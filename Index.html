@@ -2,7 +2,10 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
     <title>Party-Crasher - Hüpfburg Verwaltung</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -117,6 +120,103 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
         
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .castle-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .material-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.75rem;
+            }
+            
+            .gradient-bg .flex {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .gradient-bg .flex .flex {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
+            
+            .modal-content {
+                margin: 1rem;
+                max-height: calc(100vh - 2rem);
+            }
+            
+            .text-4xl { font-size: 2rem; }
+            .text-3xl { font-size: 1.5rem; }
+            .text-2xl { font-size: 1.25rem; }
+            .text-xl { font-size: 1.125rem; }
+            
+            .p-6 { padding: 1rem; }
+            .p-8 { padding: 1.5rem; }
+            
+            .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid.grid-cols-1.md\\:grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid.grid-cols-2 {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+        }
+        
+        /* iPhone specific optimizations */
+        @media (max-width: 480px) {
+            .text-5xl { font-size: 2.5rem; }
+            .text-4xl { font-size: 1.75rem; }
+            .text-3xl { font-size: 1.5rem; }
+            
+            .p-6 { padding: 0.75rem; }
+            .p-8 { padding: 1rem; }
+            
+            .rounded-2xl { border-radius: 1rem; }
+            
+            .space-y-4 > * + * { margin-top: 0.75rem; }
+            .space-y-6 > * + * { margin-top: 1rem; }
+            
+            .max-w-6xl { max-width: 100%; }
+            
+            .sticky.top-0 {
+                position: relative;
+            }
+        }
+        
+        /* Touch improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .card-hover:hover {
+                transform: none;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            
+            .card-hover:active {
+                transform: scale(0.98);
+            }
+            
+            button:active {
+                transform: scale(0.95);
+            }
+            
+            .cursor-pointer {
+                cursor: default;
+            }
+        }
+        
         .file-drop-zone {
             border: 2px dashed #d1d5db;
             transition: all 0.3s ease;
@@ -175,7 +275,7 @@
                 </div>
                 
                 <div class="space-y-4">
-                    <button onclick="app.login('admin')" class="w-full card-hover bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
+                    <button onclick="app.showAdminLogin()" class="w-full card-hover bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
                         <div class="text-3xl mb-2">👑</div>
                         <div class="text-xl">Admin / Chef</div>
                         <div class="text-sm opacity-80 mt-1">Vollzugriff - Verwalten & Teilen</div>
@@ -244,15 +344,15 @@
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <button id="manageCastlesBtn" class="card-hover bg-white border-2 border-blue-200 hover:border-blue-400 p-8 rounded-2xl text-center shadow-lg">
-                    <div class="text-5xl mb-4">🏰</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button id="manageCastlesBtn" class="card-hover bg-white border-2 border-blue-200 hover:border-blue-400 p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl mb-3">🏰</div>
                     <div class="text-xl font-bold text-gray-800 mb-2">Hüpfburgen verwalten</div>
                     <div class="text-gray-600">Neue Hüpfburgen anlegen und bearbeiten</div>
                 </button>
                 
-                <button id="manageMaterialsBtn" class="card-hover bg-white border-2 border-green-200 hover:border-green-400 p-8 rounded-2xl text-center shadow-lg">
-                    <div class="text-5xl mb-4">📦</div>
+                <button id="manageMaterialsBtn" class="card-hover bg-white border-2 border-green-200 hover:border-green-400 p-6 rounded-2xl text-center shadow-lg">
+                    <div class="text-4xl mb-3">📦</div>
                     <div class="text-xl font-bold text-gray-800 mb-2">Materialien verwalten</div>
                     <div class="text-gray-600">Material-Stammdaten pflegen</div>
                 </div>
@@ -260,15 +360,15 @@
         </div>
 
         <!-- Employee Dashboard -->
-        <div id="employeeDashboard" class="hidden p-6">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Hüpfburg Übersicht</h2>
+        <div id="employeeDashboard" class="hidden p-4">
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-1">Hüpfburg Übersicht</h2>
                 <p class="text-gray-600">Wählen Sie eine Hüpfburg für die Packliste</p>
             </div>
             
             <!-- Import Section -->
-            <div id="importSection" class="mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-6">
-                <div class="flex items-center justify-between mb-4">
+            <div id="importSection" class="mb-4 bg-blue-50 border border-blue-200 rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-3">
                     <div>
                         <h3 class="font-bold text-blue-800">📥 Neue Daten importieren</h3>
                         <p class="text-blue-600 text-sm">Laden Sie die neueste Datei vom Chef hoch oder fügen Sie Text ein</p>
@@ -292,10 +392,10 @@
             </div>
             
             <!-- Search -->
-            <div class="mb-6">
+            <div class="mb-4">
                 <div class="relative">
                     <input type="text" id="employeeSearch" placeholder="Hüpfburg suchen..." 
-                           class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg">
+                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg">
                     <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</div>
                 </div>
             </div>
@@ -381,7 +481,7 @@
 
         <!-- Castle Modal -->
         <div id="castleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto bounce-in">
                 <h3 id="castleModalTitle" class="text-xl font-bold text-gray-800 mb-6">Hüpfburg hinzufügen</h3>
                 
                 <form id="castleForm" class="space-y-6">
@@ -437,7 +537,7 @@
 
         <!-- Material Modal -->
         <div id="materialModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
                 <h3 id="materialModalTitle" class="text-xl font-bold text-gray-800 mb-6">Material hinzufügen</h3>
                 
                 <form id="materialForm" class="space-y-4">
@@ -479,7 +579,7 @@
 
         <!-- Share Modal -->
         <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
                 <h3 class="text-xl font-bold text-gray-800 mb-6">📤 Daten exportieren</h3>
                 
                 <div class="space-y-4">
@@ -520,7 +620,7 @@
 
         <!-- Mobile Share Modal -->
         <div id="mobileShareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">📱 iPhone/iPad Export</h3>
                 
                 <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
@@ -558,9 +658,45 @@
             </div>
         </div>
 
+        <!-- Admin Password Modal -->
+        <div id="adminPasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-sm bounce-in">
+                <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">🔐 Admin Passwort</h3>
+                
+                <form id="adminPasswordForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Passwort eingeben:</label>
+                        <input type="password" id="adminPassword" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-center text-lg"
+                               placeholder="••••••••••">
+                    </div>
+                    
+                    <div id="passwordError" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div class="flex items-center">
+                            <div class="text-red-600 mr-2">❌</div>
+                            <div class="text-sm text-red-800">Falsches Passwort! Versuchen Sie es erneut.</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
+                        <button type="button" id="cancelAdminPasswordModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors">
+                            🔓 Anmelden
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-4 text-xs text-gray-500 text-center">
+                    💡 Nur für Admins und Chefs
+                </div>
+            </div>
+        </div>
+
         <!-- Paste Modal -->
         <div id="pasteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">📋 Text einfügen</h3>
                 
                 <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
@@ -594,7 +730,7 @@
 
         <!-- Booking Modal -->
         <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
+            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
                 <h3 id="bookingModalTitle" class="text-xl font-bold text-gray-800 mb-6">📅 Hüpfburg buchen</h3>
                 
                 <form id="bookingForm" class="space-y-4">
@@ -939,7 +1075,7 @@
             }
             
             showAdminLogin() {
-                this.elements.adminPasswordModal.classList.remove('hidden');
+                document.getElementById('adminPasswordModal').classList.remove('hidden');
                 document.getElementById('adminPassword').value = '';
                 document.getElementById('passwordError').classList.add('hidden');
                 // Focus on password field
@@ -949,7 +1085,7 @@
             }
             
             hideAdminPasswordModal() {
-                this.elements.adminPasswordModal.classList.add('hidden');
+                document.getElementById('adminPasswordModal').classList.add('hidden');
             }
             
             checkAdminPassword(e) {
@@ -967,7 +1103,7 @@
                     document.getElementById('adminPassword').focus();
                     
                     // Shake animation for wrong password
-                    const modal = this.elements.adminPasswordModal.querySelector('.bounce-in');
+                    const modal = document.getElementById('adminPasswordModal').querySelector('.modal-content');
                     modal.style.animation = 'none';
                     setTimeout(() => {
                         modal.style.animation = 'shake 0.5s ease-in-out';
@@ -1831,5 +1967,5 @@
         // Initialize app
         const app = new PartyCrasherApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9743c37eb5586a63',t:'MTc1NjA0ODA5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9743d1be766a62d9',t:'MTc1NjA0ODY3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
