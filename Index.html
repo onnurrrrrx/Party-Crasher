@@ -493,9 +493,10 @@
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
                         <h4 class="font-bold text-blue-800 mb-2">📱 So teilen Sie die Daten:</h4>
                         <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
-                            <li>Datei herunterladen</li>
-                            <li>Per WhatsApp, E-Mail oder USB-Stick an Mitarbeiter senden</li>
-                            <li>Mitarbeiter lädt die Datei in der App hoch</li>
+                            <li><strong>iPhone/iPad:</strong> Datei wird direkt über WhatsApp/E-Mail geteilt</li>
+                            <li><strong>Android:</strong> Datei wird erstellt und kann geteilt werden</li>
+                            <li><strong>Desktop:</strong> Datei wird heruntergeladen</li>
+                            <li><strong>Mitarbeiter:</strong> Datei einfach in der App hochladen</li>
                         </ol>
                     </div>
                     
@@ -504,7 +505,7 @@
                             Abbrechen
                         </button>
                         <button id="downloadDataBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
-                            💾 Herunterladen
+                            📤 Datei erstellen & teilen
                         </button>
                     </div>
                 </div>
@@ -818,18 +819,70 @@
                 };
                 
                 const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
                 
-                // Check if we're on mobile (especially iOS)
+                // Check if we can use the Web Share API (works great on mobile)
+                if (navigator.share && navigator.canShare) {
+                    // Create a File object for sharing
+                    const file = new File([blob], `party-crasher-daten-${new Date().toISOString().split('T')[0]}.json`, {
+                        type: 'application/json'
+                    });
+                    
+                    // Check if we can share files
+                    if (navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            title: 'Party-Crasher Daten',
+                            text: `Hüpfburg-Daten: ${this.castles.length} Hüpfburgen, ${this.materials.length} Materialien`,
+                            files: [file]
+                        }).then(() => {
+                            this.hideShareModal();
+                            this.showNotification('📤 Datei erfolgreich geteilt! Mitarbeiter kann sie direkt importieren.', 'success');
+                            this.updateSyncStatus('shared');
+                        }).catch((error) => {
+                            console.log('Share failed, falling back to download:', error);
+                            this.fallbackDownload(blob, jsonString);
+                        });
+                        return;
+                    }
+                }
+                
+                // Fallback: Traditional download or mobile text sharing
+                this.fallbackDownload(blob, jsonString);
+            }
+            
+            fallbackDownload(blob, jsonString) {
                 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                 
                 if (isMobile) {
-                    // For mobile devices, show the data in a modal for copying
-                    this.showMobileShareModal(jsonString);
+                    // For mobile without Web Share API, try download first
+                    try {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `party-crasher-daten-${new Date().toISOString().split('T')[0]}.json`;
+                        
+                        // For iOS Safari, we need to open in new window
+                        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                            a.target = '_blank';
+                        }
+                        
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        this.hideShareModal();
+                        this.showNotification('📁 Datei erstellt! Schauen Sie in Ihre Downloads oder teilen Sie sie direkt.', 'success');
+                        this.updateSyncStatus('shared');
+                        
+                    } catch (error) {
+                        console.log('Mobile download failed, showing text modal:', error);
+                        // Last resort: show text modal
+                        this.showMobileShareModal(jsonString);
+                    }
                 } else {
                     // Desktop download
-                    const blob = new Blob([jsonString], { type: 'application/json' });
                     const url = URL.createObjectURL(blob);
-                    
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = `party-crasher-daten-${new Date().toISOString().split('T')[0]}.json`;
@@ -839,10 +892,9 @@
                     URL.revokeObjectURL(url);
                     
                     this.hideShareModal();
-                    this.showNotification('Datei erfolgreich heruntergeladen! 📥', 'success');
+                    this.showNotification('📥 Datei erfolgreich heruntergeladen!', 'success');
+                    this.updateSyncStatus('shared');
                 }
-                
-                this.updateSyncStatus('shared');
             }
             
             handleFileImport(event) {
@@ -1415,5 +1467,5 @@
         // Initialize app
         const app = new PartyCrasherApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9742df6495cf7264',t:'MTc1NjAzODc0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9742ea65532462de',t:'MTc1NjAzOTE5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
