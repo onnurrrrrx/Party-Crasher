@@ -8,6 +8,10 @@
     <meta name="format-detection" content="telephone=no">
     <title>Party-Crasher - Hüpfburg Verwaltung</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- QR Code Scanner Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -160,6 +164,33 @@
             transition: stroke-dashoffset 0.5s ease-in-out;
         }
         
+        /* QR Scanner Styles */
+        #qrScannerModal video {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 1rem;
+        }
+        
+        .qr-scanner-overlay {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+        }
+        
+        .qr-scanner-overlay::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            border: 3px solid #3b82f6;
+            border-radius: 1rem;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        }
+        
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .castle-grid {
@@ -190,47 +221,110 @@
             }
         }
         
+        /* Compact layout optimizations */
+        .compact-header {
+            padding: 0.75rem 1rem;
+        }
+        
+        .compact-card {
+            padding: 1rem;
+        }
+        
+        .compact-spacing {
+            margin-bottom: 0.75rem;
+        }
+        
+        .compact-text {
+            font-size: 0.875rem;
+            line-height: 1.25;
+        }
+        
+        .compact-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .compact-stats {
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+        
+        .compact-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-height: 40px;
+        }
+        
+        .compact-grid {
+            gap: 0.75rem;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
-            .text-8xl { font-size: 3.5rem; }
-            .text-7xl { font-size: 3rem; }
-            .text-6xl { font-size: 2.5rem; }
-            .text-5xl { font-size: 2rem; }
-            .text-4xl { font-size: 1.75rem; }
-            .text-3xl { font-size: 1.5rem; }
-            .text-2xl { font-size: 1.25rem; }
-            .text-xl { font-size: 1.125rem; }
-            .text-lg { font-size: 1rem; }
+            .text-8xl { font-size: 2.5rem; }
+            .text-7xl { font-size: 2rem; }
+            .text-6xl { font-size: 1.75rem; }
+            .text-5xl { font-size: 1.5rem; }
+            .text-4xl { font-size: 1.25rem; }
+            .text-3xl { font-size: 1.125rem; }
+            .text-2xl { font-size: 1rem; }
+            .text-xl { font-size: 0.9rem; }
+            .text-lg { font-size: 0.875rem; }
             
-            .p-12 { padding: 1.5rem; }
-            .p-10 { padding: 1.5rem; }
-            .p-8 { padding: 1rem; }
-            .p-6 { padding: 0.75rem; }
-            .p-4 { padding: 0.5rem; }
+            .p-12 { padding: 1rem; }
+            .p-10 { padding: 1rem; }
+            .p-8 { padding: 0.75rem; }
+            .p-6 { padding: 0.5rem; }
+            .p-4 { padding: 0.375rem; }
             
-            .py-12 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-            .py-8 { padding-top: 1rem; padding-bottom: 1rem; }
-            .py-6 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-            .py-4 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+            .py-12 { padding-top: 1rem; padding-bottom: 1rem; }
+            .py-8 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+            .py-6 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+            .py-4 { padding-top: 0.375rem; padding-bottom: 0.375rem; }
+            .py-3 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
             
-            .px-8 { padding-left: 1rem; padding-right: 1rem; }
-            .px-6 { padding-left: 0.75rem; padding-right: 0.75rem; }
-            .px-4 { padding-left: 0.5rem; padding-right: 0.5rem; }
+            .px-8 { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .px-6 { padding-left: 0.5rem; padding-right: 0.5rem; }
+            .px-4 { padding-left: 0.375rem; padding-right: 0.375rem; }
+            .px-3 { padding-left: 0.25rem; padding-right: 0.25rem; }
             
-            .mb-12 { margin-bottom: 1.5rem; }
-            .mb-8 { margin-bottom: 1rem; }
-            .mb-6 { margin-bottom: 0.75rem; }
-            .mb-4 { margin-bottom: 0.5rem; }
-            .mb-3 { margin-bottom: 0.375rem; }
+            .mb-12 { margin-bottom: 1rem; }
+            .mb-8 { margin-bottom: 0.75rem; }
+            .mb-6 { margin-bottom: 0.5rem; }
+            .mb-4 { margin-bottom: 0.375rem; }
+            .mb-3 { margin-bottom: 0.25rem; }
             
-            .space-y-8 > * + * { margin-top: 1rem; }
-            .space-y-6 > * + * { margin-top: 0.75rem; }
-            .space-y-4 > * + * { margin-top: 0.5rem; }
+            .space-y-8 > * + * { margin-top: 0.75rem; }
+            .space-y-6 > * + * { margin-top: 0.5rem; }
+            .space-y-4 > * + * { margin-top: 0.375rem; }
             
-            .gap-8 { gap: 1rem; }
-            .gap-6 { gap: 0.75rem; }
-            .gap-4 { gap: 0.5rem; }
-            .gap-3 { gap: 0.375rem; }
+            .gap-8 { gap: 0.75rem; }
+            .gap-6 { gap: 0.5rem; }
+            .gap-4 { gap: 0.375rem; }
+            .gap-3 { gap: 0.25rem; }
+            .gap-2 { gap: 0.125rem; }
+            
+            /* Optimize button sizes for mobile */
+            button {
+                min-height: 40px;
+                font-size: 0.8rem;
+                padding: 0.375rem 0.75rem;
+            }
+            
+            .flex-1 {
+                min-width: 0;
+            }
+            
+            /* Make everything more compact on mobile */
+            .neo-card {
+                padding: 0.75rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .stats-card {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.75rem;
+            }
         }
         
         /* Small mobile phones */
@@ -314,17 +408,17 @@
     
     <div id="app" class="min-h-screen">
         <!-- Header -->
-        <div class="hero-gradient text-white relative overflow-hidden">
+        <div class="hero-gradient text-white relative overflow-hidden compact-header">
             <div class="absolute inset-0 bg-black bg-opacity-10"></div>
-            <div class="relative z-10 max-w-7xl mx-auto px-4 py-4 md:px-6 md:py-8">
+            <div class="relative z-10 max-w-7xl mx-auto px-3 py-2 md:px-4 md:py-3">
                 <!-- Mobile Header -->
                 <div class="md:hidden">
-                    <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center">
-                            <div class="text-3xl mr-3 animate-bounce">🎪</div>
+                            <div class="text-2xl mr-2">🎪</div>
                             <div>
-                                <h1 class="text-xl font-bold">Party-Crasher</h1>
-                                <p class="text-white/80 text-sm">Hüpfburg System</p>
+                                <h1 class="text-lg font-bold">Party-Crasher</h1>
+                                <p class="text-white/80 text-xs">Hüpfburg System</p>
                             </div>
                         </div>
                         <div class="text-right">
@@ -334,18 +428,18 @@
                     </div>
                     
                     <div class="flex items-center justify-between">
-                        <div id="syncStatusMobile" class="stats-card px-3 py-1 rounded-full text-xs font-medium text-slate-700">
-                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full inline-block mr-1"></span>
+                        <div id="syncStatusMobile" class="stats-card px-2 py-1 rounded-full text-xs font-medium text-slate-700">
+                            <span class="w-1 h-1 bg-blue-500 rounded-full inline-block mr-1"></span>
                             <span>Lokal</span>
                         </div>
-                        <div class="flex gap-2">
-                            <button id="shareBtnMobile" class="hidden neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                        <div class="flex gap-1">
+                            <button id="shareBtnMobile" class="hidden neo-button px-2 py-1 text-slate-700 font-medium text-xs">
                                 📤
                             </button>
-                            <button id="backBtnMobile" class="hidden neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                            <button id="backBtnMobile" class="hidden neo-button px-2 py-1 text-slate-700 font-medium text-xs">
                                 ←
                             </button>
-                            <button id="logoutBtnMobile" class="neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                            <button id="logoutBtnMobile" class="neo-button px-2 py-1 text-slate-700 font-medium text-xs">
                                 Aus
                             </button>
                         </div>
@@ -355,28 +449,28 @@
                 <!-- Desktop Header -->
                 <div class="hidden md:flex items-center justify-between">
                     <div class="flex items-center">
-                        <div class="text-5xl mr-4 animate-bounce">🎪</div>
+                        <div class="text-3xl mr-3">🎪</div>
                         <div>
-                            <h1 class="text-4xl font-bold mb-1">Party-Crasher</h1>
-                            <p class="text-white/80 text-lg">Hüpfburg Management System</p>
+                            <h1 class="text-2xl font-bold mb-1">Party-Crasher</h1>
+                            <p class="text-white/80 text-sm">Hüpfburg Management System</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-6">
-                        <div id="syncStatus" class="stats-card px-4 py-2 rounded-full text-sm font-medium text-slate-700">
-                            <span class="w-2 h-2 bg-blue-500 rounded-full inline-block mr-2"></span>
+                    <div class="flex items-center gap-4">
+                        <div id="syncStatus" class="stats-card px-3 py-1 rounded-full text-sm font-medium text-slate-700">
+                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full inline-block mr-1"></span>
                             <span>Lokal gespeichert</span>
                         </div>
                         <div id="userInfo" class="text-right">
-                            <div class="text-sm opacity-80">Angemeldet als:</div>
-                            <div class="font-bold text-xl" id="currentUser">Gast</div>
+                            <div class="text-xs opacity-80">Angemeldet als:</div>
+                            <div class="font-bold text-lg" id="currentUser">Gast</div>
                         </div>
-                        <button id="shareBtn" class="hidden neo-button px-6 py-3 text-slate-700 font-medium">
+                        <button id="shareBtn" class="hidden neo-button px-4 py-2 text-slate-700 font-medium text-sm">
                             📤 Teilen
                         </button>
-                        <button id="backBtn" class="hidden neo-button px-6 py-3 text-slate-700 font-medium">
+                        <button id="backBtn" class="hidden neo-button px-4 py-2 text-slate-700 font-medium text-sm">
                             ← Zurück
                         </button>
-                        <button id="logoutBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
+                        <button id="logoutBtn" class="neo-button px-4 py-2 text-slate-700 font-medium text-sm">
                             Abmelden
                         </button>
                     </div>
@@ -385,50 +479,72 @@
         </div>
 
         <!-- Login Screen -->
-        <div id="loginScreen" class="max-w-4xl mx-auto px-4 py-6 md:px-6 md:py-12">
-            <div class="text-center mb-8 md:mb-12">
-                <div class="text-6xl md:text-8xl mb-4 md:mb-6 floating-card">🏰</div>
-                <h2 class="text-3xl md:text-5xl font-bold text-slate-800 mb-3 md:mb-4">Willkommen zurück!</h2>
-                <p class="text-lg md:text-xl text-slate-600">Wählen Sie Ihre Rolle um zu beginnen</p>
+        <div id="loginScreen" class="max-w-4xl mx-auto px-3 py-4 md:px-4 md:py-6">
+            <div class="text-center mb-4 md:mb-6">
+                <div class="text-4xl md:text-6xl mb-2 md:mb-3">🏰</div>
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Willkommen zurück!</h2>
+                <p class="text-base md:text-lg text-slate-600">Wählen Sie Ihre Rolle um zu beginnen</p>
             </div>
             
-            <div class="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
-                <div class="neo-card p-6 md:p-8 text-center slide-up" style="animation-delay: 0.2s">
-                    <div class="admin-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <div class="text-3xl md:text-4xl">👑</div>
+            <div class="grid md:grid-cols-2 gap-4 md:gap-6 max-w-4xl mx-auto">
+                <div class="neo-card compact-card text-center slide-up" style="animation-delay: 0.2s">
+                    <div class="admin-gradient w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                        <div class="text-2xl md:text-3xl">👑</div>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Admin / Chef</h3>
-                    <p class="text-slate-600 mb-4 md:mb-6 text-sm md:text-base">Vollzugriff auf alle Funktionen<br>Verwalten & Daten teilen</p>
-                    <button onclick="app.showAdminLogin()" class="w-full admin-gradient text-white py-3 md:py-4 rounded-2xl font-semibold text-base md:text-lg hover:shadow-xl transition-all duration-300">
+                    <h3 class="compact-title font-bold text-slate-800">Admin / Chef</h3>
+                    <p class="text-slate-600 mb-3 md:mb-4 compact-text">Vollzugriff auf alle Funktionen<br>Verwalten & Daten teilen</p>
+                    <button onclick="app.showAdminLogin()" class="w-full admin-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                         Als Admin anmelden
                     </button>
                 </div>
                 
-                <div class="neo-card p-6 md:p-8 text-center slide-up" style="animation-delay: 0.4s">
-                    <div class="employee-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
-                        <div class="text-3xl md:text-4xl">👷</div>
+                <div class="neo-card compact-card text-center slide-up" style="animation-delay: 0.4s">
+                    <div class="employee-gradient w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                        <div class="text-2xl md:text-3xl">👷</div>
                     </div>
-                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Mitarbeiter</h3>
-                    <p class="text-slate-600 mb-4 md:mb-6 text-sm md:text-base">Zugriff auf Buchungen<br>Packlisten & Import</p>
-                    <button onclick="app.login('employee')" class="w-full employee-gradient text-white py-3 md:py-4 rounded-2xl font-semibold text-base md:text-lg hover:shadow-xl transition-all duration-300">
+                    <h3 class="compact-title font-bold text-slate-800">Mitarbeiter</h3>
+                    <p class="text-slate-600 mb-3 md:mb-4 compact-text">Zugriff auf Buchungen<br>Packlisten & Import</p>
+                    <button onclick="app.login('employee')" class="w-full employee-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                         Als Mitarbeiter anmelden
                     </button>
                 </div>
             </div>
             
             <!-- Import Section for Employees -->
-            <div id="employeeImportSection" class="hidden mt-8 md:mt-12 max-w-2xl mx-auto">
-                <div class="neo-card p-6 md:p-8">
-                    <div class="text-center mb-4 md:mb-6">
-                        <div class="text-3xl md:text-4xl mb-2 md:mb-3">📥</div>
-                        <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2">Daten vom Chef erhalten?</h3>
-                        <p class="text-slate-600 text-sm md:text-base">Laden Sie die Datei hoch, die Sie vom Chef bekommen haben</p>
+            <div id="employeeImportSection" class="hidden mt-4 md:mt-6 max-w-2xl mx-auto">
+                <div class="neo-card compact-card">
+                    <div class="text-center mb-3 md:mb-4">
+                        <div class="text-2xl md:text-3xl mb-1 md:mb-2">📥</div>
+                        <h3 class="compact-title font-bold text-slate-800">Daten vom Chef erhalten?</h3>
+                        <p class="text-slate-600 compact-text">QR-Code scannen oder Datei hochladen</p>
                     </div>
                     
-                    <div id="employeeDropZone" class="file-drop-zone rounded-2xl p-6 md:p-8 text-center cursor-pointer">
-                        <div class="text-4xl md:text-5xl mb-3 md:mb-4">📁</div>
-                        <div class="text-slate-800 font-semibold text-base md:text-lg mb-2">Datei hier ablegen oder klicken</div>
-                        <div class="text-slate-600 text-sm md:text-base">Unterstützt: .json Dateien</div>
+                    <!-- QR Code Scanner -->
+                    <div class="mb-4">
+                        <button id="scanQRBtn" class="w-full employee-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 mb-2">
+                            📱 QR-Code scannen
+                        </button>
+                        <div class="text-center compact-text text-slate-500 mb-2">
+                            QR-Code vom Chef per WhatsApp erhalten? Einfach scannen!
+                        </div>
+                        
+                        <div class="text-center text-slate-400 mb-2 compact-text">oder</div>
+                        
+                        <button id="uploadQRBtn" class="w-full neo-button compact-button text-slate-700 font-semibold mb-2">
+                            📷 QR-Code Bild hochladen
+                        </button>
+                        <div class="text-center compact-text text-slate-500">
+                            Screenshot vom QR-Code hochladen - wird automatisch ausgelesen!
+                        </div>
+                        <input type="file" id="qrImageInput" accept="image/*" class="hidden">
+                    </div>
+                    
+                    <div class="text-center text-slate-400 mb-3 compact-text">oder</div>
+                    
+                    <div id="employeeDropZone" class="file-drop-zone rounded-2xl p-4 md:p-6 text-center cursor-pointer">
+                        <div class="text-3xl md:text-4xl mb-2 md:mb-3">📁</div>
+                        <div class="text-slate-800 font-semibold compact-text mb-1">Datei hier ablegen oder klicken</div>
+                        <div class="text-slate-600 compact-text">Unterstützt: .json Dateien</div>
                     </div>
                     
                     <input type="file" id="employeeFileInput" accept=".json" class="hidden">
@@ -437,112 +553,116 @@
         </div>
 
         <!-- Admin Dashboard -->
-        <div id="adminDashboard" class="hidden max-w-7xl mx-auto px-6 py-8">
-            <div class="mb-8">
-                <h2 class="text-4xl font-bold text-slate-800 mb-3">Admin Dashboard</h2>
-                <p class="text-xl text-slate-600">Verwalten Sie Ihre Hüpfburgen und Materialien</p>
+        <div id="adminDashboard" class="hidden max-w-7xl mx-auto px-3 py-4 md:px-4 md:py-6">
+            <div class="mb-4 md:mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Admin Dashboard</h2>
+                <p class="compact-text text-slate-600">Verwalten Sie Ihre Hüpfburgen und Materialien</p>
             </div>
             
             <!-- Share Section -->
-            <div class="neo-card p-8 mb-8 admin-gradient text-white">
+            <div class="neo-card compact-card mb-4 md:mb-6 admin-gradient text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-2xl font-bold mb-3">📤 Daten an Mitarbeiter senden</h3>
-                        <p class="text-white/90 text-lg">Exportieren Sie alle Daten als Datei zum Versenden</p>
+                        <h3 class="compact-title font-bold mb-2">📤 Daten an Mitarbeiter senden</h3>
+                        <p class="text-white/90 compact-text">QR-Code erstellen oder als Datei exportieren</p>
                     </div>
-                    <button id="exportBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
-                        💾 Jetzt Exportieren
+                    <button id="exportBtn" class="neo-button compact-button text-slate-700 font-semibold">
+                        📱 QR-Code
                     </button>
                 </div>
             </div>
             
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div class="stats-card p-8 rounded-2xl text-center">
-                    <div class="text-5xl mb-4">🏰</div>
-                    <div class="text-4xl font-bold text-slate-800 mb-2" id="totalCastles">0</div>
-                    <div class="text-slate-600 font-medium">Hüpfburgen</div>
+            <div class="grid grid-cols-3 compact-grid mb-6 md:mb-8">
+                <div class="stats-card compact-stats rounded-2xl text-center">
+                    <div class="text-2xl md:text-3xl mb-2">🏰</div>
+                    <div class="text-xl md:text-2xl font-bold text-slate-800 mb-1" id="totalCastles">0</div>
+                    <div class="text-slate-600 font-medium compact-text">Hüpfburgen</div>
                 </div>
                 
-                <div class="stats-card p-8 rounded-2xl text-center">
-                    <div class="text-5xl mb-4">📦</div>
-                    <div class="text-4xl font-bold text-slate-800 mb-2" id="totalMaterials">0</div>
-                    <div class="text-slate-600 font-medium">Materialien</div>
+                <div class="stats-card compact-stats rounded-2xl text-center">
+                    <div class="text-2xl md:text-3xl mb-2">📦</div>
+                    <div class="text-xl md:text-2xl font-bold text-slate-800 mb-1" id="totalMaterials">0</div>
+                    <div class="text-slate-600 font-medium compact-text">Materialien</div>
                 </div>
                 
-                <div class="stats-card p-8 rounded-2xl text-center">
-                    <div class="text-5xl mb-4">📅</div>
-                    <div class="text-4xl font-bold text-slate-800 mb-2" id="bookedCastles">0</div>
-                    <div class="text-slate-600 font-medium">Gebuchte Hüpfburgen</div>
+                <div class="stats-card compact-stats rounded-2xl text-center">
+                    <div class="text-2xl md:text-3xl mb-2">📅</div>
+                    <div class="text-xl md:text-2xl font-bold text-slate-800 mb-1" id="bookedCastles">0</div>
+                    <div class="text-slate-600 font-medium compact-text">Gebucht</div>
                 </div>
             </div>
             
             <!-- Management Cards -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <button id="manageCastlesBtn" class="neo-card p-10 text-center group hover:scale-105 transition-all duration-300">
-                    <div class="castle-gradient w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <div class="text-5xl">🏰</div>
+            <div class="grid md:grid-cols-2 compact-grid">
+                <button id="manageCastlesBtn" class="neo-card compact-card text-center group hover:scale-105 transition-all duration-300">
+                    <div class="castle-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                        <div class="text-3xl md:text-4xl">🏰</div>
                     </div>
-                    <div class="text-2xl font-bold text-slate-800 mb-3">Hüpfburgen verwalten</div>
-                    <div class="text-slate-600 text-lg">Neue Hüpfburgen anlegen und bearbeiten</div>
+                    <div class="compact-title font-bold text-slate-800">Hüpfburgen verwalten</div>
+                    <div class="text-slate-600 compact-text">Neue Hüpfburgen anlegen und bearbeiten</div>
                 </button>
                 
-                <button id="manageMaterialsBtn" class="neo-card p-10 text-center group hover:scale-105 transition-all duration-300">
-                    <div class="material-gradient w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <div class="text-5xl">📦</div>
+                <button id="manageMaterialsBtn" class="neo-card compact-card text-center group hover:scale-105 transition-all duration-300">
+                    <div class="material-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                        <div class="text-3xl md:text-4xl">📦</div>
                     </div>
-                    <div class="text-2xl font-bold text-slate-800 mb-3">Materialien verwalten</div>
-                    <div class="text-slate-600 text-lg">Material-Stammdaten pflegen</div>
+                    <div class="compact-title font-bold text-slate-800">Materialien verwalten</div>
+                    <div class="text-slate-600 compact-text">Material-Stammdaten pflegen</div>
                 </button>
             </div>
         </div>
 
         <!-- Employee Dashboard -->
-        <div id="employeeDashboard" class="hidden max-w-7xl mx-auto px-6 py-8">
-            <div class="mb-8">
-                <h2 class="text-4xl font-bold text-slate-800 mb-3">📅 Gebuchte Hüpfburgen</h2>
-                <p class="text-xl text-slate-600">Übersicht der gebuchten Hüpfburgen - klicken für Packliste</p>
+        <div id="employeeDashboard" class="hidden max-w-7xl mx-auto px-3 py-4 md:px-4 md:py-6">
+            <div class="mb-4 md:mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-2">📅 Gebuchte Hüpfburgen</h2>
+                <p class="compact-text text-slate-600">Übersicht der gebuchten Hüpfburgen - klicken für Packliste</p>
             </div>
             
             <!-- Import Section -->
-            <div id="importSection" class="neo-card p-6 mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-800">📥 Neue Daten importieren</h3>
-                        <p class="text-slate-600">Laden Sie die neueste Datei vom Chef hoch oder fügen Sie Text ein</p>
+            <div id="importSection" class="neo-card compact-card mb-4 md:mb-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-3">
+                    <div class="mb-3 md:mb-0">
+                        <h3 class="compact-title font-bold text-slate-800">📥 Neue Daten importieren</h3>
+                        <p class="text-slate-600 compact-text">QR-Code scannen oder Datei vom Chef hochladen</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button id="pasteBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
-                            📋 Text einfügen
+                    <div class="flex gap-2">
+                        <button id="scanQRBtnEmployee" class="neo-button compact-button text-slate-700 font-medium">
+                            📱 QR
                         </button>
-                        <button id="importBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
-                            📁 Datei wählen
+                        <button id="uploadQRBtnEmployee" class="neo-button compact-button text-slate-700 font-medium">
+                            📷 Bild
+                        </button>
+                        <button id="importBtn" class="neo-button compact-button text-slate-700 font-medium">
+                            📁 Datei
                         </button>
                     </div>
                 </div>
                 
-                <div id="dropZone" class="file-drop-zone rounded-2xl p-6 text-center cursor-pointer">
-                    <div class="text-4xl mb-3">📁</div>
-                    <div class="text-slate-800 font-medium">Datei hier ablegen, "Datei wählen" oder "Text einfügen" klicken</div>
+                <div id="dropZone" class="file-drop-zone rounded-2xl p-4 text-center cursor-pointer">
+                    <div class="text-2xl md:text-3xl mb-2">📁</div>
+                    <div class="text-slate-800 font-medium compact-text">QR-Code scannen, Bild hochladen oder Datei ablegen</div>
                 </div>
                 
                 <input type="file" id="fileInput" accept=".json" class="hidden">
+                <input type="file" id="qrImageInputEmployee" accept="image/*" class="hidden">
             </div>
             
             <!-- Castle Grid -->
-            <div id="employeeCastleGrid" class="castle-grid"></div>
+            <div id="employeeCastleGrid" class="castle-grid compact-grid"></div>
         </div>
 
         <!-- Castle Management Screen -->
         <div id="castleManagementScreen" class="hidden">
-            <div class="castle-gradient text-slate-800 sticky top-0 z-10">
-                <div class="max-w-7xl mx-auto px-6 py-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h2 class="text-4xl font-bold mb-2">🏰 Hüpfburgen verwalten</h2>
-                            <p class="text-slate-700 text-lg">Erstellen, bearbeiten und organisieren Sie Ihre Hüpfburgen</p>
+            <div class="castle-gradient text-slate-800 sticky top-0 z-10 compact-header">
+                <div class="max-w-7xl mx-auto px-3 py-3 md:px-4 md:py-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 md:mb-4">
+                        <div class="mb-3 md:mb-0">
+                            <h2 class="text-2xl md:text-3xl font-bold mb-1">🏰 Hüpfburgen verwalten</h2>
+                            <p class="text-slate-700 compact-text">Erstellen, bearbeiten und organisieren Sie Ihre Hüpfburgen</p>
                         </div>
-                        <button id="addCastleBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
+                        <button id="addCastleBtn" class="neo-button compact-button text-slate-700 font-semibold">
                             ✨ Neue Hüpfburg
                         </button>
                     </div>
@@ -550,26 +670,26 @@
                     <div class="max-w-md">
                         <div class="relative">
                             <input type="text" id="castleSearchInput" placeholder="Hüpfburg suchen..." 
-                                   class="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 text-lg">
-                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 text-xl">🔍</div>
+                                   class="w-full pl-10 pr-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 compact-text">
+                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-lg">🔍</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div id="castlesList" class="max-w-7xl mx-auto px-6 py-8 space-y-8"></div>
+            <div id="castlesList" class="max-w-7xl mx-auto px-3 py-4 md:px-4 md:py-6 space-y-4 md:space-y-6"></div>
         </div>
 
         <!-- Material Management Screen -->
         <div id="materialManagementScreen" class="hidden">
-            <div class="material-gradient text-slate-800 sticky top-0 z-10">
-                <div class="max-w-7xl mx-auto px-6 py-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <div>
-                            <h2 class="text-4xl font-bold mb-2">📦 Materialien verwalten</h2>
-                            <p class="text-slate-700 text-lg">Verwalten Sie alle Materialien und Zubehör für Ihre Hüpfburgen</p>
+            <div class="material-gradient text-slate-800 sticky top-0 z-10 compact-header">
+                <div class="max-w-7xl mx-auto px-3 py-3 md:px-4 md:py-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-3 md:mb-4">
+                        <div class="mb-3 md:mb-0">
+                            <h2 class="text-2xl md:text-3xl font-bold mb-1">📦 Materialien verwalten</h2>
+                            <p class="text-slate-700 compact-text">Verwalten Sie alle Materialien und Zubehör für Ihre Hüpfburgen</p>
                         </div>
-                        <button id="addMaterialBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
+                        <button id="addMaterialBtn" class="neo-button compact-button text-slate-700 font-semibold">
                             ✨ Neues Material
                         </button>
                     </div>
@@ -577,60 +697,60 @@
                     <div class="max-w-md">
                         <div class="relative">
                             <input type="text" id="materialSearchInput" placeholder="Material suchen..." 
-                                   class="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 text-lg">
-                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 text-xl">🔍</div>
+                                   class="w-full pl-10 pr-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 compact-text">
+                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 text-lg">🔍</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div id="materialsList" class="max-w-7xl mx-auto px-6 py-8 material-grid"></div>
+            <div id="materialsList" class="max-w-7xl mx-auto px-3 py-4 md:px-4 md:py-6 material-grid compact-grid"></div>
         </div>
 
         <!-- Packing List Screen -->
         <div id="packingListScreen" class="hidden">
-            <div class="packing-gradient text-white relative overflow-hidden">
+            <div class="packing-gradient text-white relative overflow-hidden compact-header">
                 <div class="absolute inset-0 bg-black bg-opacity-10"></div>
-                <div class="relative z-10 max-w-4xl mx-auto px-6 py-12">
-                    <div class="text-center mb-8">
-                        <div class="text-7xl mb-6 animate-bounce">📋</div>
-                        <h2 class="text-4xl font-bold mb-3" id="packingCastleName">Packliste</h2>
-                        <p class="text-white/90 text-xl">Was Sie einpacken müssen</p>
+                <div class="relative z-10 max-w-4xl mx-auto px-3 py-4 md:px-4 md:py-6">
+                    <div class="text-center mb-4 md:mb-6">
+                        <div class="text-4xl md:text-5xl mb-3 animate-bounce">📋</div>
+                        <h2 class="text-2xl md:text-3xl font-bold mb-2" id="packingCastleName">Packliste</h2>
+                        <p class="text-white/90 compact-text">Was Sie einpacken müssen</p>
                     </div>
                     
-                    <div class="stats-card rounded-3xl p-8 text-center">
-                        <div class="flex justify-between items-center mb-6">
-                            <span class="text-2xl font-semibold text-slate-800">Fortschritt:</span>
-                            <span class="text-3xl font-bold text-slate-800" id="packingProgress">0 / 0</span>
+                    <div class="stats-card rounded-3xl compact-card text-center">
+                        <div class="flex justify-between items-center mb-3 md:mb-4">
+                            <span class="compact-title font-semibold text-slate-800">Fortschritt:</span>
+                            <span class="text-xl md:text-2xl font-bold text-slate-800" id="packingProgress">0 / 0</span>
                         </div>
                         
                         <!-- Circular Progress -->
-                        <div class="relative w-32 h-32 mx-auto mb-6">
-                            <svg class="progress-ring w-32 h-32" viewBox="0 0 120 120">
+                        <div class="relative w-20 h-20 md:w-24 md:h-24 mx-auto mb-3 md:mb-4">
+                            <svg class="progress-ring w-20 h-20 md:w-24 md:h-24" viewBox="0 0 120 120">
                                 <circle cx="60" cy="60" r="54" fill="none" stroke="#e2e8f0" stroke-width="8"/>
                                 <circle id="progressCircle" cx="60" cy="60" r="54" fill="none" stroke="#3b82f6" stroke-width="8" 
                                         stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="339.292" 
                                         class="progress-ring-circle"/>
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center">
-                                <span id="progressPercentage" class="text-2xl font-bold text-slate-800">0%</span>
+                                <span id="progressPercentage" class="text-lg md:text-xl font-bold text-slate-800">0%</span>
                             </div>
                         </div>
                         
-                        <div class="text-slate-600 text-lg">
+                        <div class="text-slate-600 compact-text">
                             <span id="progressText">Bereit zum Packen!</span>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="max-w-4xl mx-auto px-6 py-8">
-                <div id="packingList" class="space-y-4"></div>
+            <div class="max-w-4xl mx-auto px-3 py-4 md:px-4 md:py-6">
+                <div id="packingList" class="space-y-3 md:space-y-4"></div>
                 
-                <div class="mt-12 neo-card p-8 text-center">
-                    <div class="text-5xl mb-4">✅</div>
-                    <div class="text-2xl font-bold text-slate-800 mb-3">Alles eingepackt?</div>
-                    <div class="text-slate-600 text-lg">Überprüfen Sie die Liste noch einmal bevor Sie losfahren!</div>
+                <div class="mt-6 md:mt-8 neo-card compact-card text-center">
+                    <div class="text-3xl md:text-4xl mb-2 md:mb-3">✅</div>
+                    <div class="compact-title font-bold text-slate-800 mb-2">Alles eingepackt?</div>
+                    <div class="text-slate-600 compact-text">Überprüfen Sie die Liste noch einmal bevor Sie losfahren!</div>
                 </div>
             </div>
         </div>
@@ -741,8 +861,8 @@
 
         <!-- Share Modal -->
         <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-md slide-up shadow-2xl">
-                <h3 class="text-2xl font-bold text-slate-800 mb-8 text-center">📤 Daten exportieren</h3>
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-8 text-center">📤 Daten an Mitarbeiter senden</h3>
                 
                 <div class="space-y-6">
                     <div class="neo-card p-6">
@@ -751,31 +871,134 @@
                             <div class="font-bold text-green-800 text-lg">Bereit zum Export!</div>
                         </div>
                         <div class="text-sm text-green-700 mb-4">
-                            Alle Hüpfburgen und Materialien werden in eine Datei gepackt.
+                            Alle Hüpfburgen und Materialien werden als QR-Code erstellt.
                         </div>
                         <div class="text-xs text-green-600 bg-green-100 rounded-lg p-3">
                             📊 <span id="exportStats">0 Hüpfburgen, 0 Materialien</span>
                         </div>
                     </div>
                     
-                    <div class="neo-card p-6">
-                        <h4 class="font-bold text-blue-800 mb-3 text-lg">📱 So teilen Sie die Daten:</h4>
-                        <ol class="list-decimal list-inside text-sm text-blue-700 space-y-2">
-                            <li><strong>iPhone/iPad:</strong> Datei wird direkt über WhatsApp/E-Mail geteilt</li>
-                            <li><strong>Android:</strong> Datei wird erstellt und kann geteilt werden</li>
-                            <li><strong>Desktop:</strong> Datei wird heruntergeladen</li>
-                            <li><strong>Mitarbeiter:</strong> Datei einfach in der App hochladen</li>
+                    <!-- QR Code Method (New Default) -->
+                    <div class="neo-card p-6 border-2 border-blue-200 bg-blue-50">
+                        <h4 class="font-bold text-blue-800 mb-3 text-lg flex items-center">
+                            📱 QR-Code (Empfohlen)
+                            <span class="ml-2 text-xs bg-blue-600 text-white px-2 py-1 rounded-full">NEU</span>
+                        </h4>
+                        <ol class="list-decimal list-inside text-sm text-blue-700 space-y-2 mb-4">
+                            <li><strong>QR-Code erstellen</strong> (alle Daten werden eingebettet)</li>
+                            <li><strong>Screenshot machen</strong> oder Bild speichern</li>
+                            <li><strong>Per WhatsApp senden</strong> an Mitarbeiter</li>
+                            <li><strong>Mitarbeiter lädt das Bild hoch</strong> oder scannt den QR-Code</li>
                         </ol>
+                        <div class="text-xs text-blue-600 bg-blue-100 rounded-lg p-3">
+                            💡 <strong>Vorteil:</strong> Kein Kopieren/Einfügen nötig - einfach scannen!
+                        </div>
                     </div>
                     
-                    <div class="flex gap-4 pt-4">
+                    <!-- Traditional File Method -->
+                    <div class="neo-card p-6">
+                        <h4 class="font-bold text-slate-700 mb-3 text-lg">📁 Klassische Datei</h4>
+                        <div class="text-sm text-slate-600 space-y-2">
+                            <div>• Datei wird erstellt und kann geteilt werden</div>
+                            <div>• Mitarbeiter lädt Datei in der App hoch</div>
+                            <div>• Funktioniert auf allen Geräten</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-4">
                         <button id="cancelShareModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
                             Abbrechen
                         </button>
-                        <button id="downloadDataBtn" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
-                            📤 Datei erstellen & teilen
+                        <button id="createQRCodeBtn" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
+                            📱 QR-Code erstellen
+                        </button>
+                        <button id="downloadDataBtn" class="neo-button px-4 py-4 text-slate-700 font-semibold">
+                            📁
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Modal -->
+        <div id="qrCodeModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 text-center">📱 QR-Code für Mitarbeiter</h3>
+                
+                <div class="text-center mb-6">
+                    <div id="qrCodeContainer" class="neo-card p-6 bg-white inline-block rounded-2xl">
+                        <!-- QR Code will be generated here -->
+                    </div>
+                </div>
+                
+                <div class="neo-card p-6 mb-6">
+                    <h4 class="font-bold text-green-800 mb-3">📱 So funktioniert's:</h4>
+                    <ol class="list-decimal list-inside text-sm text-green-700 space-y-2">
+                        <li><strong>Screenshot machen</strong> von diesem QR-Code</li>
+                        <li><strong>WhatsApp öffnen</strong> → Chat mit Mitarbeiter</li>
+                        <li><strong>Bild senden</strong> (Screenshot vom QR-Code)</li>
+                        <li><strong>Mitarbeiter</strong> lädt das Bild in der App hoch oder scannt es</li>
+                    </ol>
+                </div>
+                
+                <div class="neo-card p-4 mb-6 bg-blue-50">
+                    <div class="text-xs text-blue-700 text-center">
+                        📊 <strong>Enthält:</strong> <span id="qrStats">0 Hüpfburgen, 0 Materialien</span><br>
+                        🔒 <strong>Sicher:</strong> Daten sind nur im QR-Code gespeichert
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button id="cancelQRModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
+                        ← Zurück
+                    </button>
+                    <button id="saveQRImageBtn" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
+                        💾 Bild speichern
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-xs text-slate-500 text-center">
+                    💡 Tipp: QR-Code funktioniert auch offline - perfekt für unterwegs!
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Scanner Modal -->
+        <div id="qrScannerModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-md max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6 text-center">📱 QR-Code scannen</h3>
+                
+                <div class="qr-scanner-overlay mb-6">
+                    <video id="qrScannerVideo" class="w-full h-64 bg-black rounded-2xl"></video>
+                </div>
+                
+                <div class="neo-card p-6 mb-6">
+                    <h4 class="font-bold text-blue-800 mb-3">📱 So scannen Sie:</h4>
+                    <ol class="list-decimal list-inside text-sm text-blue-700 space-y-2">
+                        <li><strong>Kamera freigeben</strong> wenn gefragt</li>
+                        <li><strong>QR-Code</strong> in den blauen Rahmen halten</li>
+                        <li><strong>Warten</strong> bis der Code erkannt wird</li>
+                        <li><strong>Daten werden automatisch</strong> importiert</li>
+                    </ol>
+                </div>
+                
+                <div id="scannerStatus" class="neo-card p-4 mb-6 bg-blue-50 text-center">
+                    <div class="text-blue-700 font-medium">
+                        📷 Kamera wird gestartet...
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button id="cancelQRScanner" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
+                        Abbrechen
+                    </button>
+                    <button id="switchCamera" class="neo-button px-4 py-4 text-slate-700 font-semibold">
+                        🔄
+                    </button>
+                </div>
+                
+                <div class="mt-4 text-xs text-slate-500 text-center">
+                    💡 Tipp: Halten Sie das Handy ruhig und sorgen Sie für gute Beleuchtung
                 </div>
             </div>
         </div>
@@ -856,39 +1079,7 @@
             </div>
         </div>
 
-        <!-- Paste Modal -->
-        <div id="pasteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
-                <h3 class="text-2xl font-bold text-slate-800 mb-6">📋 Text einfügen</h3>
-                
-                <div class="neo-card p-6 mb-6">
-                    <h4 class="font-bold text-green-800 mb-3">📱 Daten vom Chef erhalten?</h4>
-                    <p class="text-sm text-green-700">
-                        Fügen Sie hier den Text ein, den Sie per WhatsApp oder E-Mail vom Chef bekommen haben:
-                    </p>
-                </div>
-                
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-slate-700 mb-3">Daten einfügen:</label>
-                    <textarea id="pasteTextarea" 
-                              class="w-full h-40 text-xs bg-white border-2 border-slate-200 rounded-2xl p-4 font-mono resize-none"
-                              placeholder="Hier den Text vom Chef einfügen..."></textarea>
-                </div>
-                
-                <div class="flex gap-4">
-                    <button id="cancelPasteModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
-                        Abbrechen
-                    </button>
-                    <button id="importPasteBtn" class="flex-1 employee-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
-                        📥 Importieren
-                    </button>
-                </div>
-                
-                <div class="mt-4 text-xs text-slate-500 text-center">
-                    💡 Tipp: Einfach den kompletten Text aus WhatsApp kopieren und hier einfügen
-                </div>
-            </div>
-        </div>
+
 
         <!-- Booking Modal -->
         <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center p-2 md:p-4 md:items-center">
@@ -952,6 +1143,7 @@
                 this.editingCastle = null;
                 this.editingMaterial = null;
                 this.bookingCastle = null;
+                this.qrScanner = null;
                 
                 // Load data from localStorage
                 this.castles = JSON.parse(localStorage.getItem('partyCrasherCastles')) || this.getDefaultCastles();
@@ -1135,6 +1327,8 @@
                     castleModal: document.getElementById('castleModal'),
                     materialModal: document.getElementById('materialModal'),
                     shareModal: document.getElementById('shareModal'),
+                    qrCodeModal: document.getElementById('qrCodeModal'),
+                    qrScannerModal: document.getElementById('qrScannerModal'),
                     bookingModal: document.getElementById('bookingModal'),
                     adminPasswordModal: document.getElementById('adminPasswordModal'),
                     backBtn: document.getElementById('backBtn'),
@@ -1163,11 +1357,26 @@
                 document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput').click());
                 document.getElementById('fileInput').addEventListener('change', (e) => this.handleFileImport(e));
                 document.getElementById('employeeFileInput').addEventListener('change', (e) => this.handleFileImport(e));
-                document.getElementById('pasteBtn').addEventListener('click', () => this.showPasteModal());
+
                 
-                // Paste Modal
-                document.getElementById('cancelPasteModal').addEventListener('click', () => this.hidePasteModal());
-                document.getElementById('importPasteBtn').addEventListener('click', () => this.handlePasteImport());
+                // QR Code Functions
+                document.getElementById('createQRCodeBtn').addEventListener('click', () => this.createQRCode());
+                document.getElementById('cancelQRModal').addEventListener('click', () => this.hideQRCodeModal());
+                document.getElementById('saveQRImageBtn').addEventListener('click', () => this.saveQRImage());
+                
+                // QR Scanner Functions
+                document.getElementById('scanQRBtn').addEventListener('click', () => this.startQRScanner());
+                document.getElementById('scanQRBtnEmployee').addEventListener('click', () => this.startQRScanner());
+                document.getElementById('cancelQRScanner').addEventListener('click', () => this.stopQRScanner());
+                document.getElementById('switchCamera').addEventListener('click', () => this.switchCamera());
+                
+                // QR Image Upload Functions
+                document.getElementById('uploadQRBtn').addEventListener('click', () => document.getElementById('qrImageInput').click());
+                document.getElementById('uploadQRBtnEmployee').addEventListener('click', () => document.getElementById('qrImageInputEmployee').click());
+                document.getElementById('qrImageInput').addEventListener('change', (e) => this.handleQRImageUpload(e));
+                document.getElementById('qrImageInputEmployee').addEventListener('change', (e) => this.handleQRImageUpload(e));
+                
+
                 
                 // Employee import on login screen
                 document.querySelector('button[onclick="app.login(\'employee\')"]').addEventListener('click', () => {
@@ -1236,6 +1445,275 @@
                 });
                 
                 dropZone.addEventListener('click', () => fileInput.click());
+            }
+            
+            // QR Code Functions
+            async createQRCode() {
+                try {
+                    const data = {
+                        version: '1.0',
+                        timestamp: new Date().toISOString(),
+                        company: 'Party-Crasher',
+                        castles: this.castles,
+                        materials: this.materials
+                    };
+                    
+                    const jsonString = JSON.stringify(data);
+                    
+                    // Generate QR Code
+                    const qrContainer = document.getElementById('qrCodeContainer');
+                    qrContainer.innerHTML = '';
+                    
+                    await QRCode.toCanvas(qrContainer, jsonString, {
+                        width: 256,
+                        margin: 2,
+                        color: {
+                            dark: '#1e293b',
+                            light: '#ffffff'
+                        }
+                    });
+                    
+                    // Update stats
+                    document.getElementById('qrStats').textContent = 
+                        `${this.castles.length} Hüpfburgen, ${this.materials.length} Materialien`;
+                    
+                    this.hideShareModal();
+                    this.elements.qrCodeModal.classList.remove('hidden');
+                    
+                } catch (error) {
+                    console.error('QR Code generation failed:', error);
+                    this.showNotification('❌ Fehler beim Erstellen des QR-Codes', 'error');
+                }
+            }
+            
+            hideQRCodeModal() {
+                this.elements.qrCodeModal.classList.add('hidden');
+            }
+            
+            async saveQRImage() {
+                try {
+                    const canvas = document.querySelector('#qrCodeContainer canvas');
+                    if (!canvas) {
+                        throw new Error('QR-Code nicht gefunden');
+                    }
+                    
+                    // Convert canvas to blob
+                    canvas.toBlob((blob) => {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `party-crasher-qr-${new Date().toISOString().split('T')[0]}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        this.hideQRCodeModal();
+                        this.showNotification('📱 QR-Code als Bild gespeichert! Jetzt per WhatsApp senden.', 'success');
+                        this.updateSyncStatus('shared');
+                    }, 'image/png');
+                    
+                } catch (error) {
+                    console.error('Save QR image failed:', error);
+                    this.showNotification('❌ Fehler beim Speichern des QR-Codes', 'error');
+                }
+            }
+            
+            // QR Scanner Functions
+            async startQRScanner() {
+                try {
+                    this.elements.qrScannerModal.classList.remove('hidden');
+                    
+                    const video = document.getElementById('qrScannerVideo');
+                    const statusDiv = document.getElementById('scannerStatus');
+                    
+                    statusDiv.innerHTML = '<div class="text-blue-700 font-medium">📷 Kamera wird gestartet...</div>';
+                    
+                    // Initialize QR Scanner
+                    this.qrScanner = new QrScanner(
+                        video,
+                        (result) => this.handleQRScanResult(result),
+                        {
+                            onDecodeError: (error) => {
+                                // Ignore decode errors - they happen constantly while scanning
+                            },
+                            highlightScanRegion: true,
+                            highlightCodeOutline: true,
+                        }
+                    );
+                    
+                    await this.qrScanner.start();
+                    statusDiv.innerHTML = '<div class="text-green-700 font-medium">✅ Bereit zum Scannen - QR-Code in den Rahmen halten</div>';
+                    
+                } catch (error) {
+                    console.error('QR Scanner start failed:', error);
+                    document.getElementById('scannerStatus').innerHTML = 
+                        '<div class="text-red-700 font-medium">❌ Kamera konnte nicht gestartet werden</div>';
+                    
+                    this.showNotification('❌ Kamera-Zugriff fehlgeschlagen. Bitte Berechtigung erteilen.', 'error');
+                }
+            }
+            
+            async stopQRScanner() {
+                if (this.qrScanner) {
+                    this.qrScanner.stop();
+                    this.qrScanner.destroy();
+                    this.qrScanner = null;
+                }
+                this.elements.qrScannerModal.classList.add('hidden');
+            }
+            
+            async switchCamera() {
+                if (this.qrScanner) {
+                    try {
+                        const cameras = await QrScanner.listCameras();
+                        if (cameras.length > 1) {
+                            const currentCamera = this.qrScanner.getCamera();
+                            const nextCamera = cameras.find(cam => cam.id !== currentCamera?.id) || cameras[0];
+                            await this.qrScanner.setCamera(nextCamera.id);
+                            this.showNotification('📷 Kamera gewechselt', 'info');
+                        } else {
+                            this.showNotification('Nur eine Kamera verfügbar', 'warning');
+                        }
+                    } catch (error) {
+                        console.error('Camera switch failed:', error);
+                        this.showNotification('❌ Kamera konnte nicht gewechselt werden', 'error');
+                    }
+                }
+            }
+            
+            handleQRScanResult(result) {
+                try {
+                    const data = JSON.parse(result.data);
+                    
+                    if (!data.castles || !data.materials) {
+                        throw new Error('Ungültiges QR-Code Format');
+                    }
+                    
+                    // Import data
+                    this.castles = data.castles;
+                    this.materials = data.materials;
+                    this.saveData();
+                    
+                    // Stop scanner
+                    this.stopQRScanner();
+                    
+                    // Update UI
+                    if (this.currentScreen === 'employeeDashboard') {
+                        this.renderEmployeeCastles();
+                    }
+                    
+                    this.showNotification(`✅ QR-Code erfolgreich gescannt! ${data.castles.length} Hüpfburgen und ${data.materials.length} Materialien importiert.`, 'success');
+                    this.updateSyncStatus('shared');
+                    
+                    // Auto-login employee if on login screen
+                    if (this.currentScreen === 'login') {
+                        this.login('employee');
+                    }
+                    
+                } catch (error) {
+                    console.error('QR scan result error:', error);
+                    this.showNotification('❌ Ungültiger QR-Code. Bitte versuchen Sie es erneut.', 'error');
+                }
+            }
+            
+            // QR Image Upload Functions
+            async handleQRImageUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                // Check if it's an image
+                if (!file.type.startsWith('image/')) {
+                    this.showNotification('❌ Bitte wählen Sie ein Bild aus.', 'error');
+                    return;
+                }
+                
+                try {
+                    this.showNotification('📷 QR-Code wird aus dem Bild gelesen...', 'info');
+                    
+                    // Create image element
+                    const img = new Image();
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    img.onload = async () => {
+                        try {
+                            // Set canvas size to image size
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            
+                            // Draw image on canvas
+                            ctx.drawImage(img, 0, 0);
+                            
+                            // Get image data
+                            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            
+                            // Use QR Scanner library to decode from image data
+                            const result = await QrScanner.scanImage(img, {
+                                returnDetailedScanResult: true,
+                                highlightScanRegion: false,
+                                highlightCodeOutline: false,
+                            });
+                            
+                            // Process the result
+                            this.processQRResult(result.data);
+                            
+                        } catch (error) {
+                            console.error('QR decode from image failed:', error);
+                            this.showNotification('❌ Kein QR-Code im Bild gefunden. Bitte versuchen Sie ein anderes Bild.', 'error');
+                        }
+                    };
+                    
+                    img.onerror = () => {
+                        this.showNotification('❌ Fehler beim Laden des Bildes.', 'error');
+                    };
+                    
+                    // Load image
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        img.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    
+                } catch (error) {
+                    console.error('QR image upload error:', error);
+                    this.showNotification('❌ Fehler beim Verarbeiten des Bildes.', 'error');
+                }
+                
+                // Reset file input
+                event.target.value = '';
+            }
+            
+            processQRResult(qrData) {
+                try {
+                    const data = JSON.parse(qrData);
+                    
+                    if (!data.castles || !data.materials) {
+                        throw new Error('Ungültiges QR-Code Format');
+                    }
+                    
+                    // Import data
+                    this.castles = data.castles;
+                    this.materials = data.materials;
+                    this.saveData();
+                    
+                    // Update UI
+                    if (this.currentScreen === 'employeeDashboard') {
+                        this.renderEmployeeCastles();
+                    }
+                    
+                    this.showNotification(`✅ QR-Code aus Bild erfolgreich gelesen! ${data.castles.length} Hüpfburgen und ${data.materials.length} Materialien importiert.`, 'success');
+                    this.updateSyncStatus('shared');
+                    
+                    // Auto-login employee if on login screen
+                    if (this.currentScreen === 'login') {
+                        this.login('employee');
+                    }
+                    
+                } catch (error) {
+                    console.error('QR result processing error:', error);
+                    this.showNotification('❌ Ungültiger QR-Code im Bild. Bitte überprüfen Sie das Bild.', 'error');
+                }
             }
             
             showAdminLogin() {
@@ -1497,49 +1975,7 @@
                 document.getElementById('mobileShareModal').classList.add('hidden');
             }
             
-            showPasteModal() {
-                document.getElementById('pasteTextarea').value = '';
-                document.getElementById('pasteModal').classList.remove('hidden');
-            }
-            
-            hidePasteModal() {
-                document.getElementById('pasteModal').classList.add('hidden');
-            }
-            
-            handlePasteImport() {
-                const pastedText = document.getElementById('pasteTextarea').value.trim();
-                
-                if (!pastedText) {
-                    this.showNotification('Bitte fügen Sie Text ein.', 'error');
-                    return;
-                }
-                
-                try {
-                    const data = JSON.parse(pastedText);
-                    
-                    if (!data.castles || !data.materials) {
-                        throw new Error('Ungültiges Datenformat');
-                    }
-                    
-                    // Import data
-                    this.castles = data.castles;
-                    this.materials = data.materials;
-                    this.saveData();
-                    
-                    // Update UI
-                    if (this.currentScreen === 'employeeDashboard') {
-                        this.renderEmployeeCastles();
-                    }
-                    
-                    this.hidePasteModal();
-                    this.showNotification(`✅ Import erfolgreich! ${data.castles.length} Hüpfburgen und ${data.materials.length} Materialien geladen.`, 'success');
-                    this.updateSyncStatus('shared');
-                    
-                } catch (error) {
-                    console.error('Paste import error:', error);
-                    this.showNotification('❌ Fehler beim Importieren. Bitte überprüfen Sie den eingefügten Text.', 'error');
-                }
-            }
+
             
             async copyMobileData() {
                 const textarea = document.getElementById('mobileShareData');
@@ -1726,11 +2162,11 @@
                     // Booking status
                     const isBooked = castle.booking && castle.booking.date;
                     const bookingStatus = isBooked ? 
-                        `<div class="neo-card p-4 mb-6 bg-red-50">
+                        `<div class="neo-card p-3 mb-3 bg-red-50">
                             <div class="flex items-start">
-                                <div class="text-red-600 mr-3 text-2xl">📅</div>
-                                <div class="text-sm">
-                                    <div class="font-bold text-red-800 text-lg mb-2">GEBUCHT für ${castle.booking.date}</div>
+                                <div class="text-red-600 mr-2 text-lg">📅</div>
+                                <div class="compact-text">
+                                    <div class="font-bold text-red-800 compact-title mb-1">GEBUCHT für ${castle.booking.date}</div>
                                     <div class="text-red-700 space-y-1">
                                         <div><strong>👥 Kunde:</strong> ${castle.booking.customer}</div>
                                         <div><strong>📍 Adresse:</strong> ${castle.booking.address}</div>
@@ -1739,78 +2175,70 @@
                                 </div>
                             </div>
                         </div>` : 
-                        `<div class="neo-card p-4 mb-6 bg-green-50 text-center">
-                            <span class="text-green-800 font-bold text-lg">✅ VERFÜGBAR</span>
+                        `<div class="neo-card p-3 mb-3 bg-green-50 text-center">
+                            <span class="text-green-800 font-bold compact-title">✅ VERFÜGBAR</span>
                         </div>`;
                     
                     return `
-                        <div class="neo-card p-8 slide-up">
-                            <div class="flex justify-between items-start mb-6">
+                        <div class="neo-card compact-card slide-up">
+                            <div class="flex justify-between items-start mb-3 md:mb-4">
                                 <div class="flex-1">
-                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">${castle.name}</h3>
-                                    ${castle.description ? `<p class="text-slate-600 mb-4 text-lg">${castle.description}</p>` : ''}
-                                    <div class="flex flex-wrap gap-3 text-sm">
-                                        ${castle.dimensions ? `<span class="stats-card px-3 py-2 rounded-full text-blue-800 font-medium">📏 ${castle.dimensions}</span>` : ''}
-                                        ${castle.capacity ? `<span class="stats-card px-3 py-2 rounded-full text-green-800 font-medium">👶 ${castle.capacity} Kinder</span>` : ''}
+                                    <h3 class="compact-title font-bold text-slate-800 mb-2">${castle.name}</h3>
+                                    ${castle.description ? `<p class="text-slate-600 mb-2 compact-text">${castle.description}</p>` : ''}
+                                    <div class="flex flex-wrap gap-2 compact-text">
+                                        ${castle.dimensions ? `<span class="stats-card px-2 py-1 rounded-full text-blue-800 font-medium">📏 ${castle.dimensions}</span>` : ''}
+                                        ${castle.capacity ? `<span class="stats-card px-2 py-1 rounded-full text-green-800 font-medium">👶 ${castle.capacity}</span>` : ''}
                                     </div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-4xl font-bold text-blue-600">${materialCount}</div>
-                                    <div class="text-sm text-slate-500 font-medium">Materialien</div>
+                                <div class="text-center ml-3">
+                                    <div class="text-2xl md:text-3xl font-bold text-blue-600">${materialCount}</div>
+                                    <div class="compact-text text-slate-500 font-medium">Materialien</div>
                                 </div>
                             </div>
                             
                             ${bookingStatus}
                             
                             ${castle.notes ? `
-                                <div class="neo-card p-4 mb-6 bg-yellow-50">
+                                <div class="neo-card p-3 mb-3 bg-yellow-50">
                                     <div class="flex items-start">
-                                        <div class="text-yellow-600 mr-3 text-xl">💡</div>
-                                        <div class="text-sm text-yellow-800 font-medium">${castle.notes}</div>
+                                        <div class="text-yellow-600 mr-2 text-base">💡</div>
+                                        <div class="compact-text text-yellow-800 font-medium">${castle.notes}</div>
                                     </div>
                                 </div>
                             ` : ''}
                             
-                            <div class="mb-6">
-                                <div class="text-sm font-bold text-slate-700 mb-3">Benötigte Materialien:</div>
-                                <div class="text-sm text-slate-600 neo-card p-4 bg-slate-50">
-                                    ${materialNames}
-                                </div>
+                            <div class="mb-3 md:mb-4">
+                                <div class="compact-text font-bold text-slate-700 mb-2">Benötigte Materialien:</div>
+                                <div class="compact-text text-slate-600">${materialNames}</div>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-3">
-                                <button onclick="app.editCastle(${castle.id})" 
-                                        class="neo-button py-3 text-slate-700 font-semibold">
-                                    ✏️ Bearbeiten
-                                </button>
-                                <button onclick="app.showBookingModal(${castle.id})" 
-                                        class="neo-button py-3 text-slate-700 font-semibold">
-                                    ${isBooked ? '📅 Ändern' : '📅 Buchen'}
-                                </button>
-                                <button onclick="app.deleteCastle(${castle.id})" 
-                                        class="neo-button py-3 text-red-700 font-semibold">
-                                    🗑️ Löschen
-                                </button>
+                            <div class="flex gap-2">
                                 ${isBooked ? `
                                     <button onclick="app.cancelBooking(${castle.id})" 
-                                            class="neo-button py-3 text-slate-700 font-semibold">
+                                            class="flex-1 neo-button compact-button text-red-600 font-medium hover:bg-red-50">
                                         ❌ Stornieren
                                     </button>
-                                ` : '<div></div>'}
+                                ` : `
+                                    <button onclick="app.showBookingModal(${castle.id})" 
+                                            class="flex-1 employee-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
+                                        📅 Buchen
+                                    </button>
+                                `}
+                                <button onclick="app.showCastleModal(app.castles.find(c => c.id === ${castle.id}))" 
+                                        class="neo-button px-3 compact-button text-slate-700 font-medium">
+                                    ✏️
+                                </button>
+                                <button onclick="app.deleteCastle(${castle.id})" 
+                                        class="neo-button px-3 compact-button text-red-600 font-medium hover:bg-red-50">
+                                    🗑️
+                                </button>
                             </div>
                         </div>
                     `;
                 }).join('');
                 
                 document.getElementById('castlesList').innerHTML = html || 
-                    '<div class="text-center text-slate-500 py-12 text-xl">Keine Hüpfburgen gefunden</div>';
-            }
-            
-            editCastle(castleId) {
-                const castle = this.castles.find(c => c.id === castleId);
-                if (castle) {
-                    this.showCastleModal(castle);
-                }
+                    '<div class="text-center py-12"><div class="text-6xl mb-4">🏰</div><div class="text-xl text-slate-600">Keine Hüpfburgen gefunden</div></div>';
             }
             
             // Material Management
@@ -1837,7 +2265,7 @@
             
             resetMaterialForm() {
                 document.getElementById('materialName').value = '';
-                document.getElementById('materialCategory').value = 'Sonstiges';
+                document.getElementById('materialCategory').value = 'Gebläse';
                 document.getElementById('materialDescription').value = '';
             }
             
@@ -1871,17 +2299,6 @@
             }
             
             deleteMaterial(materialId) {
-                // Check if material is used in any castle
-                const usedInCastles = this.castles.filter(castle => 
-                    castle.materials && castle.materials.includes(materialId)
-                );
-                
-                if (usedInCastles.length > 0) {
-                    const castleNames = usedInCastles.map(c => c.name).join(', ');
-                    this.showNotification(`Material wird noch verwendet in: ${castleNames}`, 'error');
-                    return;
-                }
-                
                 if (confirm('Sind Sie sicher, dass Sie dieses Material löschen möchten?')) {
                     this.materials = this.materials.filter(m => m.id !== materialId);
                     this.saveData();
@@ -1899,37 +2316,38 @@
                     (material.description && material.description.toLowerCase().includes(searchTerm))
                 );
                 
-                const categoryIcons = {
-                    'Gebläse': '🌪️',
-                    'Planen': '🛡️',
-                    'Befestigung': '⚓',
-                    'Kabel': '🔌',
-                    'Sicherheit': '🦺',
-                    'Sonstiges': '📦'
-                };
-                
                 const html = filteredMaterials.map(material => {
-                    const icon = categoryIcons[material.category] || '📦';
+                    const categoryColors = {
+                        'Gebläse': 'bg-blue-100 text-blue-800',
+                        'Planen': 'bg-green-100 text-green-800',
+                        'Befestigung': 'bg-yellow-100 text-yellow-800',
+                        'Kabel': 'bg-purple-100 text-purple-800',
+                        'Sicherheit': 'bg-red-100 text-red-800',
+                        'Sonstiges': 'bg-gray-100 text-gray-800'
+                    };
+                    
+                    const categoryColor = categoryColors[material.category] || categoryColors['Sonstiges'];
                     
                     return `
-                        <div class="neo-card p-6 text-center floating-card">
-                            <div class="text-5xl mb-4">${icon}</div>
-                            <h3 class="font-bold text-slate-800 text-lg mb-2">${material.name}</h3>
-                            <div class="text-sm text-slate-500 mb-4 font-medium">${material.category}</div>
+                        <div class="neo-card compact-card slide-up">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="compact-title font-bold text-slate-800">${material.name}</h3>
+                                <span class="px-2 py-1 rounded-full compact-text font-medium ${categoryColor}">
+                                    ${material.category}
+                                </span>
+                            </div>
                             
                             ${material.description ? `
-                                <div class="text-sm text-slate-600 mb-6">
-                                    ${material.description}
-                                </div>
+                                <p class="text-slate-600 mb-3 compact-text">${material.description}</p>
                             ` : ''}
                             
-                            <div class="flex gap-3">
-                                <button onclick="app.showMaterialModal(${JSON.stringify(material).replace(/"/g, '&quot;')})" 
-                                        class="flex-1 neo-button py-3 text-slate-700 font-semibold">
+                            <div class="flex gap-2">
+                                <button onclick="app.showMaterialModal(app.materials.find(m => m.id === ${material.id}))" 
+                                        class="flex-1 neo-button compact-button text-slate-700 font-medium">
                                     ✏️ Bearbeiten
                                 </button>
                                 <button onclick="app.deleteMaterial(${material.id})" 
-                                        class="neo-button px-4 py-3 text-red-700 font-semibold">
+                                        class="neo-button px-3 compact-button text-red-600 font-medium hover:bg-red-50">
                                     🗑️
                                 </button>
                             </div>
@@ -1938,156 +2356,116 @@
                 }).join('');
                 
                 document.getElementById('materialsList').innerHTML = html || 
-                    '<div class="text-center text-slate-500 py-12 col-span-full text-xl">Keine Materialien gefunden</div>';
+                    '<div class="text-center py-12"><div class="text-6xl mb-4">📦</div><div class="text-xl text-slate-600">Keine Materialien gefunden</div></div>';
             }
             
             // Employee Functions
             renderEmployeeCastles() {
-                // Filter for booked castles only
-                const bookedCastles = this.castles.filter(castle => 
-                    castle.booking && castle.booking.date
-                );
+                const bookedCastles = this.castles.filter(castle => castle.booking && castle.booking.date);
                 
-                const html = bookedCastles.map(castle => {
-                    const materialCount = castle.materials ? castle.materials.length : 0;
-                    
-                    return `
-                        <div class="neo-card p-8 text-center cursor-pointer floating-card"
-                             onclick="app.showPackingList(${castle.id})">
-                            <div class="text-6xl mb-6">🏰</div>
-                            <h3 class="text-2xl font-bold text-slate-800 mb-3">${castle.name}</h3>
-                            ${castle.description ? `<p class="text-slate-600 mb-4 text-lg">${castle.description}</p>` : ''}
-                            
-                            <div class="neo-card p-4 mb-6 bg-red-50">
-                                <div class="text-center">
-                                    <div class="font-bold text-red-800 text-lg mb-3">📅 GEBUCHT</div>
-                                    <div class="text-sm text-red-700 space-y-2">
-                                        <div><strong>Datum:</strong> ${castle.booking.date}</div>
-                                        <div><strong>Zeit:</strong> ${castle.booking.time}</div>
-                                        <div><strong>Kunde:</strong> ${castle.booking.customer}</div>
-                                        <div><strong>Adresse:</strong> ${castle.booking.address}</div>
-                                        ${castle.booking.notes ? `<div><strong>Hinweise:</strong> ${castle.booking.notes}</div>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="flex justify-center gap-3 mb-6">
-                                ${castle.dimensions ? `<span class="stats-card px-3 py-2 rounded-full text-blue-800 font-medium text-sm">📏 ${castle.dimensions}</span>` : ''}
-                                ${castle.capacity ? `<span class="stats-card px-3 py-2 rounded-full text-green-800 font-medium text-sm">👶 ${castle.capacity}</span>` : ''}
-                            </div>
-                            
-                            <div class="employee-gradient text-white px-6 py-4 rounded-2xl font-bold text-lg">
-                                📋 ${materialCount} Materialien
-                            </div>
-                            
-                            ${castle.notes ? `
-                                <div class="mt-4 neo-card p-3 bg-yellow-50">
-                                    <div class="text-sm text-yellow-800 font-medium">💡 ${castle.notes}</div>
-                                </div>
-                            ` : ''}
+                let html = '';
+                
+                // Only show booked castles for employees
+                if (bookedCastles.length > 0) {
+                    html += '<div class="mb-8">';
+                    html += bookedCastles.map(castle => this.renderEmployeeCastle(castle, true)).join('');
+                    html += '</div>';
+                } else if (this.castles.length === 0) {
+                    html = `
+                        <div class="text-center py-12">
+                            <div class="text-6xl mb-4">🏰</div>
+                            <div class="text-2xl text-slate-600 mb-4">Keine Hüpfburgen verfügbar</div>
+                            <div class="text-slate-500">Importieren Sie Daten vom Chef</div>
                         </div>
                     `;
-                }).join('');
-                
-                const emptyMessage = bookedCastles.length === 0 ? 
-                    '<div class="text-center text-slate-500 py-20 col-span-full"><div class="text-8xl mb-6">📅</div><div class="text-3xl font-bold mb-4">Keine Buchungen vorhanden</div><div class="text-xl">Aktuell sind keine Hüpfburgen gebucht.</div></div>' :
-                    '';
-                
-                document.getElementById('employeeCastleGrid').innerHTML = html || emptyMessage;
-            }
-            
-            showPackingList(castleId) {
-                const castle = this.castles.find(c => c.id === castleId);
-                if (!castle) return;
-                
-                document.getElementById('packingCastleName').textContent = castle.name;
-                
-                const materials = castle.materials ? 
-                    castle.materials.map(id => this.materials.find(m => m.id === id)).filter(Boolean) : [];
-                
-                const html = materials.map((material, index) => `
-                    <div class="checkbox-item neo-card p-6 rounded-2xl">
-                        <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="w-6 h-6 text-blue-600 rounded mr-6" 
-                                   onchange="app.updatePackingProgress()">
-                            <div class="flex-1">
-                                <div class="font-bold text-slate-800 text-xl mb-1">${material.name}</div>
-                                <div class="text-sm text-slate-500 font-medium mb-2">${material.category}</div>
-                                ${material.description ? `<div class="text-sm text-slate-600">${material.description}</div>` : ''}
-                            </div>
-                            <div class="text-4xl ml-6">📦</div>
-                        </label>
-                    </div>
-                `).join('');
-                
-                document.getElementById('packingList').innerHTML = html || 
-                    '<div class="text-center text-slate-500 py-12 text-xl">Keine Materialien zugewiesen</div>';
-                
-                this.updatePackingProgress();
-                this.showScreen('packingList');
-            }
-            
-            updatePackingProgress() {
-                const checkboxes = document.querySelectorAll('#packingList input[type="checkbox"]');
-                const checkedBoxes = document.querySelectorAll('#packingList input[type="checkbox"]:checked');
-                
-                const total = checkboxes.length;
-                const checked = checkedBoxes.length;
-                const percentage = total > 0 ? (checked / total) * 100 : 0;
-                
-                document.getElementById('packingProgress').textContent = `${checked} / ${total}`;
-                document.getElementById('progressPercentage').textContent = `${Math.round(percentage)}%`;
-                
-                // Update circular progress
-                const circle = document.getElementById('progressCircle');
-                const circumference = 2 * Math.PI * 54; // radius = 54
-                const offset = circumference - (percentage / 100) * circumference;
-                circle.style.strokeDashoffset = offset;
-                
-                // Update progress text
-                const progressText = document.getElementById('progressText');
-                if (percentage === 0) {
-                    progressText.textContent = 'Bereit zum Packen!';
-                } else if (percentage < 50) {
-                    progressText.textContent = 'Guter Start! 💪';
-                } else if (percentage < 100) {
-                    progressText.textContent = 'Fast geschafft! 🚀';
                 } else {
-                    progressText.textContent = 'Perfekt! Alles eingepackt! ✨';
+                    html = `
+                        <div class="text-center py-12">
+                            <div class="text-6xl mb-4">📅</div>
+                            <div class="text-2xl text-slate-600 mb-4">Keine gebuchten Hüpfburgen</div>
+                            <div class="text-slate-500">Gebuchte Hüpfburgen erscheinen hier automatisch</div>
+                        </div>
+                    `;
                 }
                 
-                // Update checkbox styling
-                checkboxes.forEach(checkbox => {
-                    const item = checkbox.closest('.checkbox-item');
-                    if (checkbox.checked) {
-                        item.classList.add('checked');
-                    } else {
-                        item.classList.remove('checked');
-                    }
-                });
+                document.getElementById('employeeCastleGrid').innerHTML = html;
+            }
+            
+            renderEmployeeCastle(castle, isBooked) {
+                const materialCount = castle.materials ? castle.materials.length : 0;
+                
+                const bookingInfo = isBooked ? `
+                    <div class="neo-card p-3 mb-3 bg-red-50">
+                        <div class="text-red-800 font-bold compact-title mb-1">📅 ${castle.booking.date} um ${castle.booking.time}</div>
+                        <div class="text-red-700 compact-text space-y-1">
+                            <div><strong>👥 Kunde:</strong> ${castle.booking.customer}</div>
+                            <div><strong>📍 Adresse:</strong> ${castle.booking.address}</div>
+                            ${castle.booking.notes ? `<div><strong>💡 Hinweise:</strong> ${castle.booking.notes}</div>` : ''}
+                        </div>
+                    </div>
+                ` : '';
+                
+                const actionButton = isBooked ? `
+                    <button onclick="app.showPackingList(${castle.id})" 
+                            class="w-full packing-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
+                        📋 Packliste anzeigen
+                    </button>
+                ` : `
+                    <button onclick="app.showBookingModal(${castle.id})" 
+                            class="w-full employee-gradient text-white compact-button rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
+                        📅 Buchen
+                    </button>
+                `;
+                
+                return `
+                    <div class="neo-card compact-card slide-up">
+                        <div class="flex justify-between items-start mb-3">
+                            <div class="flex-1">
+                                <h3 class="compact-title font-bold text-slate-800 mb-1">${castle.name}</h3>
+                                ${castle.description ? `<p class="text-slate-600 mb-2 compact-text">${castle.description}</p>` : ''}
+                                <div class="flex flex-wrap gap-1 compact-text">
+                                    ${castle.dimensions ? `<span class="stats-card px-2 py-1 rounded-full text-blue-800 font-medium">📏 ${castle.dimensions}</span>` : ''}
+                                    ${castle.capacity ? `<span class="stats-card px-2 py-1 rounded-full text-green-800 font-medium">👶 ${castle.capacity}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="text-center ml-3">
+                                <div class="text-lg md:text-xl font-bold text-blue-600">${materialCount}</div>
+                                <div class="text-xs text-slate-500">Materialien</div>
+                            </div>
+                        </div>
+                        
+                        ${bookingInfo}
+                        
+                        ${castle.notes ? `
+                            <div class="neo-card p-2 mb-3 bg-yellow-50">
+                                <div class="flex items-start">
+                                    <div class="text-yellow-600 mr-2 text-base">💡</div>
+                                    <div class="compact-text text-yellow-800">${castle.notes}</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${actionButton}
+                    </div>
+                `;
             }
             
             // Booking Functions
             showBookingModal(castleId) {
-                const castle = this.castles.find(c => c.id === castleId);
-                if (!castle) return;
+                this.bookingCastle = this.castles.find(c => c.id === castleId);
+                if (!this.bookingCastle) return;
                 
-                this.bookingCastle = castle;
-                document.getElementById('bookingCastleName').textContent = castle.name;
+                document.getElementById('bookingCastleName').textContent = this.bookingCastle.name;
                 
-                if (castle.booking) {
-                    document.getElementById('bookingModalTitle').textContent = '📅 Buchung ändern';
-                    // Convert German date format back to YYYY-MM-DD for input
-                    const dateValue = castle.booking.originalDate || castle.booking.date;
-                    document.getElementById('bookingDate').value = dateValue;
-                    document.getElementById('bookingTime').value = castle.booking.time;
-                    document.getElementById('bookingCustomer').value = castle.booking.customer;
-                    document.getElementById('bookingAddress').value = castle.booking.address;
-                    document.getElementById('bookingNotes').value = castle.booking.notes || '';
-                } else {
-                    document.getElementById('bookingModalTitle').textContent = '📅 Hüpfburg buchen';
-                    this.resetBookingForm();
-                }
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('bookingDate').value = today;
+                document.getElementById('bookingTime').value = '10:00';
+                
+                // Clear form
+                document.getElementById('bookingCustomer').value = '';
+                document.getElementById('bookingAddress').value = '';
+                document.getElementById('bookingNotes').value = '';
                 
                 this.elements.bookingModal.classList.remove('hidden');
             }
@@ -2097,18 +2475,8 @@
                 this.bookingCastle = null;
             }
             
-            resetBookingForm() {
-                document.getElementById('bookingDate').value = '';
-                document.getElementById('bookingTime').value = '10:00';
-                document.getElementById('bookingCustomer').value = '';
-                document.getElementById('bookingAddress').value = '';
-                document.getElementById('bookingNotes').value = '';
-            }
-            
             saveBooking(e) {
                 e.preventDefault();
-                
-                if (!this.bookingCastle) return;
                 
                 const bookingData = {
                     date: document.getElementById('bookingDate').value,
@@ -2123,24 +2491,21 @@
                     return;
                 }
                 
-                // Format date for display
-                const dateObj = new Date(bookingData.date);
-                const formattedDate = dateObj.toLocaleDateString('de-DE', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-                
-                this.bookingCastle.booking = {
-                    ...bookingData,
-                    originalDate: bookingData.date, // Keep original format for editing
-                    date: formattedDate
-                };
-                
+                // Save booking to castle
+                this.bookingCastle.booking = bookingData;
                 this.saveData();
-                this.renderCastles();
+                
                 this.hideBookingModal();
-                this.showNotification(`✅ ${this.bookingCastle.name} erfolgreich gebucht für ${formattedDate}!`, 'success');
+                
+                // Update appropriate view
+                if (this.currentScreen === 'employeeDashboard') {
+                    this.renderEmployeeCastles();
+                } else if (this.currentScreen === 'castleManagement') {
+                    this.renderCastles();
+                    this.updateAdminStats();
+                }
+                
+                this.showNotification(`✅ ${this.bookingCastle.name} erfolgreich gebucht für ${bookingData.date}!`, 'success');
             }
             
             cancelBooking(castleId) {
@@ -2149,39 +2514,201 @@
                 
                 if (confirm(`Buchung für "${castle.name}" am ${castle.booking.date} wirklich stornieren?`)) {
                     delete castle.booking;
+                    delete castle.packingStatus; // Reset packing status too
                     this.saveData();
-                    this.renderCastles();
-                    this.showNotification(`Buchung für ${castle.name} wurde storniert.`, 'info');
+                    
+                    // Update appropriate view
+                    if (this.currentScreen === 'employeeDashboard') {
+                        this.renderEmployeeCastles();
+                    } else if (this.currentScreen === 'castleManagement') {
+                        this.renderCastles();
+                        this.updateAdminStats();
+                    }
+                    
+                    this.showNotification(`❌ Buchung für ${castle.name} wurde storniert.`, 'success');
                 }
             }
             
-            showNotification(message, type = 'info') {
-                const colors = {
-                    success: 'employee-gradient',
-                    error: 'admin-gradient',
-                    warning: 'material-gradient',
-                    info: 'packing-gradient'
-                };
+            // Packing List Functions
+            showPackingList(castleId) {
+                const castle = this.castles.find(c => c.id === castleId);
+                if (!castle) return;
                 
-                const notification = document.createElement('div');
-                notification.className = `${colors[type]} text-white px-6 py-4 rounded-2xl shadow-2xl mb-3 slide-up font-medium`;
-                notification.textContent = message;
+                document.getElementById('packingCastleName').textContent = castle.name;
                 
-                this.elements.notifications.appendChild(notification);
+                // Initialize packing status if not exists
+                if (!castle.packingStatus) {
+                    castle.packingStatus = {};
+                }
                 
-                setTimeout(() => {
-                    notification.remove();
-                }, 4000);
+                this.renderPackingList(castle);
+                this.showScreen('packingList');
             }
             
+            renderPackingList(castle) {
+                const materials = castle.materials ? 
+                    castle.materials.map(id => this.materials.find(m => m.id === id)).filter(Boolean) : [];
+                
+                let html = '';
+                
+                // Group materials by category
+                const categories = {};
+                materials.forEach(material => {
+                    if (!categories[material.category]) {
+                        categories[material.category] = [];
+                    }
+                    categories[material.category].push(material);
+                });
+                
+                Object.entries(categories).forEach(([category, categoryMaterials]) => {
+                    html += `
+                        <div class="mb-8">
+                            <h3 class="text-xl font-bold text-slate-800 mb-4">${category}</h3>
+                            <div class="space-y-3">
+                    `;
+                    
+                    categoryMaterials.forEach(material => {
+                        const isChecked = castle.packingStatus[material.id] || false;
+                        html += `
+                            <div class="checkbox-item rounded-2xl p-4 ${isChecked ? 'checked' : ''}">
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" ${isChecked ? 'checked' : ''} 
+                                           onchange="app.togglePackingItem(${castle.id}, ${material.id})"
+                                           class="mr-4 w-6 h-6 text-blue-600 rounded">
+                                    <div class="flex-1">
+                                        <div class="font-semibold text-slate-800">${material.name}</div>
+                                        ${material.description ? `<div class="text-sm text-slate-600">${material.description}</div>` : ''}
+                                    </div>
+                                </label>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div></div>';
+                });
+                
+                if (materials.length === 0) {
+                    html = `
+                        <div class="text-center py-12">
+                            <div class="text-6xl mb-4">📦</div>
+                            <div class="text-2xl text-slate-600">Keine Materialien zugewiesen</div>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('packingList').innerHTML = html;
+                this.updatePackingProgress(castle);
+            }
+            
+            togglePackingItem(castleId, materialId) {
+                const castle = this.castles.find(c => c.id === castleId);
+                if (!castle) return;
+                
+                if (!castle.packingStatus) {
+                    castle.packingStatus = {};
+                }
+                
+                castle.packingStatus[materialId] = !castle.packingStatus[materialId];
+                this.saveData();
+                this.updatePackingProgress(castle);
+                
+                // Update checkbox styling
+                const checkbox = document.querySelector(`input[onchange="app.togglePackingItem(${castleId}, ${materialId})"]`);
+                if (checkbox) {
+                    const item = checkbox.closest('.checkbox-item');
+                    item.classList.toggle('checked', checkbox.checked);
+                }
+            }
+            
+            updatePackingProgress(castle) {
+                const materials = castle.materials ? 
+                    castle.materials.map(id => this.materials.find(m => m.id === id)).filter(Boolean) : [];
+                
+                const totalItems = materials.length;
+                const checkedItems = materials.filter(material => castle.packingStatus && castle.packingStatus[material.id]).length;
+                
+                const percentage = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+                
+                // Update progress display
+                document.getElementById('packingProgress').textContent = `${checkedItems} / ${totalItems}`;
+                document.getElementById('progressPercentage').textContent = `${percentage}%`;
+                
+                // Update progress text
+                const progressText = document.getElementById('progressText');
+                if (percentage === 100) {
+                    progressText.textContent = '🎉 Alles eingepackt!';
+                    progressText.className = 'text-green-600 text-lg font-bold';
+                } else if (percentage >= 50) {
+                    progressText.textContent = '👍 Guter Fortschritt!';
+                    progressText.className = 'text-blue-600 text-lg';
+                } else {
+                    progressText.textContent = 'Bereit zum Packen!';
+                    progressText.className = 'text-slate-600 text-lg';
+                }
+                
+                // Update circular progress
+                const circle = document.getElementById('progressCircle');
+                const circumference = 2 * Math.PI * 54; // radius = 54
+                const offset = circumference - (percentage / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                // Change color based on progress
+                if (percentage === 100) {
+                    circle.style.stroke = '#10b981'; // green
+                } else if (percentage >= 50) {
+                    circle.style.stroke = '#3b82f6'; // blue
+                } else {
+                    circle.style.stroke = '#6b7280'; // gray
+                }
+            }
+            
+            // Utility Functions
             saveData() {
                 localStorage.setItem('partyCrasherCastles', JSON.stringify(this.castles));
                 localStorage.setItem('partyCrasherMaterials', JSON.stringify(this.materials));
             }
+            
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `neo-card p-4 mb-4 slide-up ${
+                    type === 'success' ? 'bg-green-50 text-green-800' :
+                    type === 'error' ? 'bg-red-50 text-red-800' :
+                    type === 'warning' ? 'bg-yellow-50 text-yellow-800' :
+                    'bg-blue-50 text-blue-800'
+                }`;
+                
+                notification.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="font-medium">${message}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" 
+                                class="ml-4 text-current opacity-70 hover:opacity-100">✕</button>
+                    </div>
+                `;
+                
+                this.elements.notifications.appendChild(notification);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 5000);
+            }
         }
+        
+        // Add CSS animation for shake effect
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
         
         // Initialize app
         const app = new PartyCrasherApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9744206092aa1620',t:'MTc1NjA1MTg5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9744b72183791605',t:'MTc1NjA1ODA3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
