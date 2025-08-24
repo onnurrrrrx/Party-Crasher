@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party-Crasher - Hüpfburg Verwaltung</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.5s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+        
+        .checkbox-item {
+            transition: all 0.2s ease;
+        }
+        
+        .checkbox-item.checked {
+            background-color: #f0f9ff;
+            border-color: #0ea5e9;
+        }
+        
+        .checkbox-item input:checked + label {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .castle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Notification Container -->
+    <div id="notifications" class="notification"></div>
+    
+    <div id="app" class="max-w-6xl mx-auto bg-white min-h-screen shadow-2xl relative">
+        <!-- Header -->
+        <div class="gradient-bg text-white p-6 relative">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="text-4xl mr-3">🏰</div>
+                    <div>
+                        <h1 class="text-2xl font-bold">Party-Crasher</h1>
+                        <p class="text-white/80 text-sm">Hüpfburg Verwaltung</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div id="userInfo" class="text-right">
+                        <div class="text-sm opacity-80">Angemeldet als:</div>
+                        <div class="font-semibold" id="currentUser">Admin</div>
+                    </div>
+                    <button id="backBtn" class="hidden glass-effect hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition-all">
+                        ← Zurück
+                    </button>
+                    <button id="logoutBtn" class="glass-effect hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition-all">
+                        Abmelden
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="p-8">
+            <div class="max-w-md mx-auto">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">🎪</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Willkommen</h2>
+                    <p class="text-gray-600">Bitte wählen Sie Ihre Rolle</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <button onclick="app.login('admin')" class="w-full card-hover bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
+                        <div class="text-3xl mb-2">👑</div>
+                        <div class="text-xl">Admin / Chef</div>
+                        <div class="text-sm opacity-80 mt-1">Vollzugriff - Verwalten & Bearbeiten</div>
+                    </button>
+                    
+                    <button onclick="app.login('employee')" class="w-full card-hover bg-gradient-to-r from-blue-500 to-purple-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
+                        <div class="text-3xl mb-2">👷</div>
+                        <div class="text-xl">Mitarbeiter</div>
+                        <div class="text-sm opacity-80 mt-1">Lesezugriff - Packlisten einsehen</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminDashboard" class="hidden p-6">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Admin Dashboard</h2>
+                <p class="text-gray-600">Verwalten Sie Hüpfburgen und Materialien</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
+                    <div class="text-3xl mb-2">🏰</div>
+                    <div class="text-2xl font-bold" id="totalCastles">0</div>
+                    <div class="text-sm opacity-80">Hüpfburgen</div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
+                    <div class="text-3xl mb-2">📦</div>
+                    <div class="text-2xl font-bold" id="totalMaterials">0</div>
+                    <div class="text-sm opacity-80">Materialien</div>
+                </div>
+                
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
+                    <div class="text-3xl mb-2">✅</div>
+                    <div class="text-2xl font-bold" id="completeCastles">0</div>
+                    <div class="text-sm opacity-80">Vollständig konfiguriert</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <button id="manageCastlesBtn" class="card-hover bg-white border-2 border-blue-200 hover:border-blue-400 p-8 rounded-2xl text-center shadow-lg">
+                    <div class="text-5xl mb-4">🏰</div>
+                    <div class="text-xl font-bold text-gray-800 mb-2">Hüpfburgen verwalten</div>
+                    <div class="text-gray-600">Neue Hüpfburgen anlegen und bearbeiten</div>
+                </button>
+                
+                <button id="manageMaterialsBtn" class="card-hover bg-white border-2 border-green-200 hover:border-green-400 p-8 rounded-2xl text-center shadow-lg">
+                    <div class="text-5xl mb-4">📦</div>
+                    <div class="text-xl font-bold text-gray-800 mb-2">Materialien verwalten</div>
+                    <div class="text-gray-600">Material-Stammdaten pflegen</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Employee Dashboard -->
+        <div id="employeeDashboard" class="hidden p-6">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Hüpfburg Übersicht</h2>
+                <p class="text-gray-600">Wählen Sie eine Hüpfburg für die Packliste</p>
+            </div>
+            
+            <!-- Search -->
+            <div class="mb-6">
+                <div class="relative">
+                    <input type="text" id="employeeSearch" placeholder="Hüpfburg suchen..." 
+                           class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg">
+                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</div>
+                </div>
+            </div>
+            
+            <!-- Castle Grid -->
+            <div id="employeeCastleGrid" class="castle-grid"></div>
+        </div>
+
+        <!-- Castle Management Screen -->
+        <div id="castleManagementScreen" class="hidden">
+            <div class="p-6 bg-gray-50 border-b sticky top-0 z-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Hüpfburgen verwalten</h2>
+                    <button id="addCastleBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                        + Neue Hüpfburg
+                    </button>
+                </div>
+                
+                <div class="flex gap-4">
+                    <input type="text" id="castleSearchInput" placeholder="Hüpfburg suchen..." 
+                           class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+            
+            <div id="castlesList" class="p-6 space-y-4"></div>
+        </div>
+
+        <!-- Material Management Screen -->
+        <div id="materialManagementScreen" class="hidden">
+            <div class="p-6 bg-gray-50 border-b sticky top-0 z-10">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold text-gray-800">Materialien verwalten</h2>
+                    <button id="addMaterialBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+                        + Neues Material
+                    </button>
+                </div>
+                
+                <div class="flex gap-4">
+                    <input type="text" id="materialSearchInput" placeholder="Material suchen..." 
+                           class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                </div>
+            </div>
+            
+            <div id="materialsList" class="p-6 material-grid"></div>
+        </div>
+
+        <!-- Packing List Screen -->
+        <div id="packingListScreen" class="hidden">
+            <div class="p-6 bg-gradient-to-r from-orange-500 to-red-500 text-white">
+                <div class="flex items-center mb-4">
+                    <div class="text-4xl mr-4">📋</div>
+                    <div>
+                        <h2 class="text-2xl font-bold" id="packingCastleName">Packliste</h2>
+                        <p class="opacity-80">Was du einpacken musst</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white/20 rounded-xl p-4">
+                    <div class="flex justify-between items-center">
+                        <span>Fortschritt:</span>
+                        <span class="font-bold" id="packingProgress">0 / 0</span>
+                    </div>
+                    <div class="w-full bg-white/20 rounded-full h-2 mt-2">
+                        <div id="progressBar" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div id="packingList" class="space-y-3"></div>
+                
+                <div class="mt-8 p-6 bg-green-50 border border-green-200 rounded-2xl">
+                    <div class="flex items-center">
+                        <div class="text-green-600 text-2xl mr-3">✅</div>
+                        <div>
+                            <div class="font-bold text-green-800">Alles eingepackt?</div>
+                            <div class="text-sm text-green-600">Überprüfe die Liste noch einmal bevor du losfährst!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Castle Modal -->
+        <div id="castleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto bounce-in">
+                <h3 id="castleModalTitle" class="text-xl font-bold text-gray-800 mb-6">Hüpfburg hinzufügen</h3>
+                
+                <form id="castleForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Name der Hüpfburg *</label>
+                        <input type="text" id="castleName" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                        <textarea id="castleDescription" rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Maße (LxBxH)</label>
+                            <input type="text" id="castleDimensions" placeholder="z.B. 5x4x3m"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Für Kinder (Anzahl)</label>
+                            <input type="number" id="castleCapacity" placeholder="z.B. 8"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Besondere Hinweise</label>
+                        <textarea id="castleNotes" rows="2" placeholder="z.B. Passt nur in großen Transporter"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Benötigte Materialien</label>
+                        <div id="materialSelection" class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-4">
+                            <!-- Materials will be loaded here -->
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-6">
+                        <button type="button" id="cancelCastleModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors">
+                            Speichern
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Material Modal -->
+        <div id="materialModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
+                <h3 id="materialModalTitle" class="text-xl font-bold text-gray-800 mb-6">Material hinzufügen</h3>
+                
+                <form id="materialForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Materialname *</label>
+                        <input type="text" id="materialName" required 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
+                        <select id="materialCategory" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="Gebläse">Gebläse</option>
+                            <option value="Planen">Planen</option>
+                            <option value="Befestigung">Befestigung</option>
+                            <option value="Kabel">Kabel</option>
+                            <option value="Sicherheit">Sicherheit</option>
+                            <option value="Sonstiges">Sonstiges</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                        <textarea id="materialDescription" rows="3"
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                    </div>
+                    
+                    <div class="flex gap-3 pt-6">
+                        <button type="button" id="cancelMaterialModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                            Speichern
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PartyCrasherApp {
+            constructor() {
+                this.currentUser = null;
+                this.currentScreen = 'login';
+                this.editingCastle = null;
+                this.editingMaterial = null;
+                
+                // Load data from localStorage
+                this.castles = JSON.parse(localStorage.getItem('partyCrasherCastles')) || this.getDefaultCastles();
+                this.materials = JSON.parse(localStorage.getItem('partyCrasherMaterials')) || this.getDefaultMaterials();
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.showScreen('login');
+            }
+            
+            getDefaultCastles() {
+                return [
+                    {
+                        id: 1,
+                        name: 'Super Mario Hüpfburg',
+                        description: 'Bunte Mario-Themenwelt mit Hindernissen',
+                        dimensions: '6x4x3m',
+                        capacity: 8,
+                        notes: 'Sehr beliebt bei Kindergeburtstagen',
+                        materials: [1, 3, 4, 5] // Material IDs
+                    },
+                    {
+                        id: 2,
+                        name: 'Dschungel Abenteuer',
+                        description: 'Tropische Hüpfburg mit Rutsche',
+                        dimensions: '7x5x4m',
+                        capacity: 10,
+                        notes: 'Benötigt großen Transporter',
+                        materials: [2, 3, 4, 5, 6]
+                    }
+                ];
+            }
+            
+            getDefaultMaterials() {
+                return [
+                    { id: 1, name: 'Gebläse 1.2 kW', category: 'Gebläse', description: 'Für kleinere Hüpfburgen' },
+                    { id: 2, name: 'Gebläse 1.8 kW', category: 'Gebläse', description: 'Für größere Hüpfburgen' },
+                    { id: 3, name: 'Unterlegplane 5x5m', category: 'Planen', description: 'Schutz vor Untergrund' },
+                    { id: 4, name: 'Set Erdnägel (10 Stk.)', category: 'Befestigung', description: 'Zur Verankerung' },
+                    { id: 5, name: 'Kabeltrommel 25m', category: 'Kabel', description: 'Stromversorgung' },
+                    { id: 6, name: 'Fallschutzmatten (4 Stk.)', category: 'Sicherheit', description: 'Zusätzlicher Schutz' }
+                ];
+            }
+            
+            initializeElements() {
+                this.elements = {
+                    loginScreen: document.getElementById('loginScreen'),
+                    adminDashboard: document.getElementById('adminDashboard'),
+                    employeeDashboard: document.getElementById('employeeDashboard'),
+                    castleManagementScreen: document.getElementById('castleManagementScreen'),
+                    materialManagementScreen: document.getElementById('materialManagementScreen'),
+                    packingListScreen: document.getElementById('packingListScreen'),
+                    castleModal: document.getElementById('castleModal'),
+                    materialModal: document.getElementById('materialModal'),
+                    backBtn: document.getElementById('backBtn'),
+                    notifications: document.getElementById('notifications')
+                };
+            }
+            
+            bindEvents() {
+                // Navigation
+                document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
+                this.elements.backBtn.addEventListener('click', () => this.goBack());
+                
+                // Admin Dashboard
+                document.getElementById('manageCastlesBtn').addEventListener('click', () => this.showScreen('castleManagement'));
+                document.getElementById('manageMaterialsBtn').addEventListener('click', () => this.showScreen('materialManagement'));
+                
+                // Castle Management
+                document.getElementById('addCastleBtn').addEventListener('click', () => this.showCastleModal());
+                document.getElementById('castleSearchInput').addEventListener('input', () => this.renderCastles());
+                document.getElementById('cancelCastleModal').addEventListener('click', () => this.hideCastleModal());
+                document.getElementById('castleForm').addEventListener('submit', (e) => this.saveCastle(e));
+                
+                // Material Management
+                document.getElementById('addMaterialBtn').addEventListener('click', () => this.showMaterialModal());
+                document.getElementById('materialSearchInput').addEventListener('input', () => this.renderMaterials());
+                document.getElementById('cancelMaterialModal').addEventListener('click', () => this.hideMaterialModal());
+                document.getElementById('materialForm').addEventListener('submit', (e) => this.saveMaterial(e));
+                
+                // Employee Search
+                document.getElementById('employeeSearch').addEventListener('input', () => this.renderEmployeeCastles());
+            }
+            
+            login(role) {
+                this.currentUser = role;
+                document.getElementById('currentUser').textContent = role === 'admin' ? 'Admin' : 'Mitarbeiter';
+                
+                if (role === 'admin') {
+                    this.showScreen('adminDashboard');
+                    this.updateAdminStats();
+                } else {
+                    this.showScreen('employeeDashboard');
+                    this.renderEmployeeCastles();
+                }
+                
+                this.showNotification(`Willkommen, ${role === 'admin' ? 'Admin' : 'Mitarbeiter'}!`, 'success');
+            }
+            
+            logout() {
+                this.currentUser = null;
+                this.showScreen('login');
+                this.showNotification('Erfolgreich abgemeldet', 'info');
+            }
+            
+            showScreen(screen) {
+                // Hide all screens
+                Object.values(this.elements).forEach(el => {
+                    if (el && el.classList) el.classList.add('hidden');
+                });
+                
+                // Show selected screen
+                const screenElement = this.elements[screen + 'Screen'] || this.elements[screen];
+                if (screenElement) {
+                    screenElement.classList.remove('hidden');
+                    screenElement.classList.add('slide-in');
+                }
+                
+                // Update back button visibility
+                const showBackBtn = screen !== 'login' && screen !== 'adminDashboard' && screen !== 'employeeDashboard';
+                this.elements.backBtn.classList.toggle('hidden', !showBackBtn);
+                
+                this.currentScreen = screen;
+                
+                // Load screen-specific data
+                if (screen === 'castleManagement') this.renderCastles();
+                if (screen === 'materialManagement') this.renderMaterials();
+            }
+            
+            goBack() {
+                if (this.currentUser === 'admin') {
+                    this.showScreen('adminDashboard');
+                    this.updateAdminStats();
+                } else {
+                    this.showScreen('employeeDashboard');
+                }
+            }
+            
+            updateAdminStats() {
+                document.getElementById('totalCastles').textContent = this.castles.length;
+                document.getElementById('totalMaterials').textContent = this.materials.length;
+                
+                const completeCastles = this.castles.filter(castle => 
+                    castle.materials && castle.materials.length > 0
+                ).length;
+                document.getElementById('completeCastles').textContent = completeCastles;
+            }
+            
+            // Castle Management
+            showCastleModal(castle = null) {
+                this.editingCastle = castle;
+                
+                if (castle) {
+                    document.getElementById('castleModalTitle').textContent = 'Hüpfburg bearbeiten';
+                    document.getElementById('castleName').value = castle.name;
+                    document.getElementById('castleDescription').value = castle.description || '';
+                    document.getElementById('castleDimensions').value = castle.dimensions || '';
+                    document.getElementById('castleCapacity').value = castle.capacity || '';
+                    document.getElementById('castleNotes').value = castle.notes || '';
+                } else {
+                    document.getElementById('castleModalTitle').textContent = 'Neue Hüpfburg';
+                    this.resetCastleForm();
+                }
+                
+                this.renderMaterialSelection(castle ? castle.materials : []);
+                this.elements.castleModal.classList.remove('hidden');
+            }
+            
+            hideCastleModal() {
+                this.elements.castleModal.classList.add('hidden');
+                this.editingCastle = null;
+            }
+            
+            resetCastleForm() {
+                document.getElementById('castleName').value = '';
+                document.getElementById('castleDescription').value = '';
+                document.getElementById('castleDimensions').value = '';
+                document.getElementById('castleCapacity').value = '';
+                document.getElementById('castleNotes').value = '';
+            }
+            
+            renderMaterialSelection(selectedMaterials = []) {
+                const container = document.getElementById('materialSelection');
+                
+                const html = this.materials.map(material => {
+                    const isSelected = selectedMaterials.includes(material.id);
+                    return `
+                        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" value="${material.id}" ${isSelected ? 'checked' : ''} 
+                                   class="mr-3 w-4 h-4 text-blue-600 rounded">
+                            <div class="flex-1">
+                                <div class="font-medium">${material.name}</div>
+                                <div class="text-sm text-gray-500">${material.category}</div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+                
+                container.innerHTML = html || '<div class="text-center text-gray-500 py-4">Keine Materialien verfügbar</div>';
+            }
+            
+            saveCastle(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('castleName').value.trim(),
+                    description: document.getElementById('castleDescription').value.trim(),
+                    dimensions: document.getElementById('castleDimensions').value.trim(),
+                    capacity: parseInt(document.getElementById('castleCapacity').value) || null,
+                    notes: document.getElementById('castleNotes').value.trim(),
+                    materials: Array.from(document.querySelectorAll('#materialSelection input:checked')).map(cb => parseInt(cb.value))
+                };
+                
+                if (!formData.name) {
+                    this.showNotification('Bitte geben Sie einen Namen ein.', 'error');
+                    return;
+                }
+                
+                if (this.editingCastle) {
+                    Object.assign(this.editingCastle, formData);
+                    this.showNotification('Hüpfburg erfolgreich aktualisiert!', 'success');
+                } else {
+                    const newCastle = { id: Date.now(), ...formData };
+                    this.castles.push(newCastle);
+                    this.showNotification('Neue Hüpfburg hinzugefügt!', 'success');
+                }
+                
+                this.saveData();
+                this.renderCastles();
+                this.hideCastleModal();
+                this.updateAdminStats();
+            }
+            
+            deleteCastle(castleId) {
+                if (confirm('Sind Sie sicher, dass Sie diese Hüpfburg löschen möchten?')) {
+                    this.castles = this.castles.filter(c => c.id !== castleId);
+                    this.saveData();
+                    this.renderCastles();
+                    this.updateAdminStats();
+                    this.showNotification('Hüpfburg gelöscht!', 'success');
+                }
+            }
+            
+            renderCastles() {
+                const searchTerm = document.getElementById('castleSearchInput').value.toLowerCase();
+                const filteredCastles = this.castles.filter(castle =>
+                    castle.name.toLowerCase().includes(searchTerm) ||
+                    (castle.description && castle.description.toLowerCase().includes(searchTerm))
+                );
+                
+                const html = filteredCastles.map(castle => {
+                    const materialCount = castle.materials ? castle.materials.length : 0;
+                    const materialNames = castle.materials ? 
+                        castle.materials.map(id => {
+                            const material = this.materials.find(m => m.id === id);
+                            return material ? material.name : 'Unbekannt';
+                        }).join(', ') : 'Keine Materialien zugewiesen';
+                    
+                    return `
+                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex-1">
+                                    <h3 class="text-xl font-bold text-gray-800 mb-2">${castle.name}</h3>
+                                    ${castle.description ? `<p class="text-gray-600 mb-2">${castle.description}</p>` : ''}
+                                    <div class="flex flex-wrap gap-2 text-sm text-gray-500">
+                                        ${castle.dimensions ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">📏 ${castle.dimensions}</span>` : ''}
+                                        ${castle.capacity ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded">👶 ${castle.capacity} Kinder</span>` : ''}
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-blue-600">${materialCount}</div>
+                                    <div class="text-xs text-gray-500">Materialien</div>
+                                </div>
+                            </div>
+                            
+                            ${castle.notes ? `
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                                    <div class="flex items-start">
+                                        <div class="text-yellow-600 mr-2">💡</div>
+                                        <div class="text-sm text-yellow-800">${castle.notes}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            <div class="mb-4">
+                                <div class="text-sm font-medium text-gray-700 mb-2">Benötigte Materialien:</div>
+                                <div class="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                                    ${materialNames}
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-2">
+                                <button onclick="app.showCastleModal(${JSON.stringify(castle).replace(/"/g, '&quot;')})" 
+                                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
+                                    ✏️ Bearbeiten
+                                </button>
+                                <button onclick="app.deleteCastle(${castle.id})" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('castlesList').innerHTML = html || 
+                    '<div class="text-center text-gray-500 py-8">Keine Hüpfburgen gefunden</div>';
+            }
+            
+            // Material Management
+            showMaterialModal(material = null) {
+                this.editingMaterial = material;
+                
+                if (material) {
+                    document.getElementById('materialModalTitle').textContent = 'Material bearbeiten';
+                    document.getElementById('materialName').value = material.name;
+                    document.getElementById('materialCategory').value = material.category;
+                    document.getElementById('materialDescription').value = material.description || '';
+                } else {
+                    document.getElementById('materialModalTitle').textContent = 'Neues Material';
+                    this.resetMaterialForm();
+                }
+                
+                this.elements.materialModal.classList.remove('hidden');
+            }
+            
+            hideMaterialModal() {
+                this.elements.materialModal.classList.add('hidden');
+                this.editingMaterial = null;
+            }
+            
+            resetMaterialForm() {
+                document.getElementById('materialName').value = '';
+                document.getElementById('materialCategory').value = 'Sonstiges';
+                document.getElementById('materialDescription').value = '';
+            }
+            
+            saveMaterial(e) {
+                e.preventDefault();
+                
+                const formData = {
+                    name: document.getElementById('materialName').value.trim(),
+                    category: document.getElementById('materialCategory').value,
+                    description: document.getElementById('materialDescription').value.trim()
+                };
+                
+                if (!formData.name) {
+                    this.showNotification('Bitte geben Sie einen Namen ein.', 'error');
+                    return;
+                }
+                
+                if (this.editingMaterial) {
+                    Object.assign(this.editingMaterial, formData);
+                    this.showNotification('Material erfolgreich aktualisiert!', 'success');
+                } else {
+                    const newMaterial = { id: Date.now(), ...formData };
+                    this.materials.push(newMaterial);
+                    this.showNotification('Neues Material hinzugefügt!', 'success');
+                }
+                
+                this.saveData();
+                this.renderMaterials();
+                this.hideMaterialModal();
+                this.updateAdminStats();
+            }
+            
+            deleteMaterial(materialId) {
+                // Check if material is used in any castle
+                const usedInCastles = this.castles.filter(castle => 
+                    castle.materials && castle.materials.includes(materialId)
+                );
+                
+                if (usedInCastles.length > 0) {
+                    const castleNames = usedInCastles.map(c => c.name).join(', ');
+                    this.showNotification(`Material wird noch verwendet in: ${castleNames}`, 'error');
+                    return;
+                }
+                
+                if (confirm('Sind Sie sicher, dass Sie dieses Material löschen möchten?')) {
+                    this.materials = this.materials.filter(m => m.id !== materialId);
+                    this.saveData();
+                    this.renderMaterials();
+                    this.updateAdminStats();
+                    this.showNotification('Material gelöscht!', 'success');
+                }
+            }
+            
+            renderMaterials() {
+                const searchTerm = document.getElementById('materialSearchInput').value.toLowerCase();
+                const filteredMaterials = this.materials.filter(material =>
+                    material.name.toLowerCase().includes(searchTerm) ||
+                    material.category.toLowerCase().includes(searchTerm) ||
+                    (material.description && material.description.toLowerCase().includes(searchTerm))
+                );
+                
+                const categoryIcons = {
+                    'Gebläse': '🌪️',
+                    'Planen': '🛡️',
+                    'Befestigung': '⚓',
+                    'Kabel': '🔌',
+                    'Sicherheit': '🦺',
+                    'Sonstiges': '📦'
+                };
+                
+                const html = filteredMaterials.map(material => {
+                    const icon = categoryIcons[material.category] || '📦';
+                    
+                    return `
+                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-4 shadow-lg">
+                            <div class="text-center mb-3">
+                                <div class="text-3xl mb-2">${icon}</div>
+                                <h3 class="font-bold text-gray-800">${material.name}</h3>
+                                <div class="text-sm text-gray-500">${material.category}</div>
+                            </div>
+                            
+                            ${material.description ? `
+                                <div class="text-sm text-gray-600 mb-4 text-center">
+                                    ${material.description}
+                                </div>
+                            ` : ''}
+                            
+                            <div class="flex gap-2">
+                                <button onclick="app.showMaterialModal(${JSON.stringify(material).replace(/"/g, '&quot;')})" 
+                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
+                                    ✏️
+                                </button>
+                                <button onclick="app.deleteMaterial(${material.id})" 
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('materialsList').innerHTML = html || 
+                    '<div class="text-center text-gray-500 py-8 col-span-full">Keine Materialien gefunden</div>';
+            }
+            
+            // Employee Functions
+            renderEmployeeCastles() {
+                const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+                const filteredCastles = this.castles.filter(castle =>
+                    castle.name.toLowerCase().includes(searchTerm) ||
+                    (castle.description && castle.description.toLowerCase().includes(searchTerm))
+                );
+                
+                const html = filteredCastles.map(castle => {
+                    const materialCount = castle.materials ? castle.materials.length : 0;
+                    
+                    return `
+                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-6 shadow-lg cursor-pointer"
+                             onclick="app.showPackingList(${castle.id})">
+                            <div class="text-center">
+                                <div class="text-5xl mb-4">🏰</div>
+                                <h3 class="text-xl font-bold text-gray-800 mb-2">${castle.name}</h3>
+                                ${castle.description ? `<p class="text-gray-600 mb-3">${castle.description}</p>` : ''}
+                                
+                                <div class="flex justify-center gap-2 mb-4">
+                                    ${castle.dimensions ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">📏 ${castle.dimensions}</span>` : ''}
+                                    ${castle.capacity ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">👶 ${castle.capacity}</span>` : ''}
+                                </div>
+                                
+                                <div class="bg-orange-100 text-orange-800 px-4 py-2 rounded-xl font-medium">
+                                    📋 ${materialCount} Materialien
+                                </div>
+                                
+                                ${castle.notes ? `
+                                    <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-2">
+                                        <div class="text-sm text-yellow-800">💡 ${castle.notes}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                document.getElementById('employeeCastleGrid').innerHTML = html || 
+                    '<div class="text-center text-gray-500 py-8 col-span-full">Keine Hüpfburgen gefunden</div>';
+            }
+            
+            showPackingList(castleId) {
+                const castle = this.castles.find(c => c.id === castleId);
+                if (!castle) return;
+                
+                document.getElementById('packingCastleName').textContent = castle.name;
+                
+                const materials = castle.materials ? 
+                    castle.materials.map(id => this.materials.find(m => m.id === id)).filter(Boolean) : [];
+                
+                const html = materials.map((material, index) => `
+                    <div class="checkbox-item bg-white border-2 border-gray-200 rounded-xl p-4">
+                        <label class="flex items-center cursor-pointer">
+                            <input type="checkbox" class="w-5 h-5 text-orange-600 rounded mr-4" 
+                                   onchange="app.updatePackingProgress()">
+                            <div class="flex-1">
+                                <div class="font-medium text-lg">${material.name}</div>
+                                <div class="text-sm text-gray-500">${material.category}</div>
+                                ${material.description ? `<div class="text-sm text-gray-600 mt-1">${material.description}</div>` : ''}
+                            </div>
+                            <div class="text-2xl ml-4">📦</div>
+                        </label>
+                    </div>
+                `).join('');
+                
+                document.getElementById('packingList').innerHTML = html || 
+                    '<div class="text-center text-gray-500 py-8">Keine Materialien zugewiesen</div>';
+                
+                this.updatePackingProgress();
+                this.showScreen('packingList');
+            }
+            
+            updatePackingProgress() {
+                const checkboxes = document.querySelectorAll('#packingList input[type="checkbox"]');
+                const checkedBoxes = document.querySelectorAll('#packingList input[type="checkbox"]:checked');
+                
+                const total = checkboxes.length;
+                const checked = checkedBoxes.length;
+                const percentage = total > 0 ? (checked / total) * 100 : 0;
+                
+                document.getElementById('packingProgress').textContent = `${checked} / ${total}`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+                
+                // Update checkbox styling
+                checkboxes.forEach(checkbox => {
+                    const item = checkbox.closest('.checkbox-item');
+                    if (checkbox.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+            }
+            
+            showNotification(message, type = 'info') {
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    warning: 'bg-yellow-500',
+                    info: 'bg-blue-500'
+                };
+                
+                const notification = document.createElement('div');
+                notification.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg mb-2 bounce-in`;
+                notification.textContent = message;
+                
+                this.elements.notifications.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
+            
+            saveData() {
+                localStorage.setItem('partyCrasherCastles', JSON.stringify(this.castles));
+                localStorage.setItem('partyCrasherMaterials', JSON.stringify(this.materials));
+            }
+        }
+        
+        // Initialize app
+        const app = new PartyCrasherApp();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974253eb815662e0',t:'MTc1NjAzMzAzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
