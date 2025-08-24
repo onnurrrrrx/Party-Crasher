@@ -111,6 +111,12 @@
             50% { opacity: .5; }
         }
         
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
         .file-drop-zone {
             border: 2px dashed #d1d5db;
             transition: all 0.3s ease;
@@ -832,6 +838,7 @@
                     materialModal: document.getElementById('materialModal'),
                     shareModal: document.getElementById('shareModal'),
                     bookingModal: document.getElementById('bookingModal'),
+                    adminPasswordModal: document.getElementById('adminPasswordModal'),
                     backBtn: document.getElementById('backBtn'),
                     shareBtn: document.getElementById('shareBtn'),
                     notifications: document.getElementById('notifications')
@@ -892,6 +899,10 @@
                 document.getElementById('cancelMaterialModal').addEventListener('click', () => this.hideMaterialModal());
                 document.getElementById('materialForm').addEventListener('submit', (e) => this.saveMaterial(e));
                 
+                // Admin Password Modal
+                document.getElementById('cancelAdminPasswordModal').addEventListener('click', () => this.hideAdminPasswordModal());
+                document.getElementById('adminPasswordForm').addEventListener('submit', (e) => this.checkAdminPassword(e));
+                
                 // Booking Modal
                 document.getElementById('cancelBookingModal').addEventListener('click', () => this.hideBookingModal());
                 document.getElementById('bookingForm').addEventListener('submit', (e) => this.saveBooking(e));
@@ -927,6 +938,47 @@
                 dropZone.addEventListener('click', () => fileInput.click());
             }
             
+            showAdminLogin() {
+                this.elements.adminPasswordModal.classList.remove('hidden');
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('passwordError').classList.add('hidden');
+                // Focus on password field
+                setTimeout(() => {
+                    document.getElementById('adminPassword').focus();
+                }, 100);
+            }
+            
+            hideAdminPasswordModal() {
+                this.elements.adminPasswordModal.classList.add('hidden');
+            }
+            
+            checkAdminPassword(e) {
+                e.preventDefault();
+                
+                const password = document.getElementById('adminPassword').value;
+                const correctPassword = 'onuristcool';
+                
+                if (password === correctPassword) {
+                    this.hideAdminPasswordModal();
+                    this.login('admin');
+                } else {
+                    document.getElementById('passwordError').classList.remove('hidden');
+                    document.getElementById('adminPassword').value = '';
+                    document.getElementById('adminPassword').focus();
+                    
+                    // Shake animation for wrong password
+                    const modal = this.elements.adminPasswordModal.querySelector('.bounce-in');
+                    modal.style.animation = 'none';
+                    setTimeout(() => {
+                        modal.style.animation = 'shake 0.5s ease-in-out';
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        modal.style.animation = '';
+                    }, 500);
+                }
+            }
+
             login(role) {
                 this.currentUser = role;
                 document.getElementById('currentUser').textContent = role === 'admin' ? 'Admin' : 'Mitarbeiter';
@@ -1779,5 +1831,5 @@
         // Initialize app
         const app = new PartyCrasherApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9743aee3b0924168',t:'MTc1NjA0NzI0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9743c37eb5586a63',t:'MTc1NjA0ODA5Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
