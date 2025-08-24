@@ -9,46 +9,98 @@
     <title>Party-Crasher - Hüpfburg Verwaltung</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .admin-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
         
-        .card-hover {
+        .employee-gradient {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .castle-gradient {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        
+        .material-gradient {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+        
+        .packing-gradient {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+        }
+        
+        .neo-card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 
+                20px 20px 60px #d1d9e6,
+                -20px -20px 60px #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        
+        .neo-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                25px 25px 70px #d1d9e6,
+                -25px -25px 70px #ffffff;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .neo-button {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 15px;
+            box-shadow: 
+                8px 8px 16px #d1d9e6,
+                -8px -8px 16px #ffffff;
+            border: none;
             transition: all 0.3s ease;
         }
         
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        .neo-button:hover {
+            box-shadow: 
+                4px 4px 8px #d1d9e6,
+                -4px -4px 8px #ffffff;
+            transform: translateY(-2px);
         }
         
-        .bounce-in {
-            animation: bounceIn 0.5s ease-out;
+        .neo-button:active {
+            box-shadow: inset 4px 4px 8px #d1d9e6,
+                        inset -4px -4px 8px #ffffff;
+            transform: translateY(0);
         }
         
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
         }
         
-        .slide-in {
-            animation: slideIn 0.3s ease-out;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .slide-up {
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .notification {
@@ -60,87 +112,70 @@
         }
         
         .checkbox-item {
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
         }
         
         .checkbox-item.checked {
-            background-color: #f0f9ff;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
             border-color: #0ea5e9;
+            transform: scale(0.98);
         }
         
         .checkbox-item input:checked + label {
             text-decoration: line-through;
-            color: #6b7280;
+            color: #64748b;
         }
         
         .material-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
         }
         
         .castle-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
         }
         
-        .sync-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.3);
         }
         
-        .sync-local {
-            background-color: #e0f2fe;
-            color: #0369a1;
+        .glass-modal {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         
-        .sync-shared {
-            background-color: #dcfce7;
-            color: #166534;
+        .progress-ring {
+            transform: rotate(-90deg);
         }
         
-        .pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease-in-out;
         }
         
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             .castle-grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 1.5rem;
             }
             
             .material-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-                gap: 0.75rem;
-            }
-            
-            .gradient-bg .flex {
-                flex-direction: column;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
                 gap: 1rem;
-                text-align: center;
             }
             
-            .gradient-bg .flex .flex {
-                flex-direction: row;
-                gap: 0.5rem;
+            .neo-card {
+                box-shadow: 
+                    10px 10px 30px #d1d9e6,
+                    -10px -10px 30px #ffffff;
             }
             
             .notification {
@@ -153,150 +188,247 @@
                 margin: 1rem;
                 max-height: calc(100vh - 2rem);
             }
-            
-            .text-4xl { font-size: 2rem; }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .text-8xl { font-size: 3.5rem; }
+            .text-7xl { font-size: 3rem; }
+            .text-6xl { font-size: 2.5rem; }
+            .text-5xl { font-size: 2rem; }
+            .text-4xl { font-size: 1.75rem; }
             .text-3xl { font-size: 1.5rem; }
             .text-2xl { font-size: 1.25rem; }
             .text-xl { font-size: 1.125rem; }
+            .text-lg { font-size: 1rem; }
             
-            .p-6 { padding: 1rem; }
-            .p-8 { padding: 1.5rem; }
+            .p-12 { padding: 1.5rem; }
+            .p-10 { padding: 1.5rem; }
+            .p-8 { padding: 1rem; }
+            .p-6 { padding: 0.75rem; }
+            .p-4 { padding: 0.5rem; }
             
-            .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
-                grid-template-columns: 1fr;
-            }
+            .py-12 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+            .py-8 { padding-top: 1rem; padding-bottom: 1rem; }
+            .py-6 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+            .py-4 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
             
-            .grid.grid-cols-1.md\\:grid-cols-2 {
-                grid-template-columns: 1fr;
-            }
+            .px-8 { padding-left: 1rem; padding-right: 1rem; }
+            .px-6 { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .px-4 { padding-left: 0.5rem; padding-right: 0.5rem; }
             
-            .grid.grid-cols-2 {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.5rem;
-            }
+            .mb-12 { margin-bottom: 1.5rem; }
+            .mb-8 { margin-bottom: 1rem; }
+            .mb-6 { margin-bottom: 0.75rem; }
+            .mb-4 { margin-bottom: 0.5rem; }
+            .mb-3 { margin-bottom: 0.375rem; }
+            
+            .space-y-8 > * + * { margin-top: 1rem; }
+            .space-y-6 > * + * { margin-top: 0.75rem; }
+            .space-y-4 > * + * { margin-top: 0.5rem; }
+            
+            .gap-8 { gap: 1rem; }
+            .gap-6 { gap: 0.75rem; }
+            .gap-4 { gap: 0.5rem; }
+            .gap-3 { gap: 0.375rem; }
         }
         
-        /* iPhone specific optimizations */
+        /* Small mobile phones */
         @media (max-width: 480px) {
-            .text-5xl { font-size: 2.5rem; }
-            .text-4xl { font-size: 1.75rem; }
-            .text-3xl { font-size: 1.5rem; }
+            .text-8xl { font-size: 3rem; }
+            .text-7xl { font-size: 2.5rem; }
+            .text-6xl { font-size: 2rem; }
+            .text-5xl { font-size: 1.75rem; }
+            .text-4xl { font-size: 1.5rem; }
+            .text-3xl { font-size: 1.25rem; }
+            .text-2xl { font-size: 1.125rem; }
+            .text-xl { font-size: 1rem; }
+            .text-lg { font-size: 0.9rem; }
             
-            .p-6 { padding: 0.75rem; }
-            .p-8 { padding: 1rem; }
+            .p-12 { padding: 1rem; }
+            .p-10 { padding: 1rem; }
+            .p-8 { padding: 0.75rem; }
+            .p-6 { padding: 0.5rem; }
             
-            .rounded-2xl { border-radius: 1rem; }
+            .py-12 { padding-top: 1rem; padding-bottom: 1rem; }
+            .py-8 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
             
-            .space-y-4 > * + * { margin-top: 0.75rem; }
-            .space-y-6 > * + * { margin-top: 1rem; }
+            .px-8 { padding-left: 0.75rem; padding-right: 0.75rem; }
+            .px-6 { padding-left: 0.5rem; padding-right: 0.5rem; }
             
-            .max-w-6xl { max-width: 100%; }
+            .mb-12 { margin-bottom: 1rem; }
+            .mb-8 { margin-bottom: 0.75rem; }
+            .mb-6 { margin-bottom: 0.5rem; }
             
-            .sticky.top-0 {
-                position: relative;
-            }
+            .gap-8 { gap: 0.75rem; }
+            .gap-6 { gap: 0.5rem; }
         }
         
         /* Touch improvements */
         @media (hover: none) and (pointer: coarse) {
-            .card-hover:hover {
+            .neo-card:hover {
                 transform: none;
-                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             }
             
-            .card-hover:active {
+            .neo-card:active {
                 transform: scale(0.98);
             }
             
             button:active {
                 transform: scale(0.95);
             }
-            
-            .cursor-pointer {
-                cursor: default;
-            }
         }
         
         .file-drop-zone {
-            border: 2px dashed #d1d5db;
+            border: 3px dashed #cbd5e1;
             transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         }
         
         .file-drop-zone.dragover {
             border-color: #3b82f6;
-            background-color: #eff6ff;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+        }
+        
+        .pulse-ring {
+            animation: pulseRing 2s infinite;
+        }
+        
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.33);
+            }
+            40%, 50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.33);
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-slate-100 via-blue-50 to-indigo-100 min-h-screen">
     <!-- Notification Container -->
     <div id="notifications" class="notification"></div>
     
-    <div id="app" class="max-w-6xl mx-auto bg-white min-h-screen shadow-2xl relative">
+    <div id="app" class="min-h-screen">
         <!-- Header -->
-        <div class="gradient-bg text-white p-6 relative">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center">
-                    <div class="text-4xl mr-3">🏰</div>
-                    <div>
-                        <h1 class="text-2xl font-bold">Party-Crasher</h1>
-                        <p class="text-white/80 text-sm">Hüpfburg Verwaltung</p>
+        <div class="hero-gradient text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+            <div class="relative z-10 max-w-7xl mx-auto px-4 py-4 md:px-6 md:py-8">
+                <!-- Mobile Header -->
+                <div class="md:hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="text-3xl mr-3 animate-bounce">🎪</div>
+                            <div>
+                                <h1 class="text-xl font-bold">Party-Crasher</h1>
+                                <p class="text-white/80 text-sm">Hüpfburg System</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs opacity-80">Angemeldet:</div>
+                            <div class="font-bold text-sm" id="currentUserMobile">Gast</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div id="syncStatusMobile" class="stats-card px-3 py-1 rounded-full text-xs font-medium text-slate-700">
+                            <span class="w-1.5 h-1.5 bg-blue-500 rounded-full inline-block mr-1"></span>
+                            <span>Lokal</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="shareBtnMobile" class="hidden neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                                📤
+                            </button>
+                            <button id="backBtnMobile" class="hidden neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                                ←
+                            </button>
+                            <button id="logoutBtnMobile" class="neo-button px-3 py-2 text-slate-700 font-medium text-xs">
+                                Aus
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <div id="syncStatus" class="sync-status sync-local">
-                        <span class="w-2 h-2 bg-current rounded-full"></span>
-                        <span>Lokal gespeichert</span>
+                
+                <!-- Desktop Header -->
+                <div class="hidden md:flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="text-5xl mr-4 animate-bounce">🎪</div>
+                        <div>
+                            <h1 class="text-4xl font-bold mb-1">Party-Crasher</h1>
+                            <p class="text-white/80 text-lg">Hüpfburg Management System</p>
+                        </div>
                     </div>
-                    <div id="userInfo" class="text-right">
-                        <div class="text-sm opacity-80">Angemeldet als:</div>
-                        <div class="font-semibold" id="currentUser">Admin</div>
+                    <div class="flex items-center gap-6">
+                        <div id="syncStatus" class="stats-card px-4 py-2 rounded-full text-sm font-medium text-slate-700">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full inline-block mr-2"></span>
+                            <span>Lokal gespeichert</span>
+                        </div>
+                        <div id="userInfo" class="text-right">
+                            <div class="text-sm opacity-80">Angemeldet als:</div>
+                            <div class="font-bold text-xl" id="currentUser">Gast</div>
+                        </div>
+                        <button id="shareBtn" class="hidden neo-button px-6 py-3 text-slate-700 font-medium">
+                            📤 Teilen
+                        </button>
+                        <button id="backBtn" class="hidden neo-button px-6 py-3 text-slate-700 font-medium">
+                            ← Zurück
+                        </button>
+                        <button id="logoutBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
+                            Abmelden
+                        </button>
                     </div>
-                    <button id="shareBtn" class="hidden glass-effect hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                        📤 Teilen
-                    </button>
-                    <button id="backBtn" class="hidden glass-effect hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                        ← Zurück
-                    </button>
-                    <button id="logoutBtn" class="glass-effect hover:bg-white/20 px-4 py-2 rounded-xl text-sm font-medium transition-all">
-                        Abmelden
-                    </button>
                 </div>
             </div>
         </div>
 
         <!-- Login Screen -->
-        <div id="loginScreen" class="p-8">
-            <div class="max-w-md mx-auto">
-                <div class="text-center mb-8">
-                    <div class="text-6xl mb-4">🎪</div>
-                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Willkommen</h2>
-                    <p class="text-gray-600">Bitte wählen Sie Ihre Rolle</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <button onclick="app.showAdminLogin()" class="w-full card-hover bg-gradient-to-r from-red-500 to-orange-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
-                        <div class="text-3xl mb-2">👑</div>
-                        <div class="text-xl">Admin / Chef</div>
-                        <div class="text-sm opacity-80 mt-1">Vollzugriff - Verwalten & Teilen</div>
-                    </button>
-                    
-                    <button onclick="app.login('employee')" class="w-full card-hover bg-gradient-to-r from-blue-500 to-purple-500 text-white p-6 rounded-2xl font-semibold text-center shadow-lg">
-                        <div class="text-3xl mb-2">👷</div>
-                        <div class="text-xl">Mitarbeiter</div>
-                        <div class="text-sm opacity-80 mt-1">Daten importieren & Packlisten nutzen</div>
+        <div id="loginScreen" class="max-w-4xl mx-auto px-4 py-6 md:px-6 md:py-12">
+            <div class="text-center mb-8 md:mb-12">
+                <div class="text-6xl md:text-8xl mb-4 md:mb-6 floating-card">🏰</div>
+                <h2 class="text-3xl md:text-5xl font-bold text-slate-800 mb-3 md:mb-4">Willkommen zurück!</h2>
+                <p class="text-lg md:text-xl text-slate-600">Wählen Sie Ihre Rolle um zu beginnen</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6 md:gap-8 max-w-4xl mx-auto">
+                <div class="neo-card p-6 md:p-8 text-center slide-up" style="animation-delay: 0.2s">
+                    <div class="admin-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+                        <div class="text-3xl md:text-4xl">👑</div>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Admin / Chef</h3>
+                    <p class="text-slate-600 mb-4 md:mb-6 text-sm md:text-base">Vollzugriff auf alle Funktionen<br>Verwalten & Daten teilen</p>
+                    <button onclick="app.showAdminLogin()" class="w-full admin-gradient text-white py-3 md:py-4 rounded-2xl font-semibold text-base md:text-lg hover:shadow-xl transition-all duration-300">
+                        Als Admin anmelden
                     </button>
                 </div>
                 
-                <!-- Import Section for Employees -->
-                <div id="employeeImportSection" class="hidden mt-8 p-6 bg-blue-50 border border-blue-200 rounded-2xl">
-                    <h3 class="font-bold text-blue-800 mb-3">📥 Daten vom Chef erhalten?</h3>
-                    <p class="text-blue-700 text-sm mb-4">Laden Sie die Datei hoch, die Sie vom Chef bekommen haben:</p>
+                <div class="neo-card p-6 md:p-8 text-center slide-up" style="animation-delay: 0.4s">
+                    <div class="employee-gradient w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+                        <div class="text-3xl md:text-4xl">👷</div>
+                    </div>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2 md:mb-3">Mitarbeiter</h3>
+                    <p class="text-slate-600 mb-4 md:mb-6 text-sm md:text-base">Zugriff auf Buchungen<br>Packlisten & Import</p>
+                    <button onclick="app.login('employee')" class="w-full employee-gradient text-white py-3 md:py-4 rounded-2xl font-semibold text-base md:text-lg hover:shadow-xl transition-all duration-300">
+                        Als Mitarbeiter anmelden
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Import Section for Employees -->
+            <div id="employeeImportSection" class="hidden mt-8 md:mt-12 max-w-2xl mx-auto">
+                <div class="neo-card p-6 md:p-8">
+                    <div class="text-center mb-4 md:mb-6">
+                        <div class="text-3xl md:text-4xl mb-2 md:mb-3">📥</div>
+                        <h3 class="text-xl md:text-2xl font-bold text-slate-800 mb-2">Daten vom Chef erhalten?</h3>
+                        <p class="text-slate-600 text-sm md:text-base">Laden Sie die Datei hoch, die Sie vom Chef bekommen haben</p>
+                    </div>
                     
-                    <div id="employeeDropZone" class="file-drop-zone border-2 border-dashed border-blue-300 rounded-xl p-6 text-center cursor-pointer hover:bg-blue-50">
-                        <div class="text-3xl mb-2">📁</div>
-                        <div class="text-blue-800 font-medium">Datei hier ablegen oder klicken</div>
-                        <div class="text-blue-600 text-sm mt-1">Unterstützt: .json Dateien</div>
+                    <div id="employeeDropZone" class="file-drop-zone rounded-2xl p-6 md:p-8 text-center cursor-pointer">
+                        <div class="text-4xl md:text-5xl mb-3 md:mb-4">📁</div>
+                        <div class="text-slate-800 font-semibold text-base md:text-lg mb-2">Datei hier ablegen oder klicken</div>
+                        <div class="text-slate-600 text-sm md:text-base">Unterstützt: .json Dateien</div>
                     </div>
                     
                     <input type="file" id="employeeFileInput" accept=".json" class="hidden">
@@ -305,99 +437,96 @@
         </div>
 
         <!-- Admin Dashboard -->
-        <div id="adminDashboard" class="hidden p-6">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Admin Dashboard</h2>
-                <p class="text-gray-600">Verwalten Sie Hüpfburgen und Materialien</p>
+        <div id="adminDashboard" class="hidden max-w-7xl mx-auto px-6 py-8">
+            <div class="mb-8">
+                <h2 class="text-4xl font-bold text-slate-800 mb-3">Admin Dashboard</h2>
+                <p class="text-xl text-slate-600">Verwalten Sie Ihre Hüpfburgen und Materialien</p>
             </div>
             
             <!-- Share Section -->
-            <div class="mb-8 bg-gradient-to-r from-green-500 to-blue-500 text-white p-6 rounded-2xl">
+            <div class="neo-card p-8 mb-8 admin-gradient text-white">
                 <div class="flex items-center justify-between">
                     <div>
-                        <h3 class="text-xl font-bold mb-2">📤 Daten an Mitarbeiter senden</h3>
-                        <p class="text-white/80">Exportieren Sie alle Daten als Datei zum Versenden</p>
+                        <h3 class="text-2xl font-bold mb-3">📤 Daten an Mitarbeiter senden</h3>
+                        <p class="text-white/90 text-lg">Exportieren Sie alle Daten als Datei zum Versenden</p>
                     </div>
-                    <button id="exportBtn" class="bg-white/20 hover:bg-white/30 px-6 py-3 rounded-xl font-medium transition-colors">
-                        💾 Exportieren
+                    <button id="exportBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
+                        💾 Jetzt Exportieren
                     </button>
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div class="text-3xl mb-2">🏰</div>
-                    <div class="text-2xl font-bold" id="totalCastles">0</div>
-                    <div class="text-sm opacity-80">Hüpfburgen</div>
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div class="stats-card p-8 rounded-2xl text-center">
+                    <div class="text-5xl mb-4">🏰</div>
+                    <div class="text-4xl font-bold text-slate-800 mb-2" id="totalCastles">0</div>
+                    <div class="text-slate-600 font-medium">Hüpfburgen</div>
                 </div>
                 
-                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div class="text-3xl mb-2">📦</div>
-                    <div class="text-2xl font-bold" id="totalMaterials">0</div>
-                    <div class="text-sm opacity-80">Materialien</div>
+                <div class="stats-card p-8 rounded-2xl text-center">
+                    <div class="text-5xl mb-4">📦</div>
+                    <div class="text-4xl font-bold text-slate-800 mb-2" id="totalMaterials">0</div>
+                    <div class="text-slate-600 font-medium">Materialien</div>
                 </div>
                 
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-6 rounded-2xl shadow-lg">
-                    <div class="text-3xl mb-2">✅</div>
-                    <div class="text-2xl font-bold" id="completeCastles">0</div>
-                    <div class="text-sm opacity-80">Vollständig konfiguriert</div>
+                <div class="stats-card p-8 rounded-2xl text-center">
+                    <div class="text-5xl mb-4">📅</div>
+                    <div class="text-4xl font-bold text-slate-800 mb-2" id="bookedCastles">0</div>
+                    <div class="text-slate-600 font-medium">Gebuchte Hüpfburgen</div>
                 </div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button id="manageCastlesBtn" class="card-hover bg-white border-2 border-blue-200 hover:border-blue-400 p-6 rounded-2xl text-center shadow-lg">
-                    <div class="text-4xl mb-3">🏰</div>
-                    <div class="text-xl font-bold text-gray-800 mb-2">Hüpfburgen verwalten</div>
-                    <div class="text-gray-600">Neue Hüpfburgen anlegen und bearbeiten</div>
+            <!-- Management Cards -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <button id="manageCastlesBtn" class="neo-card p-10 text-center group hover:scale-105 transition-all duration-300">
+                    <div class="castle-gradient w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div class="text-5xl">🏰</div>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 mb-3">Hüpfburgen verwalten</div>
+                    <div class="text-slate-600 text-lg">Neue Hüpfburgen anlegen und bearbeiten</div>
                 </button>
                 
-                <button id="manageMaterialsBtn" class="card-hover bg-white border-2 border-green-200 hover:border-green-400 p-6 rounded-2xl text-center shadow-lg">
-                    <div class="text-4xl mb-3">📦</div>
-                    <div class="text-xl font-bold text-gray-800 mb-2">Materialien verwalten</div>
-                    <div class="text-gray-600">Material-Stammdaten pflegen</div>
-                </div>
+                <button id="manageMaterialsBtn" class="neo-card p-10 text-center group hover:scale-105 transition-all duration-300">
+                    <div class="material-gradient w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <div class="text-5xl">📦</div>
+                    </div>
+                    <div class="text-2xl font-bold text-slate-800 mb-3">Materialien verwalten</div>
+                    <div class="text-slate-600 text-lg">Material-Stammdaten pflegen</div>
+                </button>
             </div>
         </div>
 
         <!-- Employee Dashboard -->
-        <div id="employeeDashboard" class="hidden p-4">
-            <div class="mb-4">
-                <h2 class="text-2xl font-bold text-gray-800 mb-1">Hüpfburg Übersicht</h2>
-                <p class="text-gray-600">Wählen Sie eine Hüpfburg für die Packliste</p>
+        <div id="employeeDashboard" class="hidden max-w-7xl mx-auto px-6 py-8">
+            <div class="mb-8">
+                <h2 class="text-4xl font-bold text-slate-800 mb-3">📅 Gebuchte Hüpfburgen</h2>
+                <p class="text-xl text-slate-600">Übersicht der gebuchten Hüpfburgen - klicken für Packliste</p>
             </div>
             
             <!-- Import Section -->
-            <div id="importSection" class="mb-4 bg-blue-50 border border-blue-200 rounded-2xl p-4">
-                <div class="flex items-center justify-between mb-3">
+            <div id="importSection" class="neo-card p-6 mb-8">
+                <div class="flex items-center justify-between mb-4">
                     <div>
-                        <h3 class="font-bold text-blue-800">📥 Neue Daten importieren</h3>
-                        <p class="text-blue-600 text-sm">Laden Sie die neueste Datei vom Chef hoch oder fügen Sie Text ein</p>
+                        <h3 class="text-xl font-bold text-slate-800">📥 Neue Daten importieren</h3>
+                        <p class="text-slate-600">Laden Sie die neueste Datei vom Chef hoch oder fügen Sie Text ein</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button id="pasteBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                    <div class="flex gap-3">
+                        <button id="pasteBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
                             📋 Text einfügen
                         </button>
-                        <button id="importBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                        <button id="importBtn" class="neo-button px-6 py-3 text-slate-700 font-medium">
                             📁 Datei wählen
                         </button>
                     </div>
                 </div>
                 
-                <div id="dropZone" class="file-drop-zone border-2 border-dashed border-blue-300 rounded-xl p-4 text-center cursor-pointer hover:bg-blue-50">
-                    <div class="text-2xl mb-1">📁</div>
-                    <div class="text-blue-800 text-sm font-medium">Datei hier ablegen, "Datei wählen" oder "Text einfügen" klicken</div>
+                <div id="dropZone" class="file-drop-zone rounded-2xl p-6 text-center cursor-pointer">
+                    <div class="text-4xl mb-3">📁</div>
+                    <div class="text-slate-800 font-medium">Datei hier ablegen, "Datei wählen" oder "Text einfügen" klicken</div>
                 </div>
                 
                 <input type="file" id="fileInput" accept=".json" class="hidden">
-            </div>
-            
-            <!-- Search -->
-            <div class="mb-4">
-                <div class="relative">
-                    <input type="text" id="employeeSearch" placeholder="Hüpfburg suchen..." 
-                           class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-2xl focus:ring-2 focus:ring-orange-500 focus:border-transparent text-lg">
-                    <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl">🔍</div>
-                </div>
             </div>
             
             <!-- Castle Grid -->
@@ -406,128 +535,158 @@
 
         <!-- Castle Management Screen -->
         <div id="castleManagementScreen" class="hidden">
-            <div class="p-6 bg-gray-50 border-b sticky top-0 z-10">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">Hüpfburgen verwalten</h2>
-                    <button id="addCastleBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
-                        + Neue Hüpfburg
-                    </button>
-                </div>
-                
-                <div class="flex gap-4">
-                    <input type="text" id="castleSearchInput" placeholder="Hüpfburg suchen..." 
-                           class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <div class="castle-gradient text-slate-800 sticky top-0 z-10">
+                <div class="max-w-7xl mx-auto px-6 py-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">🏰 Hüpfburgen verwalten</h2>
+                            <p class="text-slate-700 text-lg">Erstellen, bearbeiten und organisieren Sie Ihre Hüpfburgen</p>
+                        </div>
+                        <button id="addCastleBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
+                            ✨ Neue Hüpfburg
+                        </button>
+                    </div>
+                    
+                    <div class="max-w-md">
+                        <div class="relative">
+                            <input type="text" id="castleSearchInput" placeholder="Hüpfburg suchen..." 
+                                   class="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 text-lg">
+                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 text-xl">🔍</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div id="castlesList" class="p-6 space-y-4"></div>
+            <div id="castlesList" class="max-w-7xl mx-auto px-6 py-8 space-y-8"></div>
         </div>
 
         <!-- Material Management Screen -->
         <div id="materialManagementScreen" class="hidden">
-            <div class="p-6 bg-gray-50 border-b sticky top-0 z-10">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold text-gray-800">Materialien verwalten</h2>
-                    <button id="addMaterialBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
-                        + Neues Material
-                    </button>
-                </div>
-                
-                <div class="flex gap-4">
-                    <input type="text" id="materialSearchInput" placeholder="Material suchen..." 
-                           class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+            <div class="material-gradient text-slate-800 sticky top-0 z-10">
+                <div class="max-w-7xl mx-auto px-6 py-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">📦 Materialien verwalten</h2>
+                            <p class="text-slate-700 text-lg">Verwalten Sie alle Materialien und Zubehör für Ihre Hüpfburgen</p>
+                        </div>
+                        <button id="addMaterialBtn" class="neo-button px-8 py-4 text-slate-700 font-semibold text-lg">
+                            ✨ Neues Material
+                        </button>
+                    </div>
+                    
+                    <div class="max-w-md">
+                        <div class="relative">
+                            <input type="text" id="materialSearchInput" placeholder="Material suchen..." 
+                                   class="w-full pl-12 pr-4 py-4 bg-white/80 backdrop-blur-sm border-2 border-white/50 rounded-2xl text-slate-800 placeholder-slate-500 focus:ring-4 focus:ring-white/30 focus:border-white/70 text-lg">
+                            <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-500 text-xl">🔍</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div id="materialsList" class="p-6 material-grid"></div>
+            <div id="materialsList" class="max-w-7xl mx-auto px-6 py-8 material-grid"></div>
         </div>
 
         <!-- Packing List Screen -->
         <div id="packingListScreen" class="hidden">
-            <div class="p-6 bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                <div class="flex items-center mb-4">
-                    <div class="text-4xl mr-4">📋</div>
-                    <div>
-                        <h2 class="text-2xl font-bold" id="packingCastleName">Packliste</h2>
-                        <p class="opacity-80">Was du einpacken musst</p>
+            <div class="packing-gradient text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-black bg-opacity-10"></div>
+                <div class="relative z-10 max-w-4xl mx-auto px-6 py-12">
+                    <div class="text-center mb-8">
+                        <div class="text-7xl mb-6 animate-bounce">📋</div>
+                        <h2 class="text-4xl font-bold mb-3" id="packingCastleName">Packliste</h2>
+                        <p class="text-white/90 text-xl">Was Sie einpacken müssen</p>
                     </div>
-                </div>
-                
-                <div class="bg-white/20 rounded-xl p-4">
-                    <div class="flex justify-between items-center">
-                        <span>Fortschritt:</span>
-                        <span class="font-bold" id="packingProgress">0 / 0</span>
-                    </div>
-                    <div class="w-full bg-white/20 rounded-full h-2 mt-2">
-                        <div id="progressBar" class="bg-white h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    
+                    <div class="stats-card rounded-3xl p-8 text-center">
+                        <div class="flex justify-between items-center mb-6">
+                            <span class="text-2xl font-semibold text-slate-800">Fortschritt:</span>
+                            <span class="text-3xl font-bold text-slate-800" id="packingProgress">0 / 0</span>
+                        </div>
+                        
+                        <!-- Circular Progress -->
+                        <div class="relative w-32 h-32 mx-auto mb-6">
+                            <svg class="progress-ring w-32 h-32" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+                                <circle id="progressCircle" cx="60" cy="60" r="54" fill="none" stroke="#3b82f6" stroke-width="8" 
+                                        stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="339.292" 
+                                        class="progress-ring-circle"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span id="progressPercentage" class="text-2xl font-bold text-slate-800">0%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-slate-600 text-lg">
+                            <span id="progressText">Bereit zum Packen!</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="p-6">
-                <div id="packingList" class="space-y-3"></div>
+            <div class="max-w-4xl mx-auto px-6 py-8">
+                <div id="packingList" class="space-y-4"></div>
                 
-                <div class="mt-8 p-6 bg-green-50 border border-green-200 rounded-2xl">
-                    <div class="flex items-center">
-                        <div class="text-green-600 text-2xl mr-3">✅</div>
-                        <div>
-                            <div class="font-bold text-green-800">Alles eingepackt?</div>
-                            <div class="text-sm text-green-600">Überprüfe die Liste noch einmal bevor du losfährst!</div>
-                        </div>
-                    </div>
+                <div class="mt-12 neo-card p-8 text-center">
+                    <div class="text-5xl mb-4">✅</div>
+                    <div class="text-2xl font-bold text-slate-800 mb-3">Alles eingepackt?</div>
+                    <div class="text-slate-600 text-lg">Überprüfen Sie die Liste noch einmal bevor Sie losfahren!</div>
                 </div>
             </div>
         </div>
 
         <!-- Castle Modal -->
-        <div id="castleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto bounce-in">
-                <h3 id="castleModalTitle" class="text-xl font-bold text-gray-800 mb-6">Hüpfburg hinzufügen</h3>
+        <div id="castleModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="text-5xl mr-4">🏰</div>
+                    <h3 id="castleModalTitle" class="text-3xl font-bold text-slate-800">Hüpfburg hinzufügen</h3>
+                </div>
                 
                 <form id="castleForm" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Name der Hüpfburg *</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Name der Hüpfburg *</label>
                         <input type="text" id="castleName" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                               class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 text-lg">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Beschreibung</label>
                         <textarea id="castleDescription" rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                  class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 text-lg"></textarea>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Maße (LxBxH)</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">Maße (LxBxH)</label>
                             <input type="text" id="castleDimensions" placeholder="z.B. 5x4x3m"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                   class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 text-lg">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Für Kinder (Anzahl)</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-3">Für Kinder (Anzahl)</label>
                             <input type="number" id="castleCapacity" placeholder="z.B. 8"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                   class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 text-lg">
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Besondere Hinweise</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Besondere Hinweise</label>
                         <textarea id="castleNotes" rows="2" placeholder="z.B. Passt nur in großen Transporter"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+                                  class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-blue-200 focus:border-blue-400 text-lg"></textarea>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-3">Benötigte Materialien</label>
-                        <div id="materialSelection" class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-xl p-4">
+                        <label class="block text-sm font-semibold text-slate-700 mb-4">Benötigte Materialien</label>
+                        <div id="materialSelection" class="space-y-3 max-h-60 overflow-y-auto border-2 border-slate-200 rounded-2xl p-4">
                             <!-- Materials will be loaded here -->
                         </div>
                     </div>
                     
-                    <div class="flex gap-3 pt-6">
-                        <button type="button" id="cancelCastleModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    <div class="flex gap-4 pt-8">
+                        <button type="button" id="cancelCastleModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold text-lg">
                             Abbrechen
                         </button>
-                        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors">
+                        <button type="submit" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold text-lg hover:shadow-xl transition-all duration-300">
                             Speichern
                         </button>
                     </div>
@@ -536,20 +695,23 @@
         </div>
 
         <!-- Material Modal -->
-        <div id="materialModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
-                <h3 id="materialModalTitle" class="text-xl font-bold text-gray-800 mb-6">Material hinzufügen</h3>
+        <div id="materialModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-md slide-up shadow-2xl">
+                <div class="flex items-center mb-8">
+                    <div class="text-5xl mr-4">📦</div>
+                    <h3 id="materialModalTitle" class="text-3xl font-bold text-slate-800">Material hinzufügen</h3>
+                </div>
                 
-                <form id="materialForm" class="space-y-4">
+                <form id="materialForm" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Materialname *</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Materialname *</label>
                         <input type="text" id="materialName" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                               class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-lg">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategorie</label>
-                        <select id="materialCategory" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Kategorie</label>
+                        <select id="materialCategory" class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-lg">
                             <option value="Gebläse">Gebläse</option>
                             <option value="Planen">Planen</option>
                             <option value="Befestigung">Befestigung</option>
@@ -560,16 +722,16 @@
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Beschreibung</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Beschreibung</label>
                         <textarea id="materialDescription" rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                                  class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-lg"></textarea>
                     </div>
                     
-                    <div class="flex gap-3 pt-6">
-                        <button type="button" id="cancelMaterialModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    <div class="flex gap-4 pt-8">
+                        <button type="button" id="cancelMaterialModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold text-lg">
                             Abbrechen
                         </button>
-                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                        <button type="submit" class="flex-1 material-gradient text-white py-4 rounded-2xl font-semibold text-lg hover:shadow-xl transition-all duration-300">
                             Speichern
                         </button>
                     </div>
@@ -579,26 +741,26 @@
 
         <!-- Share Modal -->
         <div id="shareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
-                <h3 class="text-xl font-bold text-gray-800 mb-6">📤 Daten exportieren</h3>
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-md slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-8 text-center">📤 Daten exportieren</h3>
                 
-                <div class="space-y-4">
-                    <div class="bg-green-50 border border-green-200 rounded-xl p-4">
-                        <div class="flex items-center mb-3">
-                            <div class="text-green-600 text-2xl mr-3">✅</div>
-                            <div class="font-bold text-green-800">Bereit zum Export!</div>
+                <div class="space-y-6">
+                    <div class="neo-card p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="text-green-600 text-3xl mr-3">✅</div>
+                            <div class="font-bold text-green-800 text-lg">Bereit zum Export!</div>
                         </div>
                         <div class="text-sm text-green-700 mb-4">
                             Alle Hüpfburgen und Materialien werden in eine Datei gepackt.
                         </div>
-                        <div class="text-xs text-green-600 bg-green-100 rounded-lg p-2">
+                        <div class="text-xs text-green-600 bg-green-100 rounded-lg p-3">
                             📊 <span id="exportStats">0 Hüpfburgen, 0 Materialien</span>
                         </div>
                     </div>
                     
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                        <h4 class="font-bold text-blue-800 mb-2">📱 So teilen Sie die Daten:</h4>
-                        <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
+                    <div class="neo-card p-6">
+                        <h4 class="font-bold text-blue-800 mb-3 text-lg">📱 So teilen Sie die Daten:</h4>
+                        <ol class="list-decimal list-inside text-sm text-blue-700 space-y-2">
                             <li><strong>iPhone/iPad:</strong> Datei wird direkt über WhatsApp/E-Mail geteilt</li>
                             <li><strong>Android:</strong> Datei wird erstellt und kann geteilt werden</li>
                             <li><strong>Desktop:</strong> Datei wird heruntergeladen</li>
@@ -606,11 +768,11 @@
                         </ol>
                     </div>
                     
-                    <div class="flex gap-3 pt-4">
-                        <button id="cancelShareModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    <div class="flex gap-4 pt-4">
+                        <button id="cancelShareModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
                             Abbrechen
                         </button>
-                        <button id="downloadDataBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                        <button id="downloadDataBtn" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                             📤 Datei erstellen & teilen
                         </button>
                     </div>
@@ -620,12 +782,12 @@
 
         <!-- Mobile Share Modal -->
         <div id="mobileShareModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">📱 iPhone/iPad Export</h3>
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6">📱 iPhone/iPad Export</h3>
                 
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                    <h4 class="font-bold text-blue-800 mb-2">📋 So funktioniert's:</h4>
-                    <ol class="list-decimal list-inside text-sm text-blue-700 space-y-1">
+                <div class="neo-card p-6 mb-6">
+                    <h4 class="font-bold text-blue-800 mb-3">📋 So funktioniert's:</h4>
+                    <ol class="list-decimal list-inside text-sm text-blue-700 space-y-2">
                         <li><strong>Text kopieren</strong> (Button unten drücken)</li>
                         <li><strong>WhatsApp öffnen</strong> → Chat mit Mitarbeiter</li>
                         <li><strong>Text einfügen</strong> und senden</li>
@@ -633,26 +795,26 @@
                     </ol>
                 </div>
                 
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="font-medium text-gray-700">Daten zum Kopieren:</span>
-                        <span class="text-xs text-gray-500">Bereit für WhatsApp</span>
+                <div class="neo-card p-4 mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-semibold text-slate-700">Daten zum Kopieren:</span>
+                        <span class="text-xs text-slate-500">Bereit für WhatsApp</span>
                     </div>
                     <textarea id="mobileShareData" readonly 
-                              class="w-full h-32 text-xs bg-white border border-gray-300 rounded-lg p-2 font-mono resize-none"
+                              class="w-full h-32 text-xs bg-white border-2 border-slate-200 rounded-xl p-3 font-mono resize-none"
                               placeholder="Daten werden hier angezeigt..."></textarea>
                 </div>
                 
-                <div class="flex gap-3">
-                    <button id="cancelMobileShareModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                <div class="flex gap-4">
+                    <button id="cancelMobileShareModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
                         Abbrechen
                     </button>
-                    <button id="copyMobileDataBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                    <button id="copyMobileDataBtn" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                         📋 Kopieren
                     </button>
                 </div>
                 
-                <div class="mt-4 text-xs text-gray-500 text-center">
+                <div class="mt-4 text-xs text-slate-500 text-center">
                     💡 Tipp: Nach dem Kopieren direkt zu WhatsApp wechseln und einfügen
                 </div>
             </div>
@@ -660,35 +822,35 @@
 
         <!-- Admin Password Modal -->
         <div id="adminPasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-sm bounce-in">
-                <h3 class="text-xl font-bold text-gray-800 mb-6 text-center">🔐 Admin Passwort</h3>
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-sm slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-8 text-center">🔐 Admin Passwort</h3>
                 
-                <form id="adminPasswordForm" class="space-y-4">
+                <form id="adminPasswordForm" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Passwort eingeben:</label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Passwort eingeben:</label>
                         <input type="password" id="adminPassword" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent text-center text-lg"
+                               class="w-full px-4 py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-red-200 focus:border-red-400 text-center text-xl"
                                placeholder="••••••••••">
                     </div>
                     
-                    <div id="passwordError" class="hidden bg-red-50 border border-red-200 rounded-lg p-3">
+                    <div id="passwordError" class="hidden neo-card p-4 bg-red-50">
                         <div class="flex items-center">
                             <div class="text-red-600 mr-2">❌</div>
                             <div class="text-sm text-red-800">Falsches Passwort! Versuchen Sie es erneut.</div>
                         </div>
                     </div>
                     
-                    <div class="flex gap-3 pt-4">
-                        <button type="button" id="cancelAdminPasswordModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    <div class="flex gap-4 pt-6">
+                        <button type="button" id="cancelAdminPasswordModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
                             Abbrechen
                         </button>
-                        <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-xl font-medium transition-colors">
+                        <button type="submit" class="flex-1 admin-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                             🔓 Anmelden
                         </button>
                     </div>
                 </form>
                 
-                <div class="mt-4 text-xs text-gray-500 text-center">
+                <div class="mt-4 text-xs text-slate-500 text-center">
                     💡 Nur für Admins und Chefs
                 </div>
             </div>
@@ -696,84 +858,84 @@
 
         <!-- Paste Modal -->
         <div id="pasteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto bounce-in">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">📋 Text einfügen</h3>
+            <div class="modal-content glass-modal rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto slide-up shadow-2xl">
+                <h3 class="text-2xl font-bold text-slate-800 mb-6">📋 Text einfügen</h3>
                 
-                <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
-                    <h4 class="font-bold text-green-800 mb-2">📱 Daten vom Chef erhalten?</h4>
+                <div class="neo-card p-6 mb-6">
+                    <h4 class="font-bold text-green-800 mb-3">📱 Daten vom Chef erhalten?</h4>
                     <p class="text-sm text-green-700">
                         Fügen Sie hier den Text ein, den Sie per WhatsApp oder E-Mail vom Chef bekommen haben:
                     </p>
                 </div>
                 
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Daten einfügen:</label>
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-slate-700 mb-3">Daten einfügen:</label>
                     <textarea id="pasteTextarea" 
-                              class="w-full h-40 text-xs bg-white border border-gray-300 rounded-lg p-3 font-mono resize-none"
+                              class="w-full h-40 text-xs bg-white border-2 border-slate-200 rounded-2xl p-4 font-mono resize-none"
                               placeholder="Hier den Text vom Chef einfügen..."></textarea>
                 </div>
                 
-                <div class="flex gap-3">
-                    <button id="cancelPasteModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                <div class="flex gap-4">
+                    <button id="cancelPasteModal" class="flex-1 neo-button py-4 text-slate-700 font-semibold">
                         Abbrechen
                     </button>
-                    <button id="importPasteBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                    <button id="importPasteBtn" class="flex-1 employee-gradient text-white py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300">
                         📥 Importieren
                     </button>
                 </div>
                 
-                <div class="mt-4 text-xs text-gray-500 text-center">
+                <div class="mt-4 text-xs text-slate-500 text-center">
                     💡 Tipp: Einfach den kompletten Text aus WhatsApp kopieren und hier einfügen
                 </div>
             </div>
         </div>
 
         <!-- Booking Modal -->
-        <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="modal-content bg-white rounded-2xl p-6 w-full max-w-md bounce-in">
-                <h3 id="bookingModalTitle" class="text-xl font-bold text-gray-800 mb-6">📅 Hüpfburg buchen</h3>
+        <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center p-2 md:p-4 md:items-center">
+            <div class="modal-content glass-modal rounded-3xl p-4 md:p-8 w-full max-w-md max-h-[95vh] md:max-h-[90vh] overflow-y-auto slide-up shadow-2xl mt-2 md:mt-0">
+                <h3 id="bookingModalTitle" class="text-xl md:text-2xl font-bold text-slate-800 mb-4 md:mb-8 text-center">📅 Hüpfburg buchen</h3>
                 
-                <form id="bookingForm" class="space-y-4">
-                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                        <div class="font-bold text-blue-800" id="bookingCastleName">Hüpfburg Name</div>
-                        <div class="text-sm text-blue-600">wird gebucht für:</div>
+                <form id="bookingForm" class="space-y-4 md:space-y-6">
+                    <div class="neo-card p-3 md:p-4 mb-4 md:mb-6">
+                        <div class="font-bold text-blue-800 text-base md:text-lg" id="bookingCastleName">Hüpfburg Name</div>
+                        <div class="text-xs md:text-sm text-blue-600">wird gebucht für:</div>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Datum *</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">Datum *</label>
                         <input type="date" id="bookingDate" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                               class="w-full px-3 py-3 md:px-4 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-base md:text-lg">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Uhrzeit *</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">Uhrzeit *</label>
                         <input type="time" id="bookingTime" required 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                               class="w-full px-3 py-3 md:px-4 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-base md:text-lg">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Kunde/Familie *</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">Kunde/Familie *</label>
                         <input type="text" id="bookingCustomer" required placeholder="z.B. Familie Müller"
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                               class="w-full px-3 py-3 md:px-4 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-base md:text-lg">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Adresse *</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">Adresse *</label>
                         <textarea id="bookingAddress" required rows="2" placeholder="Musterstraße 123, 12345 Musterstadt"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                                  class="w-full px-3 py-3 md:px-4 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-base md:text-lg resize-none"></textarea>
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Besondere Hinweise</label>
+                        <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-2 md:mb-3">Besondere Hinweise</label>
                         <textarea id="bookingNotes" rows="2" placeholder="z.B. Aufbau im Garten, Zufahrt beachten..."
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent"></textarea>
+                                  class="w-full px-3 py-3 md:px-4 md:py-4 border-2 border-slate-200 rounded-2xl focus:ring-4 focus:ring-green-200 focus:border-green-400 text-base md:text-lg resize-none"></textarea>
                     </div>
                     
-                    <div class="flex gap-3 pt-6">
-                        <button type="button" id="cancelBookingModal" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-3 rounded-xl font-medium transition-colors">
+                    <div class="flex gap-3 md:gap-4 pt-4 md:pt-6 pb-2">
+                        <button type="button" id="cancelBookingModal" class="flex-1 neo-button py-3 md:py-4 text-slate-700 font-semibold text-sm md:text-base">
                             Abbrechen
                         </button>
-                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-medium transition-colors">
+                        <button type="submit" class="flex-1 employee-gradient text-white py-3 md:py-4 rounded-2xl font-semibold hover:shadow-xl transition-all duration-300 text-sm md:text-base">
                             📅 Buchen
                         </button>
                     </div>
@@ -982,10 +1144,15 @@
             }
             
             bindEvents() {
-                // Navigation
+                // Navigation - Desktop
                 document.getElementById('logoutBtn').addEventListener('click', () => this.logout());
                 this.elements.backBtn.addEventListener('click', () => this.goBack());
                 this.elements.shareBtn.addEventListener('click', () => this.showShareModal());
+                
+                // Navigation - Mobile
+                document.getElementById('logoutBtnMobile').addEventListener('click', () => this.logout());
+                document.getElementById('backBtnMobile').addEventListener('click', () => this.goBack());
+                document.getElementById('shareBtnMobile').addEventListener('click', () => this.showShareModal());
                 
                 // Admin Dashboard
                 document.getElementById('manageCastlesBtn').addEventListener('click', () => this.showScreen('castleManagement'));
@@ -1042,9 +1209,6 @@
                 // Booking Modal
                 document.getElementById('cancelBookingModal').addEventListener('click', () => this.hideBookingModal());
                 document.getElementById('bookingForm').addEventListener('submit', (e) => this.saveBooking(e));
-                
-                // Employee Search
-                document.getElementById('employeeSearch').addEventListener('input', () => this.renderEmployeeCastles());
             }
             
             setupDragAndDrop(dropZoneId, fileInputId) {
@@ -1118,9 +1282,11 @@
             login(role) {
                 this.currentUser = role;
                 document.getElementById('currentUser').textContent = role === 'admin' ? 'Admin' : 'Mitarbeiter';
+                document.getElementById('currentUserMobile').textContent = role === 'admin' ? 'Admin' : 'Mitarbeiter';
                 
-                // Show share button for admin
+                // Show share button for admin (both desktop and mobile)
                 this.elements.shareBtn.classList.toggle('hidden', role !== 'admin');
+                document.getElementById('shareBtnMobile').classList.toggle('hidden', role !== 'admin');
                 
                 if (role === 'admin') {
                     this.showScreen('adminDashboard');
@@ -1150,12 +1316,13 @@
                 const screenElement = this.elements[screen + 'Screen'] || this.elements[screen];
                 if (screenElement) {
                     screenElement.classList.remove('hidden');
-                    screenElement.classList.add('slide-in');
+                    screenElement.classList.add('fade-in');
                 }
                 
-                // Update back button visibility
+                // Update back button visibility (both desktop and mobile)
                 const showBackBtn = screen !== 'login' && screen !== 'adminDashboard' && screen !== 'employeeDashboard';
                 this.elements.backBtn.classList.toggle('hidden', !showBackBtn);
+                document.getElementById('backBtnMobile').classList.toggle('hidden', !showBackBtn);
                 
                 this.currentScreen = screen;
                 
@@ -1407,14 +1574,32 @@
             
             updateSyncStatus(status = 'local') {
                 const statusElement = document.getElementById('syncStatus');
-                const statusText = statusElement.querySelector('span:last-child');
+                const statusElementMobile = document.getElementById('syncStatusMobile');
                 
-                if (status === 'shared') {
-                    statusElement.className = 'sync-status sync-shared';
-                    statusText.textContent = 'Daten geteilt';
-                } else {
-                    statusElement.className = 'sync-status sync-local';
-                    statusText.textContent = 'Lokal gespeichert';
+                if (statusElement) {
+                    const statusText = statusElement.querySelector('span:last-child');
+                    if (status === 'shared') {
+                        statusElement.className = 'stats-card px-4 py-2 rounded-full text-sm font-medium text-green-700';
+                        statusElement.querySelector('span:first-child').className = 'w-2 h-2 bg-green-500 rounded-full inline-block mr-2';
+                        statusText.textContent = 'Daten geteilt';
+                    } else {
+                        statusElement.className = 'stats-card px-4 py-2 rounded-full text-sm font-medium text-slate-700';
+                        statusElement.querySelector('span:first-child').className = 'w-2 h-2 bg-blue-500 rounded-full inline-block mr-2';
+                        statusText.textContent = 'Lokal gespeichert';
+                    }
+                }
+                
+                if (statusElementMobile) {
+                    const statusTextMobile = statusElementMobile.querySelector('span:last-child');
+                    if (status === 'shared') {
+                        statusElementMobile.className = 'stats-card px-3 py-1 rounded-full text-xs font-medium text-green-700';
+                        statusElementMobile.querySelector('span:first-child').className = 'w-1.5 h-1.5 bg-green-500 rounded-full inline-block mr-1';
+                        statusTextMobile.textContent = 'Geteilt';
+                    } else {
+                        statusElementMobile.className = 'stats-card px-3 py-1 rounded-full text-xs font-medium text-slate-700';
+                        statusElementMobile.querySelector('span:first-child').className = 'w-1.5 h-1.5 bg-blue-500 rounded-full inline-block mr-1';
+                        statusTextMobile.textContent = 'Lokal';
+                    }
                 }
             }
             
@@ -1422,10 +1607,10 @@
                 document.getElementById('totalCastles').textContent = this.castles.length;
                 document.getElementById('totalMaterials').textContent = this.materials.length;
                 
-                const completeCastles = this.castles.filter(castle => 
-                    castle.materials && castle.materials.length > 0
+                const bookedCastles = this.castles.filter(castle => 
+                    castle.booking && castle.booking.date
                 ).length;
-                document.getElementById('completeCastles').textContent = completeCastles;
+                document.getElementById('bookedCastles').textContent = bookedCastles;
             }
             
             // Castle Management
@@ -1467,18 +1652,18 @@
                 const html = this.materials.map(material => {
                     const isSelected = selectedMaterials.includes(material.id);
                     return `
-                        <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <label class="flex items-center p-4 border-2 border-slate-200 rounded-2xl hover:bg-slate-50 cursor-pointer transition-all">
                             <input type="checkbox" value="${material.id}" ${isSelected ? 'checked' : ''} 
-                                   class="mr-3 w-4 h-4 text-blue-600 rounded">
+                                   class="mr-4 w-5 h-5 text-blue-600 rounded">
                             <div class="flex-1">
-                                <div class="font-medium">${material.name}</div>
-                                <div class="text-sm text-gray-500">${material.category}</div>
+                                <div class="font-semibold text-slate-800">${material.name}</div>
+                                <div class="text-sm text-slate-500">${material.category}</div>
                             </div>
                         </label>
                     `;
                 }).join('');
                 
-                container.innerHTML = html || '<div class="text-center text-gray-500 py-4">Keine Materialien verfügbar</div>';
+                container.innerHTML = html || '<div class="text-center text-slate-500 py-8">Keine Materialien verfügbar</div>';
             }
             
             saveCastle(e) {
@@ -1541,72 +1726,74 @@
                     // Booking status
                     const isBooked = castle.booking && castle.booking.date;
                     const bookingStatus = isBooked ? 
-                        `<div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                        `<div class="neo-card p-4 mb-6 bg-red-50">
                             <div class="flex items-start">
-                                <div class="text-red-600 mr-2">📅</div>
+                                <div class="text-red-600 mr-3 text-2xl">📅</div>
                                 <div class="text-sm">
-                                    <div class="font-bold text-red-800">GEBUCHT für ${castle.booking.date}</div>
-                                    <div class="text-red-700">👥 ${castle.booking.customer}</div>
-                                    <div class="text-red-700">📍 ${castle.booking.address}</div>
-                                    <div class="text-red-700">🕐 ${castle.booking.time}</div>
+                                    <div class="font-bold text-red-800 text-lg mb-2">GEBUCHT für ${castle.booking.date}</div>
+                                    <div class="text-red-700 space-y-1">
+                                        <div><strong>👥 Kunde:</strong> ${castle.booking.customer}</div>
+                                        <div><strong>📍 Adresse:</strong> ${castle.booking.address}</div>
+                                        <div><strong>🕐 Zeit:</strong> ${castle.booking.time}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>` : 
-                        `<div class="bg-green-50 border border-green-200 rounded-lg p-2 mb-4 text-center">
-                            <span class="text-green-800 font-medium">✅ VERFÜGBAR</span>
+                        `<div class="neo-card p-4 mb-6 bg-green-50 text-center">
+                            <span class="text-green-800 font-bold text-lg">✅ VERFÜGBAR</span>
                         </div>`;
                     
                     return `
-                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
-                            <div class="flex justify-between items-start mb-4">
+                        <div class="neo-card p-8 slide-up">
+                            <div class="flex justify-between items-start mb-6">
                                 <div class="flex-1">
-                                    <h3 class="text-xl font-bold text-gray-800 mb-2">${castle.name}</h3>
-                                    ${castle.description ? `<p class="text-gray-600 mb-2">${castle.description}</p>` : ''}
-                                    <div class="flex flex-wrap gap-2 text-sm text-gray-500">
-                                        ${castle.dimensions ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">📏 ${castle.dimensions}</span>` : ''}
-                                        ${castle.capacity ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded">👶 ${castle.capacity} Kinder</span>` : ''}
+                                    <h3 class="text-2xl font-bold text-slate-800 mb-3">${castle.name}</h3>
+                                    ${castle.description ? `<p class="text-slate-600 mb-4 text-lg">${castle.description}</p>` : ''}
+                                    <div class="flex flex-wrap gap-3 text-sm">
+                                        ${castle.dimensions ? `<span class="stats-card px-3 py-2 rounded-full text-blue-800 font-medium">📏 ${castle.dimensions}</span>` : ''}
+                                        ${castle.capacity ? `<span class="stats-card px-3 py-2 rounded-full text-green-800 font-medium">👶 ${castle.capacity} Kinder</span>` : ''}
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <div class="text-2xl font-bold text-blue-600">${materialCount}</div>
-                                    <div class="text-xs text-gray-500">Materialien</div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold text-blue-600">${materialCount}</div>
+                                    <div class="text-sm text-slate-500 font-medium">Materialien</div>
                                 </div>
                             </div>
                             
                             ${bookingStatus}
                             
                             ${castle.notes ? `
-                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                                <div class="neo-card p-4 mb-6 bg-yellow-50">
                                     <div class="flex items-start">
-                                        <div class="text-yellow-600 mr-2">💡</div>
-                                        <div class="text-sm text-yellow-800">${castle.notes}</div>
+                                        <div class="text-yellow-600 mr-3 text-xl">💡</div>
+                                        <div class="text-sm text-yellow-800 font-medium">${castle.notes}</div>
                                     </div>
                                 </div>
                             ` : ''}
                             
-                            <div class="mb-4">
-                                <div class="text-sm font-medium text-gray-700 mb-2">Benötigte Materialien:</div>
-                                <div class="text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
+                            <div class="mb-6">
+                                <div class="text-sm font-bold text-slate-700 mb-3">Benötigte Materialien:</div>
+                                <div class="text-sm text-slate-600 neo-card p-4 bg-slate-50">
                                     ${materialNames}
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-2 gap-3">
                                 <button onclick="app.editCastle(${castle.id})" 
-                                        class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
+                                        class="neo-button py-3 text-slate-700 font-semibold">
                                     ✏️ Bearbeiten
                                 </button>
                                 <button onclick="app.showBookingModal(${castle.id})" 
-                                        class="bg-${isBooked ? 'orange' : 'green'}-600 hover:bg-${isBooked ? 'orange' : 'green'}-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
+                                        class="neo-button py-3 text-slate-700 font-semibold">
                                     ${isBooked ? '📅 Ändern' : '📅 Buchen'}
                                 </button>
                                 <button onclick="app.deleteCastle(${castle.id})" 
-                                        class="bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-sm font-medium transition-colors col-span-1">
+                                        class="neo-button py-3 text-red-700 font-semibold">
                                     🗑️ Löschen
                                 </button>
                                 ${isBooked ? `
                                     <button onclick="app.cancelBooking(${castle.id})" 
-                                            class="bg-gray-600 hover:bg-gray-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
+                                            class="neo-button py-3 text-slate-700 font-semibold">
                                         ❌ Stornieren
                                     </button>
                                 ` : '<div></div>'}
@@ -1616,7 +1803,7 @@
                 }).join('');
                 
                 document.getElementById('castlesList').innerHTML = html || 
-                    '<div class="text-center text-gray-500 py-8">Keine Hüpfburgen gefunden</div>';
+                    '<div class="text-center text-slate-500 py-12 text-xl">Keine Hüpfburgen gefunden</div>';
             }
             
             editCastle(castleId) {
@@ -1725,26 +1912,24 @@
                     const icon = categoryIcons[material.category] || '📦';
                     
                     return `
-                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-4 shadow-lg">
-                            <div class="text-center mb-3">
-                                <div class="text-3xl mb-2">${icon}</div>
-                                <h3 class="font-bold text-gray-800">${material.name}</h3>
-                                <div class="text-sm text-gray-500">${material.category}</div>
-                            </div>
+                        <div class="neo-card p-6 text-center floating-card">
+                            <div class="text-5xl mb-4">${icon}</div>
+                            <h3 class="font-bold text-slate-800 text-lg mb-2">${material.name}</h3>
+                            <div class="text-sm text-slate-500 mb-4 font-medium">${material.category}</div>
                             
                             ${material.description ? `
-                                <div class="text-sm text-gray-600 mb-4 text-center">
+                                <div class="text-sm text-slate-600 mb-6">
                                     ${material.description}
                                 </div>
                             ` : ''}
                             
-                            <div class="flex gap-2">
+                            <div class="flex gap-3">
                                 <button onclick="app.showMaterialModal(${JSON.stringify(material).replace(/"/g, '&quot;')})" 
-                                        class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-sm font-medium transition-colors">
-                                    ✏️
+                                        class="flex-1 neo-button py-3 text-slate-700 font-semibold">
+                                    ✏️ Bearbeiten
                                 </button>
                                 <button onclick="app.deleteMaterial(${material.id})" 
-                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-sm font-medium transition-colors">
+                                        class="neo-button px-4 py-3 text-red-700 font-semibold">
                                     🗑️
                                 </button>
                             </div>
@@ -1753,49 +1938,62 @@
                 }).join('');
                 
                 document.getElementById('materialsList').innerHTML = html || 
-                    '<div class="text-center text-gray-500 py-8 col-span-full">Keine Materialien gefunden</div>';
+                    '<div class="text-center text-slate-500 py-12 col-span-full text-xl">Keine Materialien gefunden</div>';
             }
             
             // Employee Functions
             renderEmployeeCastles() {
-                const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
-                const filteredCastles = this.castles.filter(castle =>
-                    castle.name.toLowerCase().includes(searchTerm) ||
-                    (castle.description && castle.description.toLowerCase().includes(searchTerm))
+                // Filter for booked castles only
+                const bookedCastles = this.castles.filter(castle => 
+                    castle.booking && castle.booking.date
                 );
                 
-                const html = filteredCastles.map(castle => {
+                const html = bookedCastles.map(castle => {
                     const materialCount = castle.materials ? castle.materials.length : 0;
                     
                     return `
-                        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-6 shadow-lg cursor-pointer"
+                        <div class="neo-card p-8 text-center cursor-pointer floating-card"
                              onclick="app.showPackingList(${castle.id})">
-                            <div class="text-center">
-                                <div class="text-5xl mb-4">🏰</div>
-                                <h3 class="text-xl font-bold text-gray-800 mb-2">${castle.name}</h3>
-                                ${castle.description ? `<p class="text-gray-600 mb-3">${castle.description}</p>` : ''}
-                                
-                                <div class="flex justify-center gap-2 mb-4">
-                                    ${castle.dimensions ? `<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">📏 ${castle.dimensions}</span>` : ''}
-                                    ${castle.capacity ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">👶 ${castle.capacity}</span>` : ''}
-                                </div>
-                                
-                                <div class="bg-orange-100 text-orange-800 px-4 py-2 rounded-xl font-medium">
-                                    📋 ${materialCount} Materialien
-                                </div>
-                                
-                                ${castle.notes ? `
-                                    <div class="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-2">
-                                        <div class="text-sm text-yellow-800">💡 ${castle.notes}</div>
+                            <div class="text-6xl mb-6">🏰</div>
+                            <h3 class="text-2xl font-bold text-slate-800 mb-3">${castle.name}</h3>
+                            ${castle.description ? `<p class="text-slate-600 mb-4 text-lg">${castle.description}</p>` : ''}
+                            
+                            <div class="neo-card p-4 mb-6 bg-red-50">
+                                <div class="text-center">
+                                    <div class="font-bold text-red-800 text-lg mb-3">📅 GEBUCHT</div>
+                                    <div class="text-sm text-red-700 space-y-2">
+                                        <div><strong>Datum:</strong> ${castle.booking.date}</div>
+                                        <div><strong>Zeit:</strong> ${castle.booking.time}</div>
+                                        <div><strong>Kunde:</strong> ${castle.booking.customer}</div>
+                                        <div><strong>Adresse:</strong> ${castle.booking.address}</div>
+                                        ${castle.booking.notes ? `<div><strong>Hinweise:</strong> ${castle.booking.notes}</div>` : ''}
                                     </div>
-                                ` : ''}
+                                </div>
                             </div>
+                            
+                            <div class="flex justify-center gap-3 mb-6">
+                                ${castle.dimensions ? `<span class="stats-card px-3 py-2 rounded-full text-blue-800 font-medium text-sm">📏 ${castle.dimensions}</span>` : ''}
+                                ${castle.capacity ? `<span class="stats-card px-3 py-2 rounded-full text-green-800 font-medium text-sm">👶 ${castle.capacity}</span>` : ''}
+                            </div>
+                            
+                            <div class="employee-gradient text-white px-6 py-4 rounded-2xl font-bold text-lg">
+                                📋 ${materialCount} Materialien
+                            </div>
+                            
+                            ${castle.notes ? `
+                                <div class="mt-4 neo-card p-3 bg-yellow-50">
+                                    <div class="text-sm text-yellow-800 font-medium">💡 ${castle.notes}</div>
+                                </div>
+                            ` : ''}
                         </div>
                     `;
                 }).join('');
                 
-                document.getElementById('employeeCastleGrid').innerHTML = html || 
-                    '<div class="text-center text-gray-500 py-8 col-span-full">Keine Hüpfburgen gefunden</div>';
+                const emptyMessage = bookedCastles.length === 0 ? 
+                    '<div class="text-center text-slate-500 py-20 col-span-full"><div class="text-8xl mb-6">📅</div><div class="text-3xl font-bold mb-4">Keine Buchungen vorhanden</div><div class="text-xl">Aktuell sind keine Hüpfburgen gebucht.</div></div>' :
+                    '';
+                
+                document.getElementById('employeeCastleGrid').innerHTML = html || emptyMessage;
             }
             
             showPackingList(castleId) {
@@ -1808,22 +2006,22 @@
                     castle.materials.map(id => this.materials.find(m => m.id === id)).filter(Boolean) : [];
                 
                 const html = materials.map((material, index) => `
-                    <div class="checkbox-item bg-white border-2 border-gray-200 rounded-xl p-4">
+                    <div class="checkbox-item neo-card p-6 rounded-2xl">
                         <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" class="w-5 h-5 text-orange-600 rounded mr-4" 
+                            <input type="checkbox" class="w-6 h-6 text-blue-600 rounded mr-6" 
                                    onchange="app.updatePackingProgress()">
                             <div class="flex-1">
-                                <div class="font-medium text-lg">${material.name}</div>
-                                <div class="text-sm text-gray-500">${material.category}</div>
-                                ${material.description ? `<div class="text-sm text-gray-600 mt-1">${material.description}</div>` : ''}
+                                <div class="font-bold text-slate-800 text-xl mb-1">${material.name}</div>
+                                <div class="text-sm text-slate-500 font-medium mb-2">${material.category}</div>
+                                ${material.description ? `<div class="text-sm text-slate-600">${material.description}</div>` : ''}
                             </div>
-                            <div class="text-2xl ml-4">📦</div>
+                            <div class="text-4xl ml-6">📦</div>
                         </label>
                     </div>
                 `).join('');
                 
                 document.getElementById('packingList').innerHTML = html || 
-                    '<div class="text-center text-gray-500 py-8">Keine Materialien zugewiesen</div>';
+                    '<div class="text-center text-slate-500 py-12 text-xl">Keine Materialien zugewiesen</div>';
                 
                 this.updatePackingProgress();
                 this.showScreen('packingList');
@@ -1838,7 +2036,25 @@
                 const percentage = total > 0 ? (checked / total) * 100 : 0;
                 
                 document.getElementById('packingProgress').textContent = `${checked} / ${total}`;
-                document.getElementById('progressBar').style.width = `${percentage}%`;
+                document.getElementById('progressPercentage').textContent = `${Math.round(percentage)}%`;
+                
+                // Update circular progress
+                const circle = document.getElementById('progressCircle');
+                const circumference = 2 * Math.PI * 54; // radius = 54
+                const offset = circumference - (percentage / 100) * circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                // Update progress text
+                const progressText = document.getElementById('progressText');
+                if (percentage === 0) {
+                    progressText.textContent = 'Bereit zum Packen!';
+                } else if (percentage < 50) {
+                    progressText.textContent = 'Guter Start! 💪';
+                } else if (percentage < 100) {
+                    progressText.textContent = 'Fast geschafft! 🚀';
+                } else {
+                    progressText.textContent = 'Perfekt! Alles eingepackt! ✨';
+                }
                 
                 // Update checkbox styling
                 checkboxes.forEach(checkbox => {
@@ -1941,21 +2157,21 @@
             
             showNotification(message, type = 'info') {
                 const colors = {
-                    success: 'bg-green-500',
-                    error: 'bg-red-500',
-                    warning: 'bg-yellow-500',
-                    info: 'bg-blue-500'
+                    success: 'employee-gradient',
+                    error: 'admin-gradient',
+                    warning: 'material-gradient',
+                    info: 'packing-gradient'
                 };
                 
                 const notification = document.createElement('div');
-                notification.className = `${colors[type]} text-white px-4 py-3 rounded-xl shadow-lg mb-2 bounce-in`;
+                notification.className = `${colors[type]} text-white px-6 py-4 rounded-2xl shadow-2xl mb-3 slide-up font-medium`;
                 notification.textContent = message;
                 
                 this.elements.notifications.appendChild(notification);
                 
                 setTimeout(() => {
                     notification.remove();
-                }, 3000);
+                }, 4000);
             }
             
             saveData() {
@@ -1967,5 +2183,5 @@
         // Initialize app
         const app = new PartyCrasherApp();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9743d1be766a62d9',t:'MTc1NjA0ODY3NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9744206092aa1620',t:'MTc1NjA1MTg5Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
