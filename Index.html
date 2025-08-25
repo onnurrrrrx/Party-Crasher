@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Party-Crasher - Hüpfburg Verleih</title>
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Party-Crasher">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlBhcnR5LUNyYXNoZXIgLSBIw7xwZmJ1cmcgVmVybGVpaCIsCiAgInNob3J0X25hbWUiOiAiUGFydHktQ3Jhc2hlciIsCiAgImRlc2NyaXB0aW9uIjogIkjDvHBmYnVyZyBWZXJsZWloIE1hbmFnZW1lbnQgU3lzdGVtIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiM2NjdlZWEiLAogICJ0aGVtZV9jb2xvciI6ICIjNjY3ZWVhIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSXhNakFpSUdobGFXZG9kRDBpTVRJd0lqNDhjbVZqZENCM2FXUjBhRDBpTVRJd0lpQm9aV2xuYUhROUlqRXlNQ0lpSUdacGJHdzlJaU0yTmpkbFpXRWlMejQ4ZEdWNGRDQjRQU0kyTUNJZ2VUMGlOakFpSUdacGJHdzlJaU0yTmpkbFpXRWlJR1p2Ym5RdGMybDZaVDBpTkRnaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQaUJnUEM5MFpYaDBQZzA4ZEdWNGRDQjRQU0kyTUNJZ2VUMGlPREFpSUdacGJHdzlJaU0yTmpkbFpXRWlJR1p2Ym5RdGMybDZaVDBpTVRZaUlIUmxlSFF0WVc1amFHOXlQU0p0YVdSa2JHVWlQaUJJZFNBZ1VHRnlkSGt0UTNKaGMyaGxjakE4TDNSbGVIUStQQzl6ZG1jKyIsCiAgICAgICJzaXplcyI6ICIxMjB4MTIwIiwKICAgICAgInR5cGUiOiAiaW1hZ2Uvc3ZnK3htbCIKICAgIH0sCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhkcFpIUm9QU0l4T1RJaUlHaGxhV2RvZEQwaU1Ua3lJajQ4Y21WamRDQjNhV1IwYUQwaU1Ua3lJaUJvWldsbmFIUTlJakU1TWlJZ1ptbHNiRDBpSXpZMk4yVmxZU0l2UGp4MFpYaDBJSGc5SWprMklpQjVQU0k1TmlJZ1ptbHNiRDBpSXpZMk4yVmxZU0lnWm05dWRDMXphWHBsUFNJME9DSWdkR1Y0ZEMxaGJtTm9iM0k5SW0xcFpHUnNaU0krSUdCUVBDOTBaWGgwUGcwOGRHVjRkQ0I0UFNJNU5pSWdlVDBpTVRFMklpQm1hV3hzUFNJall6WTNaV1ZoSWlCbWIyNTBMWE5wZW1VOUlqRTJJaUIwWlhoMExXRnVZMmh2Y2owaWJXbGtaR3hsSWo0Z1NHVnVJRkJoY25SNUxVTnlZWE5vWlhJd1BDOTBaWGgwUGp3dmMzWm5QZz09IiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSGRwWkhSb1BTSTFNVElpSUdobGFXZG9kRDBpTlRFeUlqNDhjbVZqZENCM2FXUjBhRDBpTlRFeUlpQm9aV2xuYUhROUlqVXhNaUlnWm1sc2JEMGlJelkyTjJWbFlTSXZQanh3WVhSb0lHUTlJazB5TlRZZ01USTRZekFnTFRjd0xqUWdOVGN1TmlBdE1USTRJREV5T0NBeE1qaGpOemN1TkNBd0lERXlPQ0EyTUNBd0lERXlPQzB4TWpoak1DQTNNQzQwTFRVM0xqWWdNVEk0TFRFeU9DQXhNamhhSWlCbWFXeHNQU0lqTmpZM1pXVmhJaTgrUEhSbGVIUWdlRDBpTWpVMklpQjVQU0l5TlRZaUlHWnBiR3c5SWlNMk5qZGxaV0VpSUdadmJuUXRjMmw2WlQwaU5EZ2lJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpUGlCZ1VEd3ZkR1Y0ZEQ0TlBIUmxlSFFnZUQwaU1qVTJJaUI1UFNJeU9EQWlJR1pwYkd3OUlpTTJOamRsWldFaUlHWnZiblF0YzJsNlpUMGlNVFlpSUhSbGVIUXRZVzVqYUc5eVBTSnRhV1JrYkdVaVBpQklkU0JRWVhKMGVTMURjbUZ6YUdWeU1Ed3ZkR1Y0ZEQ0OEwzTjJaejQ9IiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9zdmcreG1sIgogICAgfQogIF0KfQ==">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1796,8 +1802,125 @@
             }
         }
 
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Create service worker inline
+                const swCode = `
+                    const CACHE_NAME = 'party-crasher-v1';
+                    const urlsToCache = [
+                        '/',
+                        'https://cdn.tailwindcss.com'
+                    ];
+
+                    self.addEventListener('install', function(event) {
+                        event.waitUntil(
+                            caches.open(CACHE_NAME)
+                                .then(function(cache) {
+                                    return cache.addAll(urlsToCache);
+                                })
+                        );
+                    });
+
+                    self.addEventListener('fetch', function(event) {
+                        event.respondWith(
+                            caches.match(event.request)
+                                .then(function(response) {
+                                    if (response) {
+                                        return response;
+                                    }
+                                    return fetch(event.request);
+                                }
+                            )
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swUrl = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swUrl)
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button if not already installed
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                showInstallPrompt();
+            }
+        });
+
+        function showInstallPrompt() {
+            // Create install prompt
+            const installBanner = document.createElement('div');
+            installBanner.id = 'installBanner';
+            installBanner.className = 'fixed top-0 left-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-3 z-50 shadow-lg';
+            installBanner.innerHTML = `
+                <div class="flex items-center justify-between max-w-7xl mx-auto">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-2xl">📱</span>
+                        <div>
+                            <p class="font-semibold">Party-Crasher als App installieren</p>
+                            <p class="text-sm opacity-90">Für bessere Nutzung auf Ihrem Gerät</p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="installApp()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg font-medium transition-all">
+                            Installieren
+                        </button>
+                        <button onclick="dismissInstall()" class="bg-white bg-opacity-10 hover:bg-opacity-20 px-3 py-2 rounded-lg transition-all">
+                            ✕
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.prepend(installBanner);
+            
+            // Add margin to body to account for banner
+            document.body.style.paddingTop = '80px';
+        }
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                    dismissInstall();
+                });
+            }
+        }
+
+        function dismissInstall() {
+            const banner = document.getElementById('installBanner');
+            if (banner) {
+                banner.remove();
+                document.body.style.paddingTop = '0';
+            }
+        }
+
+        // Hide install prompt if already running as PWA
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Running as PWA');
+            }
+        });
+
         // Initialize app on load
         init();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974bdf2f414d4151',t:'MTc1NjEzMzExMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'974c26c8468ccac5',t:'MTc1NjEzNjA0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
