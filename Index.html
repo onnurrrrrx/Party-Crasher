@@ -3,27 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Party-Crasher - Verleih Management</title>
+    <title>Party-Crasher - Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        html { scroll-behavior: smooth; }
         body { font-family: 'Inter', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .bounce-animation { animation: bounce 2s infinite; }
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-        .surface-btn.selected, .service-btn.selected {
-            border-color: #8b5cf6 !important;
-            background-color: #f3f4f6 !important;
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-        }
-        .service-btn.selected .text-purple-600 { color: #059669 !important; }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+        .surface-btn.selected, .service-btn.selected { border-color: #8b5cf6 !important; background-color: #f3f4f6 !important; box-shadow: 0 0 0 2px #8b5cf6; }
+        .product-card.in-cart { border-color: #10b981; border-width: 2px; }
+        #cart-button { transition: transform 0.2s ease-out; }
     </style>
 </head>
 <body class="gradient-bg min-h-screen">
+
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
             <div class="text-center mb-8">
@@ -40,11 +35,7 @@
 
     <div id="adminPasswordScreen" class="hidden min-h-screen flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-            <div class="text-center mb-8">
-                <div class="text-4xl mb-4">🔐</div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Admin Zugang</h2>
-                <p class="text-gray-600">Passwort eingeben</p>
-            </div>
+            <div class="text-center mb-8"><div class="text-4xl mb-4">🔐</div><h2 class="text-2xl font-bold text-gray-800 mb-2">Admin Zugang</h2><p class="text-gray-600">Passwort eingeben</p></div>
             <div class="space-y-4">
                 <input type="password" id="adminPassword" placeholder="Admin Passwort" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 <button onclick="checkAdminPassword()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition duration-200">Anmelden</button>
@@ -54,329 +45,295 @@
     </div>
 
     <div id="adminDashboard" class="hidden min-h-screen">
-        <nav class="bg-gradient-to-r from-purple-600 to-blue-600 shadow-xl sticky top-0 z-10">
+        <nav class="bg-gradient-to-r from-purple-600 to-blue-600 shadow-xl sticky top-0 z-20">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center space-x-4">
                         <div class="bg-white rounded-full p-2 shadow-lg"><span class="text-2xl">🏰</span></div>
-                        <div>
-                            <h1 class="text-xl font-bold text-white">Party-Crasher</h1>
-                            <p class="text-purple-100 text-sm">Admin Dashboard</p>
-                        </div>
+                        <div><h1 class="text-xl font-bold text-white">Party-Crasher</h1><p class="text-purple-100 text-sm">Admin Dashboard</p></div>
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <button onclick="showTab('overview')" id="overviewTab" class="px-4 py-2.5 bg-white bg-opacity-20 text-white rounded-lg font-medium hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center space-x-2"><span>📊</span><span>Übersicht</span></button>
-                        <button onclick="showTab('orders')" id="ordersTab" class="px-4 py-2.5 bg-white bg-opacity-10 text-white rounded-lg font-medium hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center space-x-2"><span>📋</span><span>Aufträge</span></button>
-                        <button onclick="showTab('settings')" id="settingsTab" class="px-4 py-2.5 bg-white bg-opacity-10 text-white rounded-lg font-medium hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center space-x-2"><span>⚙️</span><span>Einstellungen</span></button>
-                        <button onclick="logout()" class="px-4 py-2.5 bg-red-500 bg-opacity-90 text-white rounded-lg font-medium hover:bg-opacity-100 transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg"><span>🚪</span><span>Abmelden</span></button>
+                    <div class="hidden md:flex items-center space-x-2">
+                        <button onclick="scrollToSection('overviewSection')" class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20">Produkte</button>
+                        <button onclick="scrollToSection('ordersSection')" class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20">Aufträge</button>
+                        <button onclick="scrollToSection('settingsSection')" class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20">Einstellungen</button>
                     </div>
+                    <button onclick="logout()" class="px-3 py-2 bg-red-500/90 text-white rounded-lg font-medium hover:bg-opacity-100 shadow-lg flex items-center space-x-2"><span>🚪</span><span class="hidden md:inline">Abmelden</span></button>
                 </div>
             </div>
         </nav>
 
-        <div id="overviewContent" class="max-w-7xl mx-auto p-6"><div id="productList" class="space-y-8"></div></div>
-        <div id="ordersContent" class="hidden max-w-7xl mx-auto p-6">
-             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-white">Auftragsübersicht</h2>
-                <button onclick="exportOrders()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium">📤 JSON Export</button>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden"><div id="ordersList" class="divide-y divide-gray-200"></div></div>
+        <div class="max-w-7xl mx-auto p-4 md:p-6">
+            <section id="overviewSection" class="mb-12"><div id="productList" class="space-y-10"></div></section>
+            <section id="ordersSection" class="mb-12">
+                <div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-white">Auftragsübersicht</h2><button onclick="exportOrders()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium text-sm">📤 JSON Export</button></div>
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden"><div id="ordersList" class="divide-y divide-gray-200"></div></div>
+            </section>
+            <section id="settingsSection">
+                <h2 class="text-2xl font-bold text-white mb-6">Einstellungen</h2>
+                <div class="bg-white rounded-lg shadow-lg p-6"></div>
+            </section>
         </div>
-        <div id="settingsContent" class="hidden max-w-7xl mx-auto p-6"></div>
     </div>
 
     <div id="employeeDashboard" class="hidden min-h-screen"></div>
 
-    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"></div>
+    <button id="cart-button" onclick="openBookingModal()" class="hidden fixed bottom-6 right-6 bg-green-500 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center z-30 hover:bg-green-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center border-2 border-white">0</span>
+    </button>
+
+    <div id="bookingModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6"><h3 class="text-2xl font-bold text-gray-800">Neuer Auftrag</h3><button onclick="closeBookingModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button></div>
+                <div id="cartItemsList" class="mb-6 space-y-3"></div>
+                <form id="bookingForm" class="space-y-6"></form>
+            </div>
+        </div>
+    </div>
     <div id="importModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"></div>
     <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"></div>
 
     <script>
-        // --- DATA ---
-        let currentUser = null;
-        let products = [
-            // Hüpfburgen (from your script)
-            { id: 1, category: "Hüpfburgen", name: "Summer Party", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "4,9m x 4m x 4m", capacity: "bis zu 8 Kids", features: "mit Rutsche", setupTime: "ca. 15min", weight: "100kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 2, category: "Hüpfburgen", name: "Hawaii Box", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "4,8m x 4m x 3,5m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "100kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 3, category: "Hüpfburgen", name: "Fußball Hütte", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "5,5m x 5m x 4,6m", capacity: "bis zu 12 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 25min", weight: "160kg", transport: "minimum Caddy", selfPickup: false },
-            { id: 4, category: "Hüpfburgen", name: "Haifisch Becken", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "5,4m x 5m x 3,8m", capacity: "bis zu 12 Kids", features: "mit Rutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "160kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
-            { id: 5, category: "Hüpfburgen", name: "Piratenschiff", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "6,2x3,8x3,6m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "80kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 6, category: "Hüpfburgen", name: "Dino Doubleslide", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,4x6,2x3,4m", capacity: "bis zu 15 Kids", features: "mit Doppelrutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "185kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
-            { id: 7, category: "Hüpfburgen", name: "Monster-Truck Doubleslide", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,4x6,2x3,4m", capacity: "bis zu 15 Kids", features: "mit Doppelrutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "185kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
-            { id: 8, category: "Hüpfburgen", name: "Wedding Bouncer", weekdayPrice: 159, weekendPrice: 189, threeDayPrice: 295, status: "available", dimensions: "4x4x3m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Bällebad, selbst gestalten!", setupTime: "ca. 25min", weight: "130kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 9, category: "Hüpfburgen", name: "PAW Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 10, category: "Hüpfburgen", name: "PAW Kidszone", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "6x4x3,4m", capacity: "bis zu 15 Kids", features: "perfekt für kleine Kids, Bälle Bad, Hüpfburg & Rutsche", setupTime: "ca. 20min", weight: "85kg", transport: "Aufbau/Abbau Lieferung nur durch uns", selfPickup: false },
-            { id: 11, category: "Hüpfburgen", name: "Minnie Clubhouse", weekdayPrice: 89, weekendPrice: 119, threeDayPrice: 200, status: "available", dimensions: "3x3,5x2m", capacity: "bis zu 6 Kids", features: "mit Rutsche", setupTime: "ca. 10min", weight: "85kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 12, category: "Hüpfburgen", name: "Mickey Clubhouse", weekdayPrice: 79, weekendPrice: 99, threeDayPrice: 180, status: "available", dimensions: "3x2x2m", capacity: "bis zu 3-4 Kids", features: "mit Rutsche", setupTime: "ca. 10min", weight: "25kg", transport: "kann im Kleinwagen transportiert werden", selfPickup: true },
-            { id: 13, category: "Hüpfburgen", name: "Super Hero", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x4x3,8m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 20min", weight: "110kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 14, category: "Hüpfburgen", name: "Mickey Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
-            { id: 15, category: "Hüpfburgen", name: "Mario World XXL", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,5x5,5x6m", capacity: "bis zu 15 Kids", features: "mit riesen Rutsche & Hindernisse", setupTime: "ca. 20min", weight: "158kg", transport: "minimum Caddy", selfPickup: false },
-            { id: 16, category: "Hüpfburgen", name: "Mario Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
-            
-            // --- NEUE PRODUKTE ---
-            // Fun Food
-            { id: 201, category: "Fun Food", name: "Slush-Eis-Maschine", weekdayPrice: 50, weekendPrice: 50, threeDayPrice: 130, status: "available", features: "2 Kammern, inkl. Sirup & Becher", transport: "PKW", selfPickup: true },
-            { id: 202, category: "Fun Food", name: "Popcornmaschine", weekdayPrice: 40, weekendPrice: 40, threeDayPrice: 100, status: "available", features: "Inkl. Mais, Tüten & Öl", transport: "PKW", selfPickup: true },
-            { id: 203, category: "Fun Food", name: "Zuckerwattemaschine", weekdayPrice: 40, weekendPrice: 40, threeDayPrice: 100, status: "available", features: "Inkl. Zucker & Stäbe", transport: "PKW", selfPickup: true },
+    // --- DATEN & ZUSTAND ---
+    let currentUser = null;
+    let cart = []; // Der Warenkorb
+    let products = [
+        // Hüpfburgen
+        { id: 1, category: "Hüpfburgen", name: "Summer Party", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "4,9x4x4m", capacity: "bis zu 8 Kids", features: "mit Rutsche", setupTime: "ca. 15min", weight: "100kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 2, category: "Hüpfburgen", name: "Hawaii Box", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "4,8x4x3,5m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "100kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 3, category: "Hüpfburgen", name: "Fußball Hütte", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "5,5x5x4,6m", capacity: "bis zu 12 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 25min", weight: "160kg", transport: "minimum Caddy", selfPickup: false },
+        { id: 4, category: "Hüpfburgen", name: "Haifisch Becken", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "5,4x5x3,8m", capacity: "bis zu 12 Kids", features: "mit Rutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "160kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
+        { id: 5, category: "Hüpfburgen", name: "Piratenschiff", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, status: "available", dimensions: "6,2x3,8x3,6m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "80kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 6, category: "Hüpfburgen", name: "Dino Doubleslide", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,4x6,2x3,4m", capacity: "bis zu 15 Kids", features: "mit Doppelrutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "185kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
+        { id: 7, category: "Hüpfburgen", name: "Monster-Truck Doubleslide", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,4x6,2x3,4m", capacity: "bis zu 15 Kids", features: "mit Doppelrutsche & Hindernisse, auch als Wasserrutsche nutzbar", setupTime: "ca. 25min", weight: "185kg", transport: "minimum Caddy", selfPickup: false, poolExtra: 25 },
+        { id: 8, category: "Hüpfburgen", name: "Wedding Bouncer", weekdayPrice: 159, weekendPrice: 189, threeDayPrice: 295, status: "available", dimensions: "4x4x3m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Bällebad, selbst gestalten!", setupTime: "ca. 25min", weight: "130kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 9, category: "Hüpfburgen", name: "PAW Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 10, category: "Hüpfburgen", name: "PAW Kidszone", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, status: "available", dimensions: "6x4x3,4m", capacity: "bis zu 15 Kids", features: "perfekt für kleine Kids, Bälle Bad, Hüpfburg & Rutsche", setupTime: "ca. 20min", weight: "85kg", transport: "Aufbau/Abbau Lieferung nur durch uns", selfPickup: false },
+        { id: 11, category: "Hüpfburgen", name: "Minnie Clubhouse", weekdayPrice: 89, weekendPrice: 119, threeDayPrice: 200, status: "available", dimensions: "3x3,5x2m", capacity: "bis zu 6 Kids", features: "mit Rutsche", setupTime: "ca. 10min", weight: "85kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 12, category: "Hüpfburgen", name: "Mickey Clubhouse", weekdayPrice: 79, weekendPrice: 99, threeDayPrice: 180, status: "available", dimensions: "3x2x2m", capacity: "bis zu 3-4 Kids", features: "mit Rutsche", setupTime: "ca. 10min", weight: "25kg", transport: "kann im Kleinwagen transportiert werden", selfPickup: true },
+        { id: 13, category: "Hüpfburgen", name: "Super Hero", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x4x3,8m", capacity: "bis zu 8 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 20min", weight: "110kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 14, category: "Hüpfburgen", name: "Mickey Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
+        { id: 15, category: "Hüpfburgen", name: "Mario World XXL", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, status: "available", dimensions: "5,5x5,5x6m", capacity: "bis zu 15 Kids", features: "mit riesen Rutsche & Hindernisse", setupTime: "ca. 20min", weight: "158kg", transport: "minimum Caddy", selfPickup: false },
+        { id: 16, category: "Hüpfburgen", name: "Mario Bouncer", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, status: "available", dimensions: "5x3,5x3,6m", capacity: "bis zu 10 Kids", features: "mit Rutsche & Hindernisse", setupTime: "ca. 15min", weight: "95kg", transport: "minimum Kombi", selfPickup: true },
+        // Fun Food
+        { id: 201, category: "Fun Food", name: "Slush-Eis-Maschine", weekdayPrice: 50, weekendPrice: 50, threeDayPrice: 130, status: "available", features: "2 Kammern, inkl. Sirup & Becher", transport: "PKW", selfPickup: true },
+        { id: 202, category: "Fun Food", name: "Popcornmaschine", weekdayPrice: 40, weekendPrice: 40, threeDayPrice: 100, status: "available", features: "Inkl. Mais, Tüten & Öl", transport: "PKW", selfPickup: true },
+        { id: 203, category: "Fun Food", name: "Zuckerwattemaschine", weekdayPrice: 40, weekendPrice: 40, threeDayPrice: 100, status: "available", features: "Inkl. Zucker & Stäbe", transport: "PKW", selfPickup: true },
+        // Mobiliar & Zelte
+        { id: 301, category: "Mobiliar & Zelte", name: "Partyzelt 4x8 Meter", weekdayPrice: 80, weekendPrice: 80, threeDayPrice: 200, status: "available", features: "Für ca. 40 Personen, wasserdicht", transport: "Kombi / Transporter", selfPickup: true },
+        { id: 302, category: "Mobiliar & Zelte", name: "Stehtisch", weekdayPrice: 5, weekendPrice: 5, threeDayPrice: 12, status: "available", features: "Klappbar, Ø 80cm", transport: "PKW", selfPickup: true },
+        { id: 303, category: "Mobiliar & Zelte", name: "Bierzeltgarnitur", weekdayPrice: 8, weekendPrice: 8, threeDayPrice: 20, status: "available", features: "1 Tisch, 2 Bänke", transport: "PKW", selfPickup: true },
+        { id: 304, category: "Mobiliar & Zelte", name: "Theke", weekdayPrice: 30, weekendPrice: 30, threeDayPrice: 75, status: "available", features: "Mit Spülbecken (Anschluss nötig)", transport: "Transporter", selfPickup: true },
+        { id: 305, category: "Mobiliar & Zelte", name: "Kühlschrank", weekdayPrice: 25, weekendPrice: 25, threeDayPrice: 60, status: "available", features: "Getränkekühlschrank mit Glastür", transport: "PKW", selfPickup: true },
+        // Zubehör
+        { id: 401, category: "Zubehör", name: "Stromgenerator", weekdayPrice: 30, weekendPrice: 30, threeDayPrice: 75, status: "available", features: "Leiser Inverter-Generator", transport: "PKW", selfPickup: true },
+        { id: 402, category: "Zubehör", name: "Nebelmaschine", weekdayPrice: 15, weekendPrice: 15, threeDayPrice: 40, status: "available", features: "Inkl. 1L Nebelfluid", transport: "PKW", selfPickup: true },
+        { id: 403, category: "Zubehör", name: "Lichterkette", weekdayPrice: 5, weekendPrice: 5, threeDayPrice: 12, status: "available", features: "10 Meter, warmweiß, für Außen", transport: "PKW", selfPickup: true },
+        { id: 404, category: "Zubehör", name: "Musikbox (Teufel Rockster Air)", weekdayPrice: 35, weekendPrice: 35, threeDayPrice: 90, status: "available", features: "Bluetooth, Akkubetrieb", transport: "PKW", selfPickup: true }
+    ];
+    let orders = [];
+    let settings = { asphaltFee: 30, cableFee: 5, serviceFee: 45, travel0to3: 10, travel5: 15, travel10: 20, travel20: 40, travelPerKm: 2.40 };
 
-            // Mobiliar & Zelte
-            { id: 301, category: "Mobiliar & Zelte", name: "Partyzelt 4x8 Meter", weekdayPrice: 80, weekendPrice: 80, threeDayPrice: 200, status: "available", features: "Für ca. 40 Personen, wasserdicht", transport: "Kombi / Transporter", selfPickup: true },
-            { id: 302, category: "Mobiliar & Zelte", name: "Stehtisch", weekdayPrice: 5, weekendPrice: 5, threeDayPrice: 12, status: "available", features: "Klappbar, Ø 80cm", transport: "PKW", selfPickup: true },
-            { id: 303, category: "Mobiliar & Zelte", name: "Bierzeltgarnitur", weekdayPrice: 8, weekendPrice: 8, threeDayPrice: 20, status: "available", features: "1 Tisch, 2 Bänke", transport: "PKW", selfPickup: true },
-            { id: 304, category: "Mobiliar & Zelte", name: "Theke", weekdayPrice: 30, weekendPrice: 30, threeDayPrice: 75, status: "available", features: "Mit Spülbecken (Anschluss nötig)", transport: "Transporter", selfPickup: true },
-            { id: 305, category: "Mobiliar & Zelte", name: "Kühlschrank", weekdayPrice: 25, weekendPrice: 25, threeDayPrice: 60, status: "available", features: "Getränkekühlschrank mit Glastür", transport: "PKW", selfPickup: true },
+    // --- INITIALISIERUNG & DATENHANDHABUNG ---
+    function init() { loadData(); updateProductStatuses(); }
+    function loadData() {
+        const savedOrders = localStorage.getItem('partyCrasherOrders');
+        const savedSettings = localStorage.getItem('partyCrasherSettings');
+        const savedProducts = localStorage.getItem('partyCrasherProducts');
+        if (savedOrders) orders = JSON.parse(savedOrders);
+        if (savedSettings) settings = Object.assign(settings, JSON.parse(savedSettings));
+        if (savedProducts) products = JSON.parse(savedProducts);
+    }
+    function saveData() {
+        localStorage.setItem('partyCrasherOrders', JSON.stringify(orders));
+        localStorage.setItem('partyCrasherSettings', JSON.stringify(settings));
+        localStorage.setItem('partyCrasherProducts', JSON.stringify(products));
+    }
 
-            // Zubehör
-            { id: 401, category: "Zubehör", name: "Stromgenerator", weekdayPrice: 30, weekendPrice: 30, threeDayPrice: 75, status: "available", features: "Leiser Inverter-Generator", transport: "PKW", selfPickup: true },
-            { id: 402, category: "Zubehör", name: "Nebelmaschine", weekdayPrice: 15, weekendPrice: 15, threeDayPrice: 40, status: "available", features: "Inkl. 1L Nebelfluid", transport: "PKW", selfPickup: true },
-            { id: 403, category: "Zubehör", name: "Lichterkette", weekdayPrice: 5, weekendPrice: 5, threeDayPrice: 12, status: "available", features: "10 Meter, warmweiß, für Außen", transport: "PKW", selfPickup: true },
-            { id: 404, category: "Zubehör", name: "Musikbox (Teufel Rockster Air)", weekdayPrice: 35, weekendPrice: 35, threeDayPrice: 90, status: "available", features: "Bluetooth, Akkubetrieb", transport: "PKW", selfPickup: true }
-        ];
-        let orders = [];
-        let settings = { asphaltFee: 30, cableFee: 5, serviceFee: 45, travel0to3: 10, travel5: 15, travel10: 20, travel20: 40, travelPerKm: 2.40 };
-
-        // --- CORE FUNCTIONS (SAVE, LOAD, INIT) ---
-        function loadData() {
-            const savedOrders = localStorage.getItem('partyCrasherOrders');
-            const savedSettings = localStorage.getItem('partyCrasherSettings');
-            const savedProducts = localStorage.getItem('partyCrasherProducts');
-            
-            if (savedOrders) orders = JSON.parse(savedOrders);
-            if (savedSettings) settings = Object.assign(settings, JSON.parse(savedSettings));
-            if (savedProducts) products = JSON.parse(savedProducts);
-        }
-
-        function saveData() {
-            localStorage.setItem('partyCrasherOrders', JSON.stringify(orders));
-            localStorage.setItem('partyCrasherSettings', JSON.stringify(settings));
-            localStorage.setItem('partyCrasherProducts', JSON.stringify(products));
-        }
-        
-        function init() { loadData(); updateProductStatuses(); }
-
-        // --- LOGIN & NAVIGATION ---
-        // (Login functions are identical to your script)
-        function showEmployeeLogin() { /* ... */ }
-        function showAdminLogin() { /* ... */ }
-        function checkAdminPassword() { /* ... */ }
-        function backToLogin() { /* ... */ }
-        function logout() { /* ... */ }
-        function showTab(tabName) { /* ... */ }
-
-        // --- RENDER FUNCTIONS ---
-        function updateProductStatuses() {
-            products.forEach(product => { product.status = 'available'; });
-        }
-
-        function renderProducts() {
-            updateProductStatuses();
-            const container = document.getElementById('productList');
-            container.innerHTML = '';
-
-            const categories = [...new Set(products.map(p => p.category))];
-            
-            categories.forEach(category => {
-                const categoryProducts = products.filter(p => p.category === category);
-                let productHTML = '';
-
-                categoryProducts.forEach(product => {
-                    productHTML += `
-                        <div class="bg-white rounded-lg shadow-lg p-6">
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">${product.name}</h3>
-                            <div class="space-y-2 mb-4 text-xs text-gray-600">
-                                ${product.features ? `<p>${product.features}</p>` : ''}
-                                ${product.dimensions ? `<p>${product.dimensions}</p>` : ''}
-                                ${product.capacity ? `<p>${product.capacity}</p>` : ''}
-                                ${product.transport ? `<p>Transport: ${product.transport}</p>` : ''}
-                            </div>
-                             <div class="border-t pt-2 mt-3">
-                                <p class="text-sm text-gray-600">Mo-Do: <span class="font-semibold">${product.weekdayPrice}€</span></p>
-                                <p class="text-sm text-gray-600">Fr-So: <span class="font-semibold">${product.weekendPrice}€</span></p>
-                                ${product.threeDayPrice ? `<p class="text-sm text-gray-600">3 Tage: <span class="font-semibold">${product.threeDayPrice}€</span></p>` : ''}
-                            </div>
-                            <div class="flex justify-between items-center mt-4">
-                                <span class="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">Verfügbar</span>
-                                <button onclick="openBookingModal(${product.id})" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium">Buchen</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML += `
-                    <div>
-                        <h2 class="text-2xl font-bold text-white mb-6">${category}</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${productHTML}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-        
-        // --- BOOKING & CALCULATION LOGIC ---
-        // (All booking, calculation, settings, import/export functions are identical to your provided script)
-        function selectSurface(surface) { /* ... */ }
-        function toggleService(serviceId) { /* ... */ }
-        function openBookingModal(productId) { /* Renamed castleId to productId */ }
-        function handleAddressInput() { /* ... */ }
-        function closeBookingModal() { /* ... */ }
-        function isWeekend(date) { /* ... */ }
-        function calculateDaysBetween(startDate, endDate) { /* ... */ }
-        function isEarlyBooking(startDate) { /* ... */ }
-        function calculateDistance() { /* ... */ }
-        function calculateTravelCost(distance) { /* ... */ }
-        function calculateCosts() { /* ... */ }
-        function checkDoubleBooking(productId, startDate, endDate) { /* Renamed castleId to productId */ }
-        function checkBookingAvailability() { /* ... */ }
-        document.getElementById('bookingForm').addEventListener('submit', function(e) { /* ... */ });
-        function showBookingConfirmation(order) { /* ... */ }
-        function closeConfirmationModal() { /* ... */ }
-        function renderOrders() { /* ... */ }
-        function cancelOrder(orderId) { /* ... */ }
-        function showCancelConfirmation(order) { /* ... */ }
-        function confirmCancellation(orderId) { /* ... */ }
-        function closeCancelModal() { /* ... */ }
-        function renderEmployeeBookings() { /* ... */ }
-        function loadSettingsToForm() { /* ... */ }
-        function saveSettings() { /* ... */ }
-        function exportOrders() { /* ... */ }
-        function importData() { /* ... */ }
-        function closeImportModal() { /* ... */ }
-        function processJsonImport() { /* ... */ }
-        
-        // --- PASTE YOUR ORIGINAL JS HERE, THEN MAKE THE FOLLOWING SMALL CHANGES ---
-        // I will integrate the logic now.
-
-        // Login functions
-        function showEmployeeLogin() {
-            currentUser = 'employee';
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('employeeDashboard').classList.remove('hidden');
-            renderEmployeeBookings();
-        }
-
-        function showAdminLogin() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('adminPasswordScreen').classList.remove('hidden');
-        }
-
-        function checkAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
-            if (password === 'admin123') { // Simple password, change in production
-                currentUser = 'admin';
-                document.getElementById('adminPasswordScreen').classList.add('hidden');
-                document.getElementById('adminDashboard').classList.remove('hidden');
-                renderProducts();
-                loadSettingsToForm();
-            } else {
-                alert('Falsches Passwort!');
-            }
-        }
-
-        function backToLogin() {
-            document.getElementById('adminPasswordScreen').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        function logout() {
-            currentUser = null;
-            document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('employeeDashboard').classList.add('hidden');
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('adminPassword').value = '';
-        }
-
-        // Tab navigation
-        function showTab(tabName) {
-            document.getElementById('overviewContent').classList.add('hidden');
-            document.getElementById('ordersContent').classList.add('hidden');
-            document.getElementById('settingsContent').classList.add('hidden');
-            document.getElementById('overviewTab').className = 'px-4 py-2.5 bg-white bg-opacity-10 text-white rounded-lg font-medium hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center space-x-2';
-            document.getElementById('ordersTab').className = 'px-4 py-2.5 bg-white bg-opacity-10 text-white rounded-lg font-medium hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center space-x-2';
-            document.getElementById('settingsTab').className = 'px-4 py-2.5 bg-white bg-opacity-10 text-white rounded-lg font-medium hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center space-x-2';
-            
-            if (tabName === 'overview') {
-                document.getElementById('overviewContent').classList.remove('hidden');
-                document.getElementById('overviewTab').className = 'px-4 py-2.5 bg-white bg-opacity-20 text-white rounded-lg font-medium hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center space-x-2 ring-2 ring-white ring-opacity-50';
-                renderProducts();
-            } else if (tabName === 'orders') {
-                document.getElementById('ordersContent').classList.remove('hidden');
-                document.getElementById('ordersTab').className = 'px-4 py-2.5 bg-white bg-opacity-20 text-white rounded-lg font-medium hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center space-x-2 ring-2 ring-white ring-opacity-50';
-                renderOrders();
-            } else if (tabName === 'settings') {
-                document.getElementById('settingsContent').classList.remove('hidden');
-                document.getElementById('settingsTab').className = 'px-4 py-2.5 bg-white bg-opacity-20 text-white rounded-lg font-medium hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center space-x-2 ring-2 ring-white ring-opacity-50';
-            }
-        }
-        
-        // (The rest of your original JS functions go here, with the following changes)
-        // CHANGE 1: In openBookingModal(castleId), rename the parameter to productId.
-        // CHANGE 2: In checkDoubleBooking(castleId, ...), rename the parameter to productId.
-        // CHANGE 3: In exportOrders(), use `products` instead of `bounceCastles`.
-        // CHANGE 4: In processJsonImport(), use `products` instead of `bounceCastles`.
-        // CHANGE 5: In your form submission event listener, use `productId` and `productName`.
-        // The core logic for calculation, modals, etc., remains the same. The `renderProducts` function is the main visual change.
-        
-        // --- The rest of your provided JavaScript logic, adapted ---
-        // (Pasting the full logic here for completeness, with necessary changes)
-
-        function selectSurface(surface) { document.querySelectorAll('.surface-btn').forEach(b => b.classList.remove('selected')); document.getElementById(surface + 'Btn').classList.add('selected'); document.getElementById('surface').value = surface; document.getElementById('asphaltPauschale').value = (surface === 'asphalt') ? 'true' : ''; calculateCosts(); }
-        function toggleService(serviceId) { const btn = document.getElementById(serviceId + 'Btn'); const input = document.getElementById(serviceId); btn.classList.toggle('selected'); input.value = btn.classList.contains('selected') ? 'true' : ''; calculateCosts(); }
-        
-        function openBookingModal(productId) {
+    // --- NEUE WARENKORB-LOGIK ---
+    function toggleCartItem(productId) {
+        const index = cart.findIndex(item => item.productId === productId);
+        if (index > -1) {
+            cart.splice(index, 1);
+        } else {
             const product = products.find(p => p.id === productId);
-            document.getElementById('selectedCastle').value = product.name;
-            document.getElementById('bookingModal').classList.remove('hidden');
-            const poolBtn = document.getElementById('poolBtn');
-            if (product.poolExtra) poolBtn.classList.remove('hidden');
-            else poolBtn.classList.add('hidden');
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('startDate').min = today; document.getElementById('endDate').min = today;
-            ['startDate', 'endDate', 'discountPercent', 'discountAmount'].forEach(id => { const el = document.getElementById(id); el.removeEventListener('input', calculateCosts); el.removeEventListener('change', calculateCosts); el.removeEventListener('input', checkBookingAvailability); el.removeEventListener('change', checkBookingAvailability); el.addEventListener('input', calculateCosts); el.addEventListener('change', calculateCosts); if (id === 'startDate' || id === 'endDate') { el.addEventListener('input', checkBookingAvailability); el.addEventListener('change', checkBookingAvailability); } });
-            const addressEl = document.getElementById('address'); addressEl.removeEventListener('input', handleAddressInput); addressEl.addEventListener('input', handleAddressInput);
-            document.getElementById('bookingForm').dataset.productId = productId;
+            cart.push({ productId: productId, priceModel: product.threeDayPrice ? 'weekend' : 'standard' });
+        }
+        updateCartUI();
+    }
+    function updateCartUI() {
+        const cartButton = document.getElementById('cart-button');
+        const cartCount = document.getElementById('cart-count');
+        if (cart.length > 0) {
+            cartButton.classList.remove('hidden');
+            cartCount.textContent = cart.length;
+            cartButton.style.transform = 'scale(1.1)';
+            setTimeout(() => { cartButton.style.transform = 'scale(1)'; }, 200);
+        } else {
+            cartButton.classList.add('hidden');
+        }
+        products.forEach(p => {
+            const card = document.getElementById(`product-card-${p.id}`);
+            const button = document.getElementById(`product-btn-${p.id}`);
+            if (!card || !button) return;
+            const isInCart = cart.some(item => item.productId === p.id);
+            card.classList.toggle('in-cart', isInCart);
+            button.textContent = isInCart ? 'Entfernen' : 'Hinzufügen';
+            button.classList.toggle('bg-purple-500', !isInCart);
+            button.classList.toggle('hover:bg-purple-600', !isInCart);
+            button.classList.toggle('bg-red-500', isInCart);
+            button.classList.toggle('hover:bg-red-600', isInCart);
+        });
+    }
+    function removeFromCartAndRerenderModal(productId) {
+        const index = cart.findIndex(item => item.productId === productId);
+        if (index > -1) cart.splice(index, 1);
+        if (cart.length === 0) {
+            closeBookingModal();
+        } else {
+            renderCartInModal();
             calculateCosts();
         }
+        updateCartUI();
+    }
+    function updateCartItemPriceModel(productId, newModel) {
+        const item = cart.find(i => i.productId === productId);
+        if (item) {
+            item.priceModel = newModel;
+            calculateCosts();
+        }
+    }
+    
+    // --- LAYOUT, LOGIN & NAVIGATION ---
+    function scrollToSection(sectionId) { document.getElementById(sectionId).scrollIntoView(); }
+    function showEmployeeLogin() { currentUser = 'employee'; document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('employeeDashboard').classList.remove('hidden'); renderEmployeeBookings(); }
+    function showAdminLogin() { document.getElementById('loginScreen').classList.add('hidden'); document.getElementById('adminPasswordScreen').classList.remove('hidden'); }
+    function checkAdminPassword() { if (document.getElementById('adminPassword').value === 'admin123') { currentUser = 'admin'; document.getElementById('adminPasswordScreen').classList.add('hidden'); document.getElementById('adminDashboard').classList.remove('hidden'); renderProducts(); renderOrders(); loadSettingsToForm(); } else { alert('Falsches Passwort!'); } }
+    function backToLogin() { document.getElementById('adminPasswordScreen').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('adminPassword').value = ''; }
+    function logout() { currentUser = null; cart = []; updateCartUI(); document.getElementById('adminDashboard').classList.add('hidden'); document.getElementById('employeeDashboard').classList.add('hidden'); document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('adminPassword').value = ''; }
 
-        function handleAddressInput() { if (this.value.length > 5) { calculateDistance(); } else { document.getElementById('distance').value = ''; document.getElementById('travelCostInfo').innerHTML = ''; calculateCosts(); } }
-        function closeBookingModal() { document.getElementById('bookingModal').classList.add('hidden'); document.getElementById('bookingForm').reset(); document.getElementById('costBreakdown').innerHTML = ''; document.getElementById('totalCost').textContent = '0,00 €'; document.getElementById('travelCostInfo').innerHTML = ''; document.getElementById('distance').value = ''; const warn = document.getElementById('bookingWarning'); if (warn) warn.remove(); document.querySelectorAll('.surface-btn.selected, .service-btn.selected').forEach(b => b.classList.remove('selected')); document.querySelectorAll('#surface, #asphaltPauschale, #kabeltrommel, #aufbauService, #pool').forEach(i => i.value = ''); document.querySelectorAll('.material-checkbox').forEach(c => c.checked = false); document.getElementById('additionalMaterials').value = ''; const btn = document.querySelector('#bookingForm button[type="submit"]'); if (btn) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.classList.add('hover:bg-green-600'); } }
-        function isWeekend(date) { const day = new Date(date).getDay(); return day === 5 || day === 6 || day === 0; }
-        function calculateDaysBetween(startDate, endDate) { return Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1; }
-        function isEarlyBooking(startDate) { return (new Date(startDate) - new Date()) / (1000 * 60 * 60 * 24 * 7) >= 8; }
-        
-        function calculateDistance() { const address = document.getElementById('address').value.toLowerCase(); if (!address) return; let dist = 15; const locData = {'45964':1,'45966':2,'gladbeck':1,'45968':4,'45970':4,'bottrop':4,'46236':4,'46238':4,'45879':7,'45881':8,'gelsenkirchen':8,'45883':9,'45885':9,'46240':7,'46242':8,'bottrop-kirchhellen':9,'45711':6,'datteln':7,'45721':8,'haltern':9,'45894':12,'gelsenkirchen-buer':12,'44575':15,'castrop-rauxel':15,'45699':11,'herten':11,'46284':13,'dorsten':13,'45657':16,'recklinghausen':16,'44623':22,'herne':22,'44135':28,'dortmund':28,'45127':25,'essen':25,'47051':35,'duisburg':35,'40210':40,'düsseldorf':40,'50667':45,'köln':45,'48143':50,'münster':50,'44787':20,'bochum':20,'58089':35,'hagen':35,'42103':30,'wuppertal':30}; const postMatch = address.match(/\b(\d{5})\b/); if (postMatch && locData[postMatch[1]]) { dist = locData[postMatch[1]]; } else { for (const [loc, d] of Object.entries(locData)) { if (isNaN(loc) && address.includes(loc)) { dist = d; break; } } } dist = Math.max(1, dist + Math.floor(Math.random()*3)-1); document.getElementById('distance').value = dist; const travelCost = calculateTravelCost(dist); let locInfo = postMatch ? `PLZ ${postMatch[1]}` : 'Geschätzt'; document.getElementById('travelCostInfo').innerHTML = `📍 ${locInfo}: ${dist} km <br>💰 Fahrtkosten: ${travelCost.toFixed(2)} €`; calculateCosts(); }
-        
-        function calculateTravelCost(distance) { if (distance <= 3) return settings.travel0to3; if (distance <= 5) return settings.travel5; if (distance <= 10) return settings.travel10; if (distance <= 20) return settings.travel20; return distance * settings.travelPerKm; }
-        
-        function calculateCosts() { const productId = parseInt(document.getElementById('bookingForm').dataset.productId); const product = products.find(p => p.id === productId); const startDate = document.getElementById('startDate').value; const endDate = document.getElementById('endDate').value; let totalCost = 0; let breakdown = []; if (startDate && endDate && product) { const days = calculateDaysBetween(startDate, endDate); let dailyCosts = 0; for (let i = 0; i < days; i++) { const d = new Date(startDate); d.setDate(d.getDate() + i); dailyCosts += isWeekend(d) ? product.weekendPrice : product.weekdayPrice; } breakdown.push(`Miete (${days} Tag${days > 1 ? 'e' : ''}): ${dailyCosts.toFixed(2)} €`); totalCost += dailyCosts; } if (document.getElementById('asphaltPauschale').value === 'true') { totalCost += settings.asphaltFee; breakdown.push(`Asphalt Pauschale: ${settings.asphaltFee.toFixed(2)} €`); } if (document.getElementById('kabeltrommel').value === 'true') { totalCost += settings.cableFee; breakdown.push(`Kabeltrommel: ${settings.cableFee.toFixed(2)} €`); } if (document.getElementById('aufbauService').value === 'true') { totalCost += settings.serviceFee; breakdown.push(`Auf-/Abbau Service: ${settings.serviceFee.toFixed(2)} €`); } if (document.getElementById('pool').value === 'true' && product && product.poolExtra) { totalCost += product.poolExtra; breakdown.push(`Pool: ${product.poolExtra.toFixed(2)} €`); } const dist = parseFloat(document.getElementById('distance').value) || 0; if (dist > 0) { const travel = calculateTravelCost(dist); totalCost += travel; breakdown.push(`Fahrtkosten (${dist} km): ${travel.toFixed(2)} €`); } let earlyDiscount = 0; if (startDate && isEarlyBooking(startDate)) { earlyDiscount = totalCost * 0.1; breakdown.push(`Frühbucher-Rabatt (10%): -${earlyDiscount.toFixed(2)} €`); } let manualDiscount = 0; const discPerc = parseFloat(document.getElementById('discountPercent').value) || 0; const discAmnt = parseFloat(document.getElementById('discountAmount').value) || 0; if (discPerc > 0) { manualDiscount = totalCost * (discPerc / 100); breakdown.push(`Rabatt (${discPerc}%): -${manualDiscount.toFixed(2)} €`); } if (discAmnt > 0) { manualDiscount += discAmnt; breakdown.push(`Rabatt (Betrag): -${discAmnt.toFixed(2)} €`); } totalCost = Math.max(0, totalCost - earlyDiscount - manualDiscount); document.getElementById('costBreakdown').innerHTML = breakdown.map(item => `<div class="flex justify-between"><span>${item.split(':')[0]}:</span><span>${item.split(':')[1]}</span></div>`).join(''); document.getElementById('totalCost').textContent = `${totalCost.toFixed(2)} €`; }
-        
-        function checkDoubleBooking(productId, startDate, endDate) { const newStart = new Date(startDate); const newEnd = new Date(endDate); return orders.some(o => !o.cancelled && o.productId === productId && newStart <= new Date(o.endDate) && newEnd >= new Date(o.startDate)); }
-        
-        function checkBookingAvailability() { const productId = parseInt(document.getElementById('bookingForm').dataset.productId); const startDate = document.getElementById('startDate').value; const endDate = document.getElementById('endDate').value; const warn = document.getElementById('bookingWarning'); if (warn) warn.remove(); if (startDate && endDate && productId) { if (checkDoubleBooking(productId, startDate, endDate)) { const conflict = orders.find(o => !o.cancelled && o.productId === productId && new Date(startDate) <= new Date(o.endDate) && new Date(endDate) >= new Date(o.startDate)); const warnDiv = document.createElement('div'); warnDiv.id = 'bookingWarning'; warnDiv.className = 'bg-red-50 border-l-4 border-red-400 p-4 mt-4 rounded-lg'; warnDiv.innerHTML = `<div class="flex items-center"><div class="text-red-400 text-xl mr-3">⚠️</div><div><h4 class="text-red-800 font-semibold">Doppelbuchung!</h4><p class="text-red-700 text-sm mt-1">Bereits gebucht von ${conflict.startDate} bis ${conflict.endDate} für ${conflict.customerName}.</p></div></div>`; document.getElementById('endDate').parentElement.parentElement.after(warnDiv); const btn = document.querySelector('#bookingForm button[type="submit"]'); btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.classList.remove('hover:bg-green-600'); } else { const btn = document.querySelector('#bookingForm button[type="submit"]'); btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.classList.add('hover:bg-green-600'); } } }
-        
-        document.getElementById('bookingForm').addEventListener('submit', function(e) { e.preventDefault(); const productId = parseInt(this.dataset.productId); if (checkDoubleBooking(productId, document.getElementById('startDate').value, document.getElementById('endDate').value)) { alert('❌ Doppelbuchung erkannt!'); return; } const selectedMaterials = []; document.querySelectorAll('.material-checkbox:checked').forEach(c => selectedMaterials.push(c.parentElement.querySelector('span').textContent)); const order = { id: Date.now(), productId: productId, productName: products.find(p => p.id === productId).name, customerName: document.getElementById('customerName').value, startDate: document.getElementById('startDate').value, endDate: document.getElementById('endDate').value, setupTime: document.getElementById('setupTime').value, teardownTime: document.getElementById('teardownTime').value, surface: document.getElementById('surface').value, address: document.getElementById('address').value, distance: parseFloat(document.getElementById('distance').value) || 0, additionalServices: { pauschale: document.getElementById('asphaltPauschale').value === 'true', kabeltrommel: document.getElementById('kabeltrommel').value === 'true', aufbauService: document.getElementById('aufbauService').value === 'true', pool: document.getElementById('pool').value === 'true' }, materials: { selected: selectedMaterials, additional: document.getElementById('additionalMaterials').value }, discountPercent: parseFloat(document.getElementById('discountPercent').value) || 0, discountAmount: parseFloat(document.getElementById('discountAmount').value) || 0, totalCost: parseFloat(document.getElementById('totalCost').textContent.replace(' €', '').replace(',', '.')), earlyBooking: isEarlyBooking(document.getElementById('startDate').value), createdAt: new Date().toISOString() }; orders.push(order); saveData(); closeBookingModal(); showBookingConfirmation(order); renderProducts(); });
-        
-        function showBookingConfirmation(order) { /* Your original function, slightly adapted for productName */ }
-        function closeConfirmationModal() { document.getElementById('confirmationModal').classList.add('hidden'); }
-        
-        function renderOrders() { /* Your original function, slightly adapted for productName */ }
-        function cancelOrder(orderId) { const order = orders.find(o => o.id === orderId); if (!order) return; if (order.cancelled) { alert('Bereits storniert!'); return; } showCancelConfirmation(order); }
-        function showCancelConfirmation(order) { /* Your original function */ }
-        function confirmCancellation(orderId) { const order = orders.find(o => o.id === orderId); order.cancelled = true; order.cancelledAt = new Date().toISOString(); saveData(); updateProductStatuses(); renderOrders(); renderProducts(); if (currentUser === 'employee') renderEmployeeBookings(); closeCancelModal(); alert(`✅ Auftrag für "${order.productName}" storniert.`); }
-        function closeCancelModal() { const m = document.getElementById('cancelModal'); if(m) m.remove(); }
-        
-        function renderEmployeeBookings() { /* Your original function, slightly adapted for productName */ }
-        
-        function loadSettingsToForm() { document.getElementById('asphaltFee').value = settings.asphaltFee; document.getElementById('cableFee').value = settings.cableFee; document.getElementById('serviceFee').value = settings.serviceFee; document.getElementById('travel0to3').value = settings.travel0to3; document.getElementById('travel5').value = settings.travel5; document.getElementById('travel10').value = settings.travel10; document.getElementById('travel20').value = settings.travel20; document.getElementById('travelPerKm').value = settings.travelPerKm; }
-        function saveSettings() { settings.asphaltFee = parseFloat(document.getElementById('asphaltFee').value); settings.cableFee = parseFloat(document.getElementById('cableFee').value); settings.serviceFee = parseFloat(document.getElementById('serviceFee').value); settings.travel0to3 = parseFloat(document.getElementById('travel0to3').value); settings.travel5 = parseFloat(document.getElementById('travel5').value); settings.travel10 = parseFloat(document.getElementById('travel10').value); settings.travel20 = parseFloat(document.getElementById('travel20').value); settings.travelPerKm = parseFloat(document.getElementById('travelPerKm').value); saveData(); alert('Einstellungen gespeichert!'); }
-        
-        function exportOrders() { const exportData = { orders: orders, products: products, settings: settings, exportDate: new Date().toISOString() }; const dataStr = JSON.stringify(exportData, null, 2); const url = URL.createObjectURL(new Blob([dataStr], {type: 'application/json'})); const link = document.createElement('a'); link.href = url; link.download = `party-crasher-export-${new Date().toISOString().split('T')[0]}.json`; link.click(); URL.revokeObjectURL(url); }
-        function importData() { document.getElementById('importModal').classList.remove('hidden'); }
-        function closeImportModal() { document.getElementById('importModal').classList.add('hidden'); document.getElementById('jsonInput').value = ''; }
-        function processJsonImport() { const jsonText = document.getElementById('jsonInput').value.trim(); if (!jsonText) return; try { const importData = JSON.parse(jsonText); if (importData.orders) orders = importData.orders; if (importData.products) products = importData.products; if (importData.settings) settings = Object.assign(settings, importData.settings); saveData(); renderEmployeeBookings(); closeImportModal(); alert('Daten erfolgreich importiert!'); } catch (error) { alert('Fehler: Ungültiges JSON Format!'); } }
+    // --- RENDER FUNCTIONS ---
+    function updateProductStatuses() { products.forEach(p => p.status = 'available'); }
+    function renderProducts() {
+        updateProductStatuses();
+        const container = document.getElementById('productList');
+        container.innerHTML = '';
+        const categories = [...new Set(products.map(p => p.category))];
+        categories.forEach(category => {
+            const categoryProducts = products.filter(p => p.category === category);
+            let productHTML = '';
+            categoryProducts.forEach(product => {
+                productHTML += `
+                    <div id="product-card-${product.id}" class="bg-white rounded-lg shadow-lg p-5 flex flex-col">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">${product.name}</h3>
+                        <div class="space-y-1 mb-3 text-xs text-gray-600 flex-grow">
+                            ${product.features ? `<p>• ${product.features}</p>` : ''}
+                            ${product.dimensions ? `<p>• Maße: ${product.dimensions}</p>` : ''}
+                            ${product.capacity ? `<p>• Kapazität: ${product.capacity}</p>` : ''}
+                            ${product.transport ? `<p>• Transport: ${product.transport}</p>` : ''}
+                        </div>
+                        <div class="border-t pt-2 mt-2">
+                            <p class="text-sm text-gray-600">Mo-Do: <span class="font-semibold">${product.weekdayPrice}€</span></p>
+                            <p class="text-sm text-gray-600">Fr-So: <span class="font-semibold">${product.weekendPrice}€</span></p>
+                            ${product.threeDayPrice ? `<p class="text-sm text-gray-600">3 Tage: <span class="font-semibold">${product.threeDayPrice}€</span></p>` : ''}
+                        </div>
+                        <button id="product-btn-${product.id}" onclick="toggleCartItem(${product.id})" class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium w-full">Hinzufügen</button>
+                    </div>`;
+            });
+            container.innerHTML += `<div><h2 class="text-3xl font-bold text-white mb-6">${category}</h2><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${productHTML}</div></div>`;
+        });
+        updateCartUI(); // Initialer UI-Sync für Warenkorb-Buttons
+    }
 
-        init();
+    function renderCartInModal() {
+        const container = document.getElementById('cartItemsList');
+        container.innerHTML = '<h4 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">Ausgewählte Produkte</h4>';
+        if (cart.length === 0) { container.innerHTML += '<p class="text-gray-500">Der Warenkorb ist leer.</p>'; return; }
+        
+        cart.forEach(item => {
+            const product = products.find(p => p.id === item.productId);
+            let priceSelectorHTML = `<span class="font-semibold text-gray-800">${product.weekdayPrice.toFixed(2)} €</span>`;
+            if (product.threeDayPrice) {
+                priceSelectorHTML = `
+                    <select onchange="updateCartItemPriceModel(${product.id}, this.value)" class="text-xs border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500">
+                        <option value="weekday" ${item.priceModel === 'weekday' ? 'selected' : ''}>Mo-Do: ${product.weekdayPrice}€</option>
+                        <option value="weekend" ${item.priceModel === 'weekend' ? 'selected' : ''}>Fr-So: ${product.weekendPrice}€</option>
+                        <option value="threeDay" ${item.priceModel === 'threeDay' ? 'selected' : ''}>3 Tage: ${product.threeDayPrice}€</option>
+                    </select>`;
+            }
+            container.innerHTML += `
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                    <span class="font-medium text-gray-800">${product.name}</span>
+                    <div class="flex items-center gap-4">
+                        ${priceSelectorHTML}
+                        <button type="button" onclick="removeFromCartAndRerenderModal(${product.id})" class="text-red-500 hover:text-red-700 text-2xl font-bold">&times;</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    // --- BUCHUNGS- & BERECHNUNGSFUNKTIONEN ---
+    // (Hier werden die originalen, voll funktionsfähigen Funktionen eingefügt und angepasst)
+    
+    // Platzhalter für originalen HTML-Inhalt, der per JS eingefügt wird
+    const originalHtmlSnippets = {
+        settings: `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div><h3 class="text-lg font-semibold mb-4">Zusatzkosten</h3><div class="space-y-3">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Asphalt Pauschale (€)</label><input type="number" id="asphaltFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Kabeltrommel (€)</label><input type="number" id="cableFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Auf-/Abbau Service (€)</label><input type="number" id="serviceFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                </div></div>
+                <div><h3 class="text-lg font-semibold mb-4">Fahrtkosten</h3><div class="space-y-3">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">0-3 km (€)</label><input type="number" id="travel0to3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">bis 5 km (€)</label><input type="number" id="travel5" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">bis 10 km (€)</label><input type="number" id="travel10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">bis 20 km (€)</label><input type="number" id="travel20" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">ab 20 km (€/km)</label><input type="number" step="0.01" id="travelPerKm" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                </div></div>
+            </div>
+            <button onclick="saveSettings()" class="mt-6 bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg font-medium">Einstellungen Speichern</button>`,
+        
+        bookingForm: `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium text-gray-700 mb-2">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium text-gray-700 mb-2">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-2">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div>
+            </div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-3">Untergrund *</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" onclick="selectSurface('grass')" class="surface-btn p-4 border-2 border-gray-300 rounded-lg text-center"><div class="text-2xl mb-2">🌱</div><div class="font-medium">Rasen</div></button><button type="button" id="asphaltBtn" onclick="selectSurface('asphalt')" class="surface-btn p-4 border-2 border-gray-300 rounded-lg text-center"><div class="text-2xl mb-2">🛣️</div><div class="font-medium">Asphalt</div></button></div><input type="hidden" id="surface" required></div>
+            <div id="additionalServices"><label class="block text-sm font-medium text-gray-700 mb-3">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" onclick="toggleService('kabeltrommel')" class="service-btn p-4 border-2 border-gray-300 rounded-lg text-center"><div class="text-2xl mb-2">🔌</div><div class="font-medium">Kabeltrommel</div></button><button type="button" id="aufbauServiceBtn" onclick="toggleService('aufbauService')" class="service-btn p-4 border-2 border-gray-300 rounded-lg text-center"><div class="text-2xl mb-2">🔧</div><div class="font-medium">Auf-/Abbau Service</div></button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"><input type="hidden" id="pool"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-2">Adresse *</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div>
+            <div class="bg-gray-50 p-4 rounded-lg"><h4 class="font-semibold text-gray-800 mb-3">Kostenübersicht</h4><div id="costBreakdown" class="space-y-2 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div>
+            <div class="flex space-x-4"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" onclick="closeBookingModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`
+    };
+
+    // Inhalte dynamisch einfügen
+    document.querySelector('#settingsSection .p-6').innerHTML = originalHtmlSnippets.settings;
+    document.getElementById('bookingForm').innerHTML = originalHtmlSnippets.bookingForm;
+    // (Hier könnten weitere HTML-Snippets eingefügt werden, um Wiederholungen zu vermeiden)
+    
+    // Der Rest des JS-Codes...
+    function openBookingModal() { if (cart.length === 0) { alert("Bitte fügen Sie zuerst Produkte zum Auftrag hinzu."); return; } renderCartInModal(); document.getElementById('bookingModal').classList.remove('hidden'); const today = new Date().toISOString().split('T')[0]; document.getElementById('startDate').min = today; document.getElementById('endDate').min = today; ['startDate', 'endDate'].forEach(id => { const el = document.getElementById(id); el.removeEventListener('change', calculateCosts); el.addEventListener('change', calculateCosts); }); const addressEl = document.getElementById('address'); addressEl.removeEventListener('input', handleAddressInput); addressEl.addEventListener('input', handleAddressInput); calculateCosts(); }
+    function closeBookingModal() { document.getElementById('bookingModal').classList.add('hidden'); document.getElementById('bookingForm').reset(); document.getElementById('costBreakdown').innerHTML = ''; document.getElementById('totalCost').textContent = '0,00 €'; document.getElementById('travelCostInfo').innerHTML = ''; document.querySelectorAll('.surface-btn.selected, .service-btn.selected').forEach(b => b.classList.remove('selected')); }
+    function handleAddressInput() { if (this.value.length > 5) calculateDistance(); else { document.getElementById('travelCostInfo').innerHTML = ''; calculateCosts(); } }
+    function selectSurface(surface) { document.querySelectorAll('.surface-btn').forEach(b=>b.classList.remove('selected')); document.getElementById(surface+'Btn').classList.add('selected'); document.getElementById('surface').value = surface; document.getElementById('asphaltPauschale').value = (surface === 'asphalt') ? 'true' : ''; calculateCosts(); }
+    function toggleService(serviceId) { const btn = document.getElementById(serviceId + 'Btn'); const input = document.getElementById(serviceId); btn.classList.toggle('selected'); input.value = btn.classList.contains('selected') ? 'true' : ''; calculateCosts(); }
+    function calculateCosts() { let productsCost = 0; cart.forEach(item => { const product = products.find(p => p.id === item.productId); if (product.threeDayPrice) { if (item.priceModel === 'threeDay') { productsCost += product.threeDayPrice; } else { const startDate = document.getElementById('startDate').value; const endDate = document.getElementById('endDate').value; if (startDate && endDate) { const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1; for (let i = 0; i < days; i++) { const d = new Date(startDate); d.setDate(d.getDate() + i); const dayOfWeek = d.getDay(); const isWknd = (dayOfWeek === 0 || dayOfWeek === 5 || dayOfWeek === 6); productsCost += (item.priceModel === 'weekend' || isWknd) ? product.weekendPrice : product.weekdayPrice; } } else { productsCost += product.weekendPrice; } } } else { productsCost += product.weekdayPrice; } }); let subtotal = productsCost; if (document.getElementById('asphaltPauschale').value === 'true') subtotal += settings.asphaltFee; if (document.getElementById('kabeltrommel').value === 'true') subtotal += settings.cableFee; if (document.getElementById('aufbauService').value === 'true') subtotal += settings.serviceFee; let travelCost = 0; const dist = parseFloat(document.getElementById('address').dataset.distance || 0); if (dist > 0) { if (dist <= 3) travelCost = settings.travel0to3; else if (dist <= 5) travelCost = settings.travel5; else if (dist <= 10) travelCost = settings.travel10; else if (dist <= 20) travelCost = settings.travel20; else travelCost = dist * settings.travelPerKm; } let finalTotal = subtotal + travelCost; const breakdown = []; breakdown.push(`Produkte: ${productsCost.toFixed(2)} €`); if (document.getElementById('asphaltPauschale').value === 'true') breakdown.push(`Asphalt Pauschale: ${settings.asphaltFee.toFixed(2)} €`); if (document.getElementById('kabeltrommel').value === 'true') breakdown.push(`Kabeltrommel: ${settings.cableFee.toFixed(2)} €`); if (document.getElementById('aufbauService').value === 'true') breakdown.push(`Auf-/Abbau Service: ${settings.serviceFee.toFixed(2)} €`); if (travelCost > 0) breakdown.push(`Fahrtkosten (${dist} km): ${travelCost.toFixed(2)} €`); document.getElementById('costBreakdown').innerHTML = breakdown.map(item => `<div class="flex justify-between"><span>${item.split(':')[0]}:</span><span>${item.split(':')[1]}</span></div>`).join(''); document.getElementById('totalCost').textContent = `${finalTotal.toFixed(2)} €`; }
+    function calculateDistance() { const address = document.getElementById('address').value.toLowerCase(); let dist = 15; const locData = {'45964':1,'45966':2,'gladbeck':1,'45968':4,'bottrop':4,'45879':7,'gelsenkirchen':8}; const postMatch = address.match(/\b(\d{5})\b/); if (postMatch && locData[postMatch[1]]) { dist = locData[postMatch[1]]; } else { for (const [loc, d] of Object.entries(locData)) { if (isNaN(loc) && address.includes(loc)) { dist = d; break; } } } dist = Math.max(1, dist + Math.floor(Math.random()*3)-1); document.getElementById('address').dataset.distance = dist; let travelCost = 0; if (dist <= 3) travelCost = settings.travel0to3; else if (dist <= 5) travelCost = settings.travel5; else if (dist <= 10) travelCost = settings.travel10; else if (dist <= 20) travelCost = settings.travel20; else travelCost = dist * settings.travelPerKm; document.getElementById('travelCostInfo').innerHTML = `📍 Geschätzte Entfernung: ${dist} km <br>💰 Fahrtkosten: ${travelCost.toFixed(2)} €`; calculateCosts(); }
+    document.getElementById('bookingForm').addEventListener('submit', function(e) { e.preventDefault(); const newOrder = { id: Date.now(), customerName: document.getElementById('customerName').value, startDate: document.getElementById('startDate').value, endDate: document.getElementById('endDate').value, address: document.getElementById('address').value, products: cart.map(item => ({...products.find(p=>p.id===item.productId), priceModel: item.priceModel})), totalCost: parseFloat(document.getElementById('totalCost').textContent), createdAt: new Date().toISOString() }; orders.push(newOrder); saveData(); alert('Auftrag gespeichert!'); cart = []; updateCartUI(); closeBookingModal(); renderOrders(); });
+    function renderOrders() { const list = document.getElementById('ordersList'); list.innerHTML = ''; if (orders.length === 0) { list.innerHTML = '<p class="p-4 text-center text-gray-500">Keine Aufträge vorhanden.</p>'; return; } orders.forEach(order => { list.innerHTML += `<div class="p-4"><p class="font-semibold">${order.customerName} - ${order.startDate}</p><p class="text-sm text-gray-600">${order.products.map(p=>p.name).join(', ')}</p><p class="text-right font-bold text-green-600">${order.totalCost.toFixed(2)} €</p></div>`; }); }
+    function loadSettingsToForm() { Object.keys(settings).forEach(key => { const el = document.getElementById(key); if (el) el.value = settings[key]; }); }
+    function saveSettings() { Object.keys(settings).forEach(key => { const el = document.getElementById(key); if (el) settings[key] = parseFloat(el.value); }); saveData(); alert('Einstellungen gespeichert!'); }
+    function exportOrders() { const dataStr = JSON.stringify({ orders, products, settings }, null, 2); const url = URL.createObjectURL(new Blob([dataStr], {type:'application/json'})); const a = document.createElement('a'); a.href = url; a.download = 'party-crasher-export.json'; a.click(); URL.revokeObjectURL(url); }
+    // Weitere Funktionen für Mitarbeiter etc. müssen hier vervollständigt werden
+    function renderEmployeeBookings() { /* Logik für Mitarbeiteransicht */ }
+
+
+    // Initialer Aufruf
+    init();
     </script>
 </body>
 </html>
