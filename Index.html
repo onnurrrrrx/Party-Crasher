@@ -98,6 +98,20 @@
             </div>
         </div>
     </div>
+    <div id="summaryModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Auftrag gespeichert</h3>
+                    <button class="close-modal-btn text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                </div>
+                <div id="summaryContent" class="space-y-4"></div>
+                 <div class="flex justify-end mt-6">
+                    <button class="close-modal-btn bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-6 rounded-lg">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -158,7 +172,7 @@
             document.addEventListener('click', (event) => {
                 const closeButton = event.target.closest('.close-modal-btn');
                 if (closeButton) {
-                    const modal = closeButton.closest('#bookingModal, #importModal, #settingsModal');
+                    const modal = closeButton.closest('#bookingModal, #importModal, #settingsModal, #summaryModal');
                     if (modal) {
                         modal.classList.add('hidden');
                         if (modal.id === 'importModal') {
@@ -173,7 +187,7 @@
             buildSettingsForm();
         }
         function buildAdminNav(){document.getElementById('main-nav').innerHTML=`<button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('overviewSection')">Produkte</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('ordersSection')">Aufträge</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('settingsSection')">Einstellungen</button>`;}
-        function buildBookingForm(){document.getElementById('bookingForm').innerHTML=`<div><label class="block text-sm font-medium text-gray-700">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div><div><label class="block text-sm font-medium text-gray-700">Untergrund</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🌱 Rasen</button><button type="button" id="asphaltBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🛣️ Asphalt</button></div><input type="hidden" id="surface"></div><div><label class="block text-sm font-medium text-gray-700">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔌 Kabeltrommel</button><button type="button" id="aufbauServiceBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔧 Auf-/Abbau Service</button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"></div><div><label class="block text-sm font-medium text-gray-700">Adresse</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div><div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2">Manuelle Rabatte</h4><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Rabatt (%)</label><input type="number" id="manualDiscountPercent" placeholder="z.B. 10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Rabatt (€)</label><input type="number" id="manualDiscountAmount" placeholder="z.B. 25" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div class="bg-gray-50 p-4 rounded-lg mt-4"><h4 class="font-semibold text-gray-800 mb-3">Kostenübersicht</h4><div id="costBreakdown" class="space-y-2 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`;document.getElementById('bookingForm').addEventListener('submit',handleBookingSubmit);document.getElementById('grassBtn').addEventListener('click',()=>selectSurface('grass'));document.getElementById('asphaltBtn').addEventListener('click',()=>selectSurface('asphalt'));document.getElementById('kabeltrommelBtn').addEventListener('click',()=>toggleService('kabeltrommel'));document.getElementById('aufbauServiceBtn').addEventListener('click',()=>toggleService('aufbauService'));}
+        function buildBookingForm(){document.getElementById('bookingForm').innerHTML=`<div><label class="block text-sm font-medium text-gray-700">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div><div><label class="block text-sm font-medium text-gray-700">Untergrund</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🌱 Rasen</button><button type="button" id="asphaltBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🛣️ Asphalt</button></div><input type="hidden" id="surface"></div><div><label class="block text-sm font-medium text-gray-700">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔌 Kabeltrommel</button><button type="button" id="aufbauServiceBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔧 Auf-/Abbau Service</button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"></div><div><label class="block text-sm font-medium text-gray-700">Adresse</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div><div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2">Manuelle Rabatte</h4><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Rabatt (%)</label><input type="number" id="manualDiscountPercent" placeholder="z.B. 10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Rabatt (€)</label><input type="number" id="manualDiscountAmount" placeholder="z.B. 25" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div class="bg-gray-50 p-4 rounded-lg mt-4"><h4 class="font-semibold text-gray-800 mb-3">Detaillierte Kostenübersicht</h4><div id="costBreakdown" class="space-y-1 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`;document.getElementById('bookingForm').addEventListener('submit',handleBookingSubmit);document.getElementById('grassBtn').addEventListener('click',()=>selectSurface('grass'));document.getElementById('asphaltBtn').addEventListener('click',()=>selectSurface('asphalt'));document.getElementById('kabeltrommelBtn').addEventListener('click',()=>toggleService('kabeltrommel'));document.getElementById('aufbauServiceBtn').addEventListener('click',()=>toggleService('aufbauService'));}
         function buildSettingsForm(){document.getElementById('settingsContainer').innerHTML=`<div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="text-lg font-semibold mb-4">Zusatzkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Asphalt Pauschale (€)</label><input type="number" id="asphaltFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Kabeltrommel (€)</label><input type="number" id="cableFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Auf-/Abbau Service (€)</label><input type="number" id="serviceFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div><h3 class="text-lg font-semibold mb-4">Fahrtkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">0-3 km (€)</label><input type="number" id="travel0to3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 5 km (€)</label><input type="number" id="travel5" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 10 km (€)</label><input type="number" id="travel10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 20 km (€)</label><input type="number" id="travel20" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">ab 20 km (€/km)</label><input type="number" step="0.01" id="travelPerKm" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div></div><div class="flex space-x-4 mt-6"><button id="saveSettingsBtn" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium">Einstellungen Speichern</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Schließen</button></div>`;document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);}
         function loadData(){const d1=localStorage.getItem('partyCrasherOrders'),d2=localStorage.getItem('partyCrasherSettings'),d3=localStorage.getItem('partyCrasherProducts');if(d1)orders=JSON.parse(d1);if(d2)settings=Object.assign(settings,JSON.parse(d2));if(d3)products=JSON.parse(d3);}
         function saveData(){localStorage.setItem('partyCrasherOrders',JSON.stringify(orders));localStorage.setItem('partyCrasherSettings',JSON.stringify(settings));localStorage.setItem('partyCrasherProducts',JSON.stringify(products));}
@@ -186,7 +200,7 @@
             const cartItem = cart.find(item => item.productId === productId);
             if (!cartItem) return;
             let existingAddon = cartItem.addons.find(a => a.name === addonName);
-            if ((type === 'quantity' && (value === '' || value <= 0)) || (type === 'checkbox' && value === false)) {
+            if ((type === 'quantity' && (value === '' || value <= 0)) || (type === 'checkbox' && value === false) || (type === 'text' && value === '')) {
                 cartItem.addons = cartItem.addons.filter(a => a.name !== addonName);
             } else {
                 if (existingAddon) {
@@ -231,7 +245,6 @@
                     p.addons.forEach(addon => {
                         const savedAddon = item.addons.find(a => a.name === addon.name);
                         const currentValue = savedAddon ? savedAddon.value : '';
-
                         if (addon.type === 'quantity') {
                             addonsHTML += `<div class="flex justify-between items-center text-sm"><label>${addon.name} ${addon.price > 0 ? `(+${addon.price.toFixed(2)}€)` : ''}</label><input type="number" min="0" value="${currentValue}" placeholder="${addon.placeholder || ''}" oninput="updateAddonInCart(${p.id}, '${addon.name}', this.value, ${addon.price}, 'quantity')" class="w-20 px-2 py-1 border rounded-md"></div>`;
                         } else if (addon.type === 'text') {
@@ -254,7 +267,7 @@
                 cont.innerHTML += `
                     <div class="grid grid-cols-3 items-center gap-2 bg-gray-50 p-3 rounded-lg">
                         <span class="font-medium text-gray-800 col-span-3 sm:col-span-1">${p.name}</span>
-                        <div class="col-span-2 sm:col-span-1">${p.weekdayPrice > 0 || p.weekendPrice > 0 ? priceSelectorHTML : ''}</div>
+                        <div class="col-span-2 sm:col-span-1">${p.weekdayPrice > 0 || p.weekendPrice > 0 || p.threeDayPrice > 0 ? priceSelectorHTML : ''}</div>
                         <div class="flex items-center gap-1 col-span-1 justify-self-end">
                             <input type="number" step="0.01" value="${finalPrice.toFixed(2)}" oninput="updateCartItemOverridePrice(${p.id}, this.value)" placeholder="Preis" class="w-20 text-right px-2 py-1 border border-gray-300 rounded-md text-sm">
                             <button type="button" onclick="removeFromCartAndRerenderModal(${p.id})" class="text-red-500 hover:text-red-700 text-2xl font-bold">×</button>
@@ -268,129 +281,163 @@
         function handleAddressInput(){if(this.value.length>5)calculateDistance();else{document.getElementById('address').dataset.distance=0;document.getElementById('travelCostInfo').innerHTML='';calculateCosts();}}
         function selectSurface(s){document.querySelectorAll('.surface-btn').forEach(b=>b.classList.remove('selected'));document.getElementById(s+'Btn').classList.add('selected');document.getElementById('surface').value=s;document.getElementById('asphaltPauschale').value=(s==='asphalt')?'true':'';calculateCosts();}
         function toggleService(id){const btn=document.getElementById(id+'Btn'),input=document.getElementById(id);btn.classList.toggle('selected');input.value=btn.classList.contains('selected')?'true':'';calculateCosts();}
+        
         function calculateCosts() {
-            let pCost = 0;
-            let addonCost = 0;
+            const costDetails = {
+                items: [],
+                services: [],
+                travel: { cost: 0, distance: 0 },
+                discounts: { earlyBird: 0, manualPercent: 0, manualAmount: 0 }
+            };
+
             const start = document.getElementById('startDate').value;
             const end = document.getElementById('endDate').value;
             const hasDateRange = start && end && new Date(end) >= new Date(start);
+            let subtotal = 0;
 
             cart.forEach(item => {
                 const p = products.find(pr => pr.id === item.productId);
                 let quantity = 1;
                 if(item.addons) {
                     const quantityAddon = item.addons.find(a => a.name.startsWith('Anzahl der'));
-                    if(quantityAddon && quantityAddon.value > 0) {
-                        quantity = parseInt(quantityAddon.value);
-                    }
+                    if(quantityAddon && quantityAddon.value > 0) quantity = parseInt(quantityAddon.value);
                 }
 
+                let itemPrice = 0;
                 if (item.overridePrice !== null && !isNaN(item.overridePrice)) {
-                    pCost += parseFloat(item.overridePrice);
+                    itemPrice = parseFloat(item.overridePrice);
                 } else {
-                    let singleItemPrice = 0;
-                    if (p.threeDayPrice && item.priceModel === 'threeDay') {
-                        singleItemPrice = p.threeDayPrice;
+                     if (p.threeDayPrice && item.priceModel === 'threeDay') {
+                        itemPrice = p.threeDayPrice;
                     } else if (hasDateRange && (p.weekdayPrice > 0 || p.weekendPrice > 0)) {
                         const days = Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1;
                         for (let i = 0; i < days; i++) {
-                            const d = new Date(start);
-                            d.setDate(d.getDate() + i);
-                            const day = d.getDay();
-                            const isWk = (day === 0 || day === 5 || day === 6);
-                            singleItemPrice += isWk ? p.weekendPrice : p.weekdayPrice;
+                            const d = new Date(start); d.setDate(d.getDate() + i); const day = d.getDay(); const isWk = (day === 0 || day === 5 || day === 6);
+                            itemPrice += isWk ? p.weekendPrice : p.weekdayPrice;
                         }
                     } else {
-                        singleItemPrice = (item.priceModel === 'weekend') ? p.weekendPrice : p.weekdayPrice;
+                        itemPrice = (item.priceModel === 'weekend') ? p.weekendPrice : p.weekdayPrice;
                     }
-                    pCost += singleItemPrice * quantity;
                 }
+                const totalItemPrice = itemPrice * quantity;
+                costDetails.items.push({ name: `${p.name}${quantity > 1 ? ` (${quantity}x)` : ''}`, cost: totalItemPrice });
+                subtotal += totalItemPrice;
                 
                 if (item.addons) {
                     item.addons.forEach(addon => {
-                        if (addon.price > 0) {
-                            if (addon.type === 'quantity' && addon.value > 0) {
-                                addonCost += addon.price * addon.value;
-                            } else if (addon.type === 'checkbox' && addon.value === true) {
-                                addonCost += addon.price;
-                            }
+                        if (addon.price > 0 && addon.value > 0) {
+                            const addonCost = addon.price * addon.value;
+                            costDetails.items.push({ name: `&nbsp;&nbsp; L ${addon.name} (${addon.value}x)`, cost: addonCost });
+                            subtotal += addonCost;
                         }
                     });
                 }
             });
 
-            let sub = pCost + addonCost;
-            if (document.getElementById('asphaltPauschale').value === 'true') sub += settings.asphaltFee;
-            if (document.getElementById('kabeltrommel').value === 'true') sub += settings.cableFee;
-            if (document.getElementById('aufbauService').value === 'true') sub += settings.serviceFee;
-
-            let travel = 0;
+            if (document.getElementById('asphaltPauschale').value === 'true') { costDetails.services.push({ name: 'Asphalt Pauschale', cost: settings.asphaltFee }); subtotal += settings.asphaltFee; }
+            if (document.getElementById('kabeltrommel').value === 'true') { costDetails.services.push({ name: 'Kabeltrommel', cost: settings.cableFee }); subtotal += settings.cableFee; }
+            if (document.getElementById('aufbauService').value === 'true') { costDetails.services.push({ name: 'Auf-/Abbau Service', cost: settings.serviceFee }); subtotal += settings.serviceFee; }
+            
             const dist = parseFloat(document.getElementById('address').dataset.distance || 0);
             if (dist > 0) {
-                if (dist <= 3) travel = settings.travel0to3;
-                else if (dist <= 5) travel = settings.travel5;
-                else if (dist <= 10) travel = settings.travel10;
-                else if (dist <= 20) travel = settings.travel20;
-                else travel = dist * settings.travelPerKm;
+                let travelCost = 0;
+                if (dist <= 3) travelCost = settings.travel0to3; else if (dist <= 5) travelCost = settings.travel5; else if (dist <= 10) travelCost = settings.travel10; else if (dist <= 20) travelCost = settings.travel20; else travelCost = dist * settings.travelPerKm;
+                costDetails.travel = { cost: travelCost, distance: dist };
+                subtotal += travelCost;
             }
-
-            const subTotalWithTravel = sub + travel;
             
-            // --- Rabattberechnung ---
             let earlyBirdDiscountPercent = 0;
-            const startDateValue = document.getElementById('startDate').value;
-            if (startDateValue) {
-                const today = new Date();
-                today.setHours(0,0,0,0);
-                const eightWeeksFromNow = new Date();
-                eightWeeksFromNow.setDate(today.getDate() + 56);
-                const bookingStartDate = new Date(startDateValue);
-                if (bookingStartDate >= eightWeeksFromNow) {
-                    earlyBirdDiscountPercent = 10;
-                }
+            if (start) {
+                const today = new Date(); today.setHours(0,0,0,0);
+                const eightWeeksFromNow = new Date(); eightWeeksFromNow.setDate(today.getDate() + 56);
+                if (new Date(start) >= eightWeeksFromNow) earlyBirdDiscountPercent = 10;
             }
-
-            const earlyBirdDiscountValue = subTotalWithTravel * (earlyBirdDiscountPercent / 100);
+            costDetails.discounts.earlyBird = subtotal * (earlyBirdDiscountPercent / 100);
             const manualDiscPerc = parseFloat(document.getElementById('manualDiscountPercent').value) || 0;
-            const manualPercValue = subTotalWithTravel * (manualDiscPerc / 100);
-            const manualDiscAmnt = parseFloat(document.getElementById('manualDiscountAmount').value) || 0;
+            costDetails.discounts.manualPercent = subtotal * (manualDiscPerc / 100);
+            costDetails.discounts.manualAmount = parseFloat(document.getElementById('manualDiscountAmount').value) || 0;
             
-            const totalDisc = earlyBirdDiscountValue + manualPercValue + manualDiscAmnt;
-            let total = subTotalWithTravel - totalDisc;
+            const totalDisc = costDetails.discounts.earlyBird + costDetails.discounts.manualPercent + costDetails.discounts.manualAmount;
+            const total = subtotal - totalDisc;
 
             const breakdown = [];
-            breakdown.push(`Produkte & Catering: ${pCost.toFixed(2)} €`);
-            if (addonCost > 0) breakdown.push(`Zubehör & Extras: ${addonCost.toFixed(2)} €`);
-            const serviceCost = sub - pCost - addonCost;
-            if (serviceCost > 0) breakdown.push(`Services: ${serviceCost.toFixed(2)} €`);
-            if (travel > 0) breakdown.push(`Fahrtkosten (${dist.toFixed(0)} km): ${travel.toFixed(2)} €`);
-            if (earlyBirdDiscountValue > 0) breakdown.push(`<span class="text-green-600">Frühbucherrabatt (10%): -${earlyBirdDiscountValue.toFixed(2)} €</span>`);
-            if (manualPercValue + manualDiscAmnt > 0) breakdown.push(`<span class="text-green-600">Manueller Rabatt: -${(manualPercValue + manualDiscAmnt).toFixed(2)} €</span>`);
+            costDetails.items.forEach(i => breakdown.push(`<div class="flex justify-between"><span>${i.name}</span><span>${i.cost.toFixed(2)} €</span></div>`));
+            costDetails.services.forEach(s => breakdown.push(`<div class="flex justify-between"><span>${s.name}</span><span>${s.cost.toFixed(2)} €</span></div>`));
+            if(costDetails.travel.cost > 0) breakdown.push(`<div class="flex justify-between"><span>Fahrtkosten (${costDetails.travel.distance.toFixed(0)} km)</span><span>${costDetails.travel.cost.toFixed(2)} €</span></div>`);
+            if(costDetails.discounts.earlyBird > 0) breakdown.push(`<div class="flex justify-between text-green-600"><span>Frühbucherrabatt (10%)</span><span>-${costDetails.discounts.earlyBird.toFixed(2)} €</span></div>`);
+            const manualDiscountTotal = costDetails.discounts.manualPercent + costDetails.discounts.manualAmount;
+            if(manualDiscountTotal > 0) breakdown.push(`<div class="flex justify-between text-green-600"><span>Manueller Rabatt</span><span>-${manualDiscountTotal.toFixed(2)} €</span></div>`);
 
-            document.getElementById('costBreakdown').innerHTML = breakdown.map(item => `<div class="flex justify-between">${item}</div>`).join('');
+            document.getElementById('costBreakdown').innerHTML = breakdown.join('');
             document.getElementById('totalCost').textContent = `${total.toFixed(2)} €`;
+
+            return { costDetails, total };
         }
         function calculateDistance(){const addr=document.getElementById('address').value.toLowerCase();let dist=15;const loc={'45964':1,'45966':2,'gladbeck':1,'45968':4,'bottrop':4,'45879':7,'gelsenkirchen':8};const match=addr.match(/\b(\d{5})\b/);if(match&&loc[match[1]]){dist=loc[match[1]];}else{for(const[l,d] of Object.entries(loc)){if(!isNaN(l))continue;if(addr.includes(l)){dist=d;break;}}}dist=Math.max(1,dist+Math.floor(Math.random()*3)-1);document.getElementById('address').dataset.distance=dist;let travel=0;if(dist<=3)travel=settings.travel0to3;else if(dist<=5)travel=settings.travel5;else if(dist<=10)travel=settings.travel10;else if(dist<=20)travel=settings.travel20;else travel=dist*settings.travelPerKm;document.getElementById('travelCostInfo').innerHTML=`📍 Geschätzte Entfernung: ${dist} km <br>💰 Fahrtkosten: ${travel.toFixed(2)} €`;calculateCosts();}
+        
+        function generateOrderSummaryHTML(order) {
+            let html = `<div class="text-sm space-y-2">
+                <p><strong>Kunde:</strong> ${order.customerName}</p>
+                <p><strong>Adresse:</strong> ${order.address}</p>
+                <p><strong>Zeitraum:</strong> ${new Date(order.startDate).toLocaleDateString('de-DE')} - ${new Date(order.endDate).toLocaleDateString('de-DE')}</p>
+            </div>
+            <div class="border-t mt-4 pt-4">
+                <h4 class="font-semibold text-gray-800 mb-2">Rechnungsübersicht</h4>
+                <div class="space-y-1 text-sm">`;
+            
+            order.costDetails.items.forEach(i => html += `<div class="flex justify-between"><span>${i.name.replace(/&nbsp;&nbsp; L/g, '<span class="ml-4">-</span>')}</span><span>${i.cost.toFixed(2)} €</span></div>`);
+            order.costDetails.services.forEach(s => html += `<div class="flex justify-between"><span>${s.name}</span><span>${s.cost.toFixed(2)} €</span></div>`);
+            if(order.costDetails.travel.cost > 0) html += `<div class="flex justify-between"><span>Fahrtkosten (${order.costDetails.travel.distance.toFixed(0)} km)</span><span>${order.costDetails.travel.cost.toFixed(2)} €</span></div>`;
+            
+            html += `<div class="border-t my-2"></div>`;
+            let subtotalForSummary = order.costDetails.items.reduce((acc, i) => acc + i.cost, 0) + order.costDetails.services.reduce((acc, s) => acc + s.cost, 0) + order.costDetails.travel.cost;
+            html += `<div class="flex justify-between font-semibold"><span>Zwischensumme</span><span>${subtotalForSummary.toFixed(2)} €</span></div>`;
+
+            if(order.costDetails.discounts.earlyBird > 0) html += `<div class="flex justify-between text-green-600"><span>Frühbucherrabatt (10%)</span><span>-${order.costDetails.discounts.earlyBird.toFixed(2)} €</span></div>`;
+            const manualDiscountTotal = order.costDetails.discounts.manualPercent + order.costDetails.discounts.manualAmount;
+            if(manualDiscountTotal > 0) html += `<div class="flex justify-between text-green-600"><span>Manueller Rabatt</span><span>-${manualDiscountTotal.toFixed(2)} €</span></div>`;
+            
+            html += `</div>
+                <div class="border-t pt-2 mt-2">
+                    <div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span>${order.total.toFixed(2)} €</span></div>
+                </div>
+            </div>`;
+            return html;
+        }
+
         function handleBookingSubmit(e) {
             e.preventDefault();
+            const { costDetails, total } = calculateCosts();
+
             const finalCart = cart.map(item => {
                 const p = products.find(pr => pr.id === item.productId);
                 let finalPrice = item.overridePrice;
                 if (finalPrice === null || isNaN(finalPrice)) {
-                    if (p.threeDayPrice && item.priceModel === 'threeDay') {
-                        finalPrice = p.threeDayPrice;
-                    } else if (item.priceModel === 'weekend') {
-                        finalPrice = p.weekendPrice;
-                    } else {
-                        finalPrice = p.weekdayPrice;
-                    }
+                    if (p.threeDayPrice && item.priceModel === 'threeDay') finalPrice = p.threeDayPrice;
+                    else if (item.priceModel === 'weekend') finalPrice = p.weekendPrice;
+                    else finalPrice = p.weekdayPrice;
                 }
                 return { ...p, finalPrice: finalPrice, priceModel: item.priceModel, addons: item.addons || [] };
             });
-            const newOrder = { id: Date.now(), customerName: document.getElementById('customerName').value, startDate: document.getElementById('startDate').value, endDate: document.getElementById('endDate').value, address: document.getElementById('address').value, products: finalCart, totalCost: parseFloat(document.getElementById('totalCost').textContent.replace(',', '.')), manualDiscountPercent: parseFloat(document.getElementById('manualDiscountPercent').value) || 0, manualDiscountAmount: parseFloat(document.getElementById('manualDiscountAmount').value) || 0, createdAt: new Date().toISOString() };
+
+            const newOrder = { 
+                id: Date.now(), 
+                customerName: document.getElementById('customerName').value, 
+                startDate: document.getElementById('startDate').value, 
+                endDate: document.getElementById('endDate').value, 
+                address: document.getElementById('address').value, 
+                products: finalCart, 
+                totalCost: total, 
+                costDetails: costDetails,
+                createdAt: new Date().toISOString() 
+            };
+            
             orders.push(newOrder);
             saveData();
-            alert('Auftrag gespeichert!');
+            
+            document.getElementById('summaryContent').innerHTML = generateOrderSummaryHTML(newOrder);
+            document.getElementById('summaryModal').classList.remove('hidden');
+
             cart = [];
             updateCartUI();
             closeBookingModal();
@@ -418,7 +465,6 @@
                         }
                     }
                      productsHTML += p.finalPrice > 0 ? ` (${p.finalPrice.toFixed(2)} €)`: '';
-                    
                     const addonsToShow = p.addons.filter(a => a.value && !a.name.startsWith("Anzahl der"));
                     if (addonsToShow.length > 0) {
                         productsHTML += `<ul class="list-disc list-inside ml-4 text-xs text-gray-600">`;
@@ -433,22 +479,7 @@
                     }
                     productsHTML += `</li>`;
                 });
-
-                cont.innerHTML += `
-                    <div class="bg-white rounded-lg shadow-lg p-6 space-y-3">
-                        <div class="flex justify-between items-start">
-                            <h3 class="text-xl font-bold text-gray-800">${o.customerName}</h3>
-                            <span class="text-lg font-bold text-green-600">${o.totalCost.toFixed(2)} €</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500"><strong>Zeitraum:</strong> ${new Date(o.startDate).toLocaleDateString('de-DE')} - ${new Date(o.endDate).toLocaleDateString('de-DE')}</p>
-                            <p class="text-sm text-gray-500"><strong>Adresse:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.address)}" target="_blank" class="text-blue-600 hover:underline">${o.address}</a></p>
-                        </div>
-                        <div class="border-t pt-3">
-                            <h4 class="font-semibold text-gray-700 mb-2">Gebuchte Produkte & Zubehör</h4>
-                            <ul class="list-disc list-inside text-sm space-y-2">${productsHTML}</ul>
-                        </div>
-                    </div>`;
+                cont.innerHTML += `<div class="bg-white rounded-lg shadow-lg p-6 space-y-3"><div class="flex justify-between items-start"><h3 class="text-xl font-bold text-gray-800">${o.customerName}</h3><span class="text-lg font-bold text-green-600">${o.totalCost.toFixed(2)} €</span></div><div><p class="text-sm text-gray-500"><strong>Zeitraum:</strong> ${new Date(o.startDate).toLocaleDateString('de-DE')} - ${new Date(o.endDate).toLocaleDateString('de-DE')}</p><p class="text-sm text-gray-500"><strong>Adresse:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(o.address)}" target="_blank" class="text-blue-600 hover:underline">${o.address}</a></p></div><div class="border-t pt-3"><h4 class="font-semibold text-gray-700 mb-2">Gebuchte Produkte & Zubehör</h4><ul class="list-disc list-inside text-sm space-y-2">${productsHTML}</ul></div></div>`;
             });
         }
         function openSettingsModal() {
