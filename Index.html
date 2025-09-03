@@ -359,24 +359,32 @@
                 btn.classList.toggle('bg-red-500', inCart); btn.classList.toggle('hover:bg-red-600', inCart);
             });
         }
-        function removeFromCartAndRerenderModal(id){
+        
+        // --- KORREKTUR START: Funktionen global verfügbar machen ---
+        // Diese Funktionen werden durch onclick/onchange/oninput direkt aus dem HTML aufgerufen.
+        // Damit das funktioniert, müssen sie im globalen "window"-Scope bekannt sein.
+        
+        window.removeFromCartAndRerenderModal = function(id){
             cart = cart.filter(item => item.productId !== id);
             if(cart.length === 0){ closeModal($('#bookingModal')); }
             else { renderCartInModal(); calculateCosts(); }
             updateCartUI();
         }
-        function updateCartItemPriceModel(id, model){
+        
+        window.updateCartItemPriceModel = function(id, model){
             const item = cart.find(i => i.productId === id);
             if(item){ item.priceModel = model; item.overridePrice = null; }
             renderCartInModal(); // Neu rendern, um Override-Feld zu leeren
             calculateCosts();
         }
-        function updateCartItemOverridePrice(id, price){
+        
+        window.updateCartItemOverridePrice = function(id, price){
             const item = cart.find(i => i.productId === id);
             if(item){ item.overridePrice = price === '' ? null : parseFloat(price); }
             calculateCosts();
         }
-        function updateAddonInCart(productId, addonName, value, price, type) {
+        
+        window.updateAddonInCart = function(productId, addonName, value, price, type) {
             const cartItem = cart.find(item => item.productId === productId);
             if (!cartItem) return;
             let existingAddon = cartItem.addons.find(a => a.name === addonName);
@@ -388,6 +396,8 @@
             }
             calculateCosts();
         }
+        // --- KORREKTUR ENDE ---
+
 
         // --- PRODUKT- & KATEGORIE-VERWALTUNG ---
         function getCategories() { return [...new Set(products.map(p => p.category))].sort(); }
@@ -520,7 +530,6 @@
         // --- BUCHUNGS- & AUFTRAGS-FUNKTIONEN ---
         function openBookingModal(){ renderCartInModal(); calculateCosts(); $('#bookingModal').classList.remove('hidden'); }
         
-        // NEU & WICHTIG: Stellt den Warenkorb im Buchungsdialog dar
         function renderCartInModal(){
             const list = $('#cartItemsList');
             list.innerHTML = '';
