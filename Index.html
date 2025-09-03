@@ -53,7 +53,14 @@
             </div></div>
         </nav>
         <div class="max-w-7xl mx-auto p-4 md:p-6">
-            <section id="overviewSection" class="mb-12"><h2 class="text-3xl font-bold text-white mb-6">Produkte</h2><div id="categoryTabs" class="flex flex-wrap -mb-px border-b border-white/20"></div><div id="productGridContainer" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div></section>
+            <section id="overviewSection" class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-bold text-white">Produkte</h2>
+                    <button id="addProductBtn" class="bg-white/90 hover:bg-white text-purple-700 font-bold py-2 px-4 rounded-lg shadow-lg text-sm">+ Neues Produkt hinzufügen</button>
+                </div>
+                <div id="categoryTabs" class="flex flex-wrap items-center -mb-px border-b border-white/20"></div>
+                <div id="productGridContainer" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
             <section id="ordersSection" class="mb-12"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold text-white">Auftragsübersicht</h2><button id="exportOrdersBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium text-sm">📤 JSON Export</button></div><div class="bg-white rounded-lg shadow-lg overflow-hidden"><div id="ordersList" class="divide-y divide-gray-200"></div></div></section>
             <section id="settingsSection"><h2 class="text-2xl font-bold text-white mb-6">Einstellungen</h2><button id="openSettingsBtn" class="bg-white/90 hover:bg-white text-purple-700 font-bold py-3 px-6 rounded-lg shadow-lg transition duration-200">⚙️ Einstellungen verwalten</button></section>
         </div>
@@ -112,6 +119,53 @@
             </div>
         </div>
     </div>
+    <div id="productModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <form id="productForm" class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="productModalTitle" class="text-2xl font-bold text-gray-800">Produkt verwalten</h3>
+                    <button type="button" class="close-modal-btn text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                </div>
+                <div class="space-y-4">
+                    <input type="hidden" id="productId">
+                    <div><label class="block text-sm font-medium">Name</label><input type="text" id="productName" required class="w-full mt-1 p-2 border rounded-md"></div>
+                    <div><label class="block text-sm font-medium">Kategorie</label><input type="text" id="productCategory" required class="w-full mt-1 p-2 border rounded-md"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="block text-sm font-medium">Preis Mo-Do (€)</label><input type="number" step="0.01" id="productWeekdayPrice" required class="w-full mt-1 p-2 border rounded-md"></div>
+                        <div><label class="block text-sm font-medium">Preis Fr-So (€)</label><input type="number" step="0.01" id="productWeekendPrice" required class="w-full mt-1 p-2 border rounded-md"></div>
+                        <div><label class="block text-sm font-medium">Preis 3 Tage (€)</label><input type="number" step="0.01" id="productThreeDayPrice" class="w-full mt-1 p-2 border rounded-md" placeholder="Optional"></div>
+                    </div>
+                    <div><label class="block text-sm font-medium">Features</label><textarea id="productFeatures" rows="2" class="w-full mt-1 p-2 border rounded-md"></textarea></div>
+                    <div><label class="block text-sm font-medium">Zubehör (Addons) als JSON</label><textarea id="productAddons" rows="4" class="w-full mt-1 p-2 border rounded-md font-mono text-xs" placeholder='[{"name":"Beispiel","type":"quantity","price":10.00}]'></textarea></div>
+                </div>
+                <div class="flex justify-between mt-6">
+                    <button type="button" id="deleteProductBtn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-5 rounded-lg">Produkt löschen</button>
+                    <div class="flex space-x-4">
+                        <button type="button" class="close-modal-btn bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-2 px-5 rounded-lg">Abbrechen</button>
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-lg">Speichern</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="categoryModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+            <div class="p-6">
+                 <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Kategorien verwalten</h3>
+                    <button class="close-modal-btn text-gray-500 hover:text-gray-700 text-2xl">×</button>
+                </div>
+                <div id="categoryManagerContainer" class="space-y-3"></div>
+                <div class="border-t pt-4 mt-4">
+                    <h4 class="font-semibold text-gray-700 mb-2">Neue Kategorie hinzufügen</h4>
+                    <div class="flex space-x-2">
+                        <input type="text" id="newCategoryName" placeholder="Name des neuen Reiters" class="flex-grow p-2 border rounded-md">
+                        <button id="addCategoryBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg">Hinzufügen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -124,31 +178,17 @@
             { id: 1, category: "Hüpfburgen", name: "Summer Party", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, features: "mit Rutsche" },
             { id: 2, category: "Hüpfburgen", name: "Hawaii Box", weekdayPrice: 99, weekendPrice: 129, threeDayPrice: 245, features: "mit Rutsche & Hindernisse" },
             { id: 6, category: "Hüpfburgen", name: "Dino Doubleslide", weekdayPrice: 145, weekendPrice: 195, threeDayPrice: 320, features: "mit Doppelrutsche, als Wasserrutsche nutzbar" },
-            { id: 8, category: "Hüpfburgen", name: "Wedding Bouncer", weekdayPrice: 159, weekendPrice: 189, threeDayPrice: 295, features: "mit Rutsche & Bällebad, selbst gestalten!" },
-            { id: 10, category: "Hüpfburgen", name: "PAW Kidszone", weekdayPrice: 139, weekendPrice: 179, threeDayPrice: 295, features: "perfekt für kleine Kids, Bälle Bad, Hüpfburg & Rutsche" },
             // Spiel & Spaß
             { id: 201, category: "Spiel & Spaß", name: "Wasserrutsche mit Pool", weekdayPrice: 129, weekendPrice: 149, threeDayPrice: 280, features: "Großer Badespaß für den Garten" },
             { id: 202, category: "Spiel & Spaß", name: "Whack-A-Mole", weekdayPrice: 149, weekendPrice: 189, threeDayPrice: 295, features: "Aufblasbares Reaktionsspiel" },
-            { id: 203, category: "Spiel & Spaß", name: "Sumo Fight", weekdayPrice: 109, weekendPrice: 139, threeDayPrice: 250, features: "Set für 2 Personen mit Matte" },
-            { id: 204, category: "Spiel & Spaß", name: "Boxautomat", weekdayPrice: 89, weekendPrice: 99, threeDayPrice: null, features: "Mit digitaler Punkteanzeige" },
-            { id: 205, category: "Spiel & Spaß", name: "Maskottchen - Minnie", weekdayPrice: 49, weekendPrice: 59, threeDayPrice: null, features: "Professionelles Kostüm" },
             // Funfood
-            { id: 301, category: "Funfood", name: "Slush-Ice Maschine (2-Kammer)", weekdayPrice: 55, weekendPrice: 75, threeDayPrice: null, features: "Miete für 24 Std. Sirup & Zubehör separat.", addons: [ { name: "Gewünschte Sirup-Sorten", type: "text", placeholder: "z.B. 2x Blaue Himbeere, 1x Waldmeister...", price: 0 }, { name: "Sirup 1 Liter", type: "quantity", price: 9.90 }, { name: "Sirup 5 Liter", type: "quantity", price: 45.00 }, { name: "Palmenbecher 0,4l (Stück)", type: "quantity", price: 2.50 }, { name: "Set: 30x Becher 0,2l + Trinkhalme", type: "quantity", price: 4.00 } ] },
-            { id: 303, category: "Funfood", name: "Popcorn Maschine", weekdayPrice: 39, weekendPrice: 45, threeDayPrice: null, features: "Miete für 24 Std. Inkl. 500g Mais & 50g Zucker/Salz.", addons: [ { name: "Maisart", type: "radio", options: ["Butterfly Mais", "Mushroom Mais"], price: 0}, { name: "Popcorn Spitztüten (10 Stück)", type: "quantity", price: 3.00 }, { name: "Popcorn Tüten (10 Stück)", type: "quantity", price: 2.50 }, { name: "Popcorn Becher (10 Stück)", type: "quantity", price: 3.50 } ] },
-            { id: 305, category: "Funfood", name: "Softeis Maschine", weekdayPrice: 89, weekendPrice: 109, threeDayPrice: null, features: "Miete für 24 Std. Pulver & Zubehör separat.", addons: [ { name: "Softeispulver Schoko (500g)", type: "quantity", price: 8.90 }, { name: "Softeispulver Vanille (500g)", type: "quantity", price: 8.90 }, { name: "Softeispulver Erdbeere (500g)", type: "quantity", price: 8.90 }, { name: "Set: 30x Eisbecher + Löffel", type: "quantity", price: 4.00 } ] },
-            { id: 306, category: "Funfood", name: "Zuckerwatten Maschine", weekdayPrice: 39, weekendPrice: 45, threeDayPrice: null, features: "Miete für 24 Std. Zucker & Stäbchen separat.", addons: [ { name: "Gewünschte Zucker-Sorten", type: "text", placeholder: "z.B. Orange, Blaue Himbeere...", price: 0 }, { name: "Zucker-Set (200g inkl. Stäbchen)", type: "quantity", price: 3.90 } ] },
+            { id: 301, category: "Funfood", name: "Slush-Ice Maschine (2-Kammer)", weekdayPrice: 55, weekendPrice: 75, threeDayPrice: null, features: "Miete für 24 Std. Sirup & Zubehör separat.", addons: [ { name: "Gewünschte Sirup-Sorten", type: "text", placeholder: "z.B. 2x Blaue Himbeere, 1x Waldmeister...", price: 0 }, { name: "Sirup 1 Liter", type: "quantity", price: 9.90 }, { name: "Sirup 5 Liter", type: "quantity", price: 45.00 }] },
+            { id: 303, category: "Funfood", name: "Popcorn Maschine", weekdayPrice: 39, weekendPrice: 45, threeDayPrice: null, features: "Miete für 24 Std. Inkl. 500g Mais & 50g Zucker/Salz.", addons: [ { name: "Maisart", type: "radio", options: ["Butterfly Mais", "Mushroom Mais"], price: 0}, { name: "Popcorn Tüten (10 Stück)", type: "quantity", price: 2.50 }] },
             // Equipment
             { id: 401, category: "Equipment", name: "Disco", weekdayPrice: 285, weekendPrice: 345, threeDayPrice: 450, features: "Komplettset für eine Party." },
-            { id: 402, category: "Equipment", name: "Kinoabend", weekdayPrice: 95, weekendPrice: 145, threeDayPrice: 245, features: "Set für den perfekten Filmabend.", addons: [ { name: "Lautsprecher", type: "checkbox", price: 0 }, { name: "Sitzsäcke", type: "checkbox", price: 0 }, { name: "Beamer", type: "checkbox", price: 0 }, { name: "Popcornmaschine", type: "checkbox", price: 0 } ] },
-            { id: 403, category: "Equipment", name: "Stehtische (Set)", weekdayPrice: 20, weekendPrice: 20, threeDayPrice: null, features: "Preis pro Set (1x Tisch & 1x Husse).", addons: [ { name: "Anzahl der Sets", type: "quantity", price: 0, placeholder: "Stückzahl eintragen" } ] },
-            { id: 408, category: "Equipment", name: "Festzeltgarnitur", weekdayPrice: 12, weekendPrice: 20, threeDayPrice: null, features: "Für Erwachsene und Kinder erhältlich.", addons: [ { name: "Anzahl der Garnituren", type: "quantity", price: 0, placeholder: "Stückzahl eintragen" } ] },
-            { id: 410, category: "Equipment", name: "JBL PartyBox 320", weekdayPrice: 35, weekendPrice: 35, threeDayPrice: null, features: "Kraftvoller Sound für deine Party.", addons: [ { name: "Inklusive Stativ", type: "checkbox", price: 0 }, { name: "Zusätzliches Mikrofon", type: "checkbox", price: 0 } ] },
-            { id: 413, category: "Equipment", name: "XXL Gasgrill", weekdayPrice: 65, weekendPrice: 85, threeDayPrice: 145, features: "Für professionelles Grillvergnügen." },
+            { id: 402, category: "Equipment", name: "Kinoabend", weekdayPrice: 95, weekendPrice: 145, threeDayPrice: 245, features: "Set für den perfekten Filmabend.", addons: [ { name: "Lautsprecher", type: "checkbox", price: 0 }, { name: "Sitzsäcke", type: "checkbox", price: 0 }] },
             // Catering
-            { id: 501, category: "Catering", name: "Snack & Getränke Buffet", weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null, features: "Preis nach Absprache. Details im Auftrag eintragen.", addons: [ { name: "Gebuchte Inhalte", type: "text", placeholder: "Auflistung der Speisen & Getränke...", price: 0 } ] },
-            { id: 502, category: "Catering", name: "Dessert Cups & Cupcakes", weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null, features: "Preis nach Absprache. Details im Auftrag eintragen.", addons: [ { name: "Bestellte Desserts", type: "text", placeholder: "Sorten, Stückzahlen...", price: 0 } ] },
-            { id: 503, category: "Catering", name: "Donut Wall", weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null, features: "Preis pro Donut, ab 1,10€.", addons: [ { name: "Donut-Sorten", type: "text", placeholder: "z.B. 50x Schoko, 25x gefüllt...", price: 0 }, { name: "Anzahl der Donuts", type: "quantity", price: 1.10 } ] },
-            { id: 504, category: "Catering", name: "Ice Cream", weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null, features: "Preis nach Absprache. Details im Auftrag eintragen.", addons: [ { name: "Eis-Bestellung", type: "text", placeholder: "Sorten, Mengen, Waffeln/Becher...", price: 0 } ] }
+            { id: 503, category: "Catering", name: "Donut Wall", weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null, features: "Preis pro Donut, ab 1,10€.", addons: [ { name: "Donut-Sorten", type: "text", placeholder: "z.B. 50x Schoko, 25x gefüllt...", price: 0 }, { name: "Anzahl der Donuts", type: "quantity", price: 1.10 } ] }
         ];
 
         let orders = [];
@@ -157,27 +197,32 @@
         // --- FUNKTIONEN ---
         function init(){
             loadData();
+            // Login & Navigation
             document.getElementById('employeeLoginBtn').addEventListener('click', showEmployeeLogin);
             document.getElementById('adminLoginBtn').addEventListener('click', showAdminLogin);
             document.getElementById('adminPasswordSubmitBtn').addEventListener('click', checkAdminPassword);
             document.getElementById('backToLoginBtn').addEventListener('click', backToLogin);
             document.getElementById('logoutBtnAdmin').addEventListener('click', logout);
             document.getElementById('logoutBtnEmployee').addEventListener('click', logout);
+            // Admin Funktionen
             document.getElementById('exportOrdersBtn').addEventListener('click', exportOrders);
             document.getElementById('importDataBtn').addEventListener('click', importData);
             document.getElementById('processImportBtn').addEventListener('click', processJsonImport);
             document.getElementById('cart-button').addEventListener('click', openBookingModal);
             document.getElementById('openSettingsBtn').addEventListener('click', openSettingsModal);
-            
+            // Produkt & Kategorie Management
+            document.getElementById('addProductBtn').addEventListener('click', () => openProductModal());
+            document.getElementById('productForm').addEventListener('submit', handleProductFormSubmit);
+            document.getElementById('deleteProductBtn').addEventListener('click', deleteProduct);
+            document.getElementById('addCategoryBtn').addEventListener('click', addCategory);
+
+            // Generischer Modal-Schließer
             document.addEventListener('click', (event) => {
                 const closeButton = event.target.closest('.close-modal-btn');
                 if (closeButton) {
-                    const modal = closeButton.closest('#bookingModal, #importModal, #settingsModal, #summaryModal');
+                    const modal = closeButton.closest('#bookingModal, #importModal, #settingsModal, #summaryModal, #productModal, #categoryModal');
                     if (modal) {
                         modal.classList.add('hidden');
-                        if (modal.id === 'importModal') {
-                             document.getElementById('jsonInput').value = '';
-                        }
                     }
                 }
             });
@@ -189,7 +234,7 @@
         function buildAdminNav(){document.getElementById('main-nav').innerHTML=`<button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('overviewSection')">Produkte</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('ordersSection')">Aufträge</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('settingsSection')">Einstellungen</button>`;}
         function buildBookingForm(){document.getElementById('bookingForm').innerHTML=`<div><label class="block text-sm font-medium text-gray-700">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div><div><label class="block text-sm font-medium text-gray-700">Untergrund</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🌱 Rasen</button><button type="button" id="asphaltBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🛣️ Asphalt</button></div><input type="hidden" id="surface"></div><div><label class="block text-sm font-medium text-gray-700">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔌 Kabeltrommel</button><button type="button" id="aufbauServiceBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔧 Auf-/Abbau Service</button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"></div><div><label class="block text-sm font-medium text-gray-700">Adresse</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div><div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2">Manuelle Rabatte</h4><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Rabatt (%)</label><input type="number" id="manualDiscountPercent" placeholder="z.B. 10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Rabatt (€)</label><input type="number" id="manualDiscountAmount" placeholder="z.B. 25" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div class="bg-gray-50 p-4 rounded-lg mt-4"><h4 class="font-semibold text-gray-800 mb-3">Detaillierte Kostenübersicht</h4><div id="costBreakdown" class="space-y-1 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`;document.getElementById('bookingForm').addEventListener('submit',handleBookingSubmit);document.getElementById('grassBtn').addEventListener('click',()=>selectSurface('grass'));document.getElementById('asphaltBtn').addEventListener('click',()=>selectSurface('asphalt'));document.getElementById('kabeltrommelBtn').addEventListener('click',()=>toggleService('kabeltrommel'));document.getElementById('aufbauServiceBtn').addEventListener('click',()=>toggleService('aufbauService'));}
         function buildSettingsForm(){document.getElementById('settingsContainer').innerHTML=`<div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="text-lg font-semibold mb-4">Zusatzkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Asphalt Pauschale (€)</label><input type="number" id="asphaltFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Kabeltrommel (€)</label><input type="number" id="cableFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Auf-/Abbau Service (€)</label><input type="number" id="serviceFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div><h3 class="text-lg font-semibold mb-4">Fahrtkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">0-3 km (€)</label><input type="number" id="travel0to3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 5 km (€)</label><input type="number" id="travel5" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 10 km (€)</label><input type="number" id="travel10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 20 km (€)</label><input type="number" id="travel20" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">ab 20 km (€/km)</label><input type="number" step="0.01" id="travelPerKm" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div></div><div class="flex space-x-4 mt-6"><button id="saveSettingsBtn" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium">Einstellungen Speichern</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Schließen</button></div>`;document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);}
-        function loadData(){const d1=localStorage.getItem('partyCrasherOrders'),d2=localStorage.getItem('partyCrasherSettings'),d3=localStorage.getItem('partyCrasherProducts');if(d1)orders=JSON.parse(d1);if(d2)settings=Object.assign(settings,JSON.parse(d2));if(d3)products=JSON.parse(d3);}
+        function loadData(){const d1=localStorage.getItem('partyCrasherOrders');if(d1)orders=JSON.parse(d1);const d2=localStorage.getItem('partyCrasherSettings');if(d2)settings=Object.assign(settings,JSON.parse(d2));const d3=localStorage.getItem('partyCrasherProducts');if(d3){products=JSON.parse(d3);}else{saveData();}}
         function saveData(){localStorage.setItem('partyCrasherOrders',JSON.stringify(orders));localStorage.setItem('partyCrasherSettings',JSON.stringify(settings));localStorage.setItem('partyCrasherProducts',JSON.stringify(products));}
         function toggleCartItem(id){const i=cart.findIndex(item=>item.productId===id);if(i>-1){cart.splice(i,1);}else{cart.push({productId:id,priceModel:'weekday',overridePrice:null,addons:[]});}updateCartUI();}
         function updateCartUI(){const btn=document.getElementById('cart-button'),count=document.getElementById('cart-count');if(cart.length>0){btn.classList.remove('hidden');count.textContent=cart.length;btn.style.transform='scale(1.1)';setTimeout(()=>btn.style.transform='scale(1)',200);}else{btn.classList.add('hidden');}document.querySelectorAll('[id^="product-card-"]').forEach(card=>{const btn=card.querySelector('button');if(!card||!btn)return;const id=parseInt(card.id.split('-')[2]);const inCart=cart.some(item=>item.productId===id);card.classList.toggle('in-cart',inCart);btn.textContent=inCart?'Entfernen':'Hinzufügen';btn.classList.toggle('bg-purple-500',!inCart);btn.classList.toggle('hover:bg-purple-600',!inCart);btn.classList.toggle('bg-red-500',inCart);btn.classList.toggle('hover:bg-red-600',inCart);});}
@@ -217,71 +262,204 @@
         function checkAdminPassword(){if(document.getElementById('adminPassword').value==='admin123'){currentUser='admin';document.getElementById('adminPasswordScreen').classList.add('hidden');document.getElementById('adminDashboard').classList.remove('hidden');initAdminView();renderOrders();loadSettingsToForm();}else{alert('Falsches Passwort!');}}
         function backToLogin(){document.getElementById('adminPasswordScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('adminPassword').value='';}
         function logout(){currentUser=null;cart=[];updateCartUI();document.getElementById('adminDashboard').classList.add('hidden');document.getElementById('employeeDashboard').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden');document.getElementById('adminPassword').value='';}
-        function initAdminView(){renderCategoryTabs();switchCategory([...new Set(products.map(p=>p.category))][0]);}
-        function renderCategoryTabs(){const cont=document.getElementById('categoryTabs');cont.innerHTML='';const cats=[...new Set(products.map(p=>p.category))];cats.forEach(cat=>{const btn=document.createElement('button');btn.id=`tab-${cat.replace(/[^a-zA-Z0-9]/g,'-')}`;btn.className='category-tab text-white/70 font-semibold py-2 px-4';btn.textContent=cat;btn.onclick=()=>switchCategory(cat);cont.appendChild(btn);});}
-        function switchCategory(cat){activeCategory=cat;document.querySelectorAll('.category-tab').forEach(t=>t.classList.remove('active'));document.getElementById(`tab-${cat.replace(/[^a-zA-Z0-9]/g,'-')}`).classList.add('active');renderProductGrid();}
-        function renderProductGrid(){const cont=document.getElementById('productGridContainer');cont.innerHTML='';products.filter(p=>p.category===activeCategory).forEach(p=>{const card=document.createElement('div');card.id=`product-card-${p.id}`;card.className="bg-white rounded-lg shadow-lg p-5 flex flex-col";card.innerHTML=`<h3 class="text-lg font-bold text-gray-800 mb-2">${p.name}</h3><div class="space-y-1 mb-3 text-xs text-gray-600 flex-grow">${p.features?`<p>• ${p.features}</p>`:''}</div><div class="border-t pt-2 mt-2"><p class="text-sm text-gray-600">Mo-Do: <span class="font-semibold">${p.weekdayPrice}€</span></p><p class="text-sm text-gray-600">Fr-So: <span class="font-semibold">${p.weekendPrice}€</span></p>${p.threeDayPrice?`<p class="text-sm text-gray-600">3 Tage: <span class="font-semibold">${p.threeDayPrice}€</span></p>`:''}</div><button id="product-btn-${p.id}" class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium w-full">Hinzufügen</button>`;card.querySelector('button').onclick=()=>toggleCartItem(p.id);cont.appendChild(card);});updateCartUI();}
-        function renderCartInModal() {
-            const cont = document.getElementById('cartItemsList');
-            cont.innerHTML = '<h4 class="text-lg font-semibold text-gray-700 border-b pb-2 mb-3">Ausgewählte Produkte</h4>';
-            if (cart.length === 0) {
-                cont.innerHTML += '<p class="text-gray-500">Der Warenkorb ist leer.</p>';
+        function initAdminView(){const cats=getCategories();renderCategoryTabs();if(cats.length>0)switchCategory(cats[0]);else switchCategory(null);}
+        
+        // NEU: Funktionen für Produkt- & Kategorie-Management
+        function getCategories() { return [...new Set(products.map(p => p.category))].sort(); }
+        
+        function openProductModal(productId = null) {
+            const form = document.getElementById('productForm');
+            form.reset();
+            const addonsTextarea = document.getElementById('productAddons');
+            addonsTextarea.style.borderColor = ''; // Reset validation color
+            if (productId) {
+                const product = products.find(p => p.id === productId);
+                document.getElementById('productModalTitle').textContent = "Produkt bearbeiten";
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productWeekdayPrice').value = product.weekdayPrice;
+                document.getElementById('productWeekendPrice').value = product.weekendPrice;
+                document.getElementById('productThreeDayPrice').value = product.threeDayPrice || '';
+                document.getElementById('productFeatures').value = product.features || '';
+                addonsTextarea.value = product.addons ? JSON.stringify(product.addons, null, 2) : '';
+                document.getElementById('deleteProductBtn').classList.remove('hidden');
+            } else {
+                document.getElementById('productModalTitle').textContent = "Neues Produkt hinzufügen";
+                document.getElementById('productId').value = '';
+                document.getElementById('productCategory').value = activeCategory; // Prefill current category
+                document.getElementById('deleteProductBtn').classList.add('hidden');
+            }
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function handleProductFormSubmit(e) {
+            e.preventDefault();
+            const productId = parseInt(document.getElementById('productId').value);
+            let addons = [];
+            const addonsTextarea = document.getElementById('productAddons');
+            try {
+                if(addonsTextarea.value.trim()){
+                    addons = JSON.parse(addonsTextarea.value);
+                }
+                addonsTextarea.style.borderColor = ''; // Success
+            } catch (error) {
+                alert('Fehler im Zubehör (Addons) JSON. Bitte korrigieren.');
+                addonsTextarea.style.borderColor = 'red';
                 return;
             }
-            cart.forEach(item => {
-                const p = products.find(pr => pr.id === item.productId);
-                let calculatedPrice;
-                switch (item.priceModel) {
-                    case 'threeDay': calculatedPrice = p.threeDayPrice; break;
-                    case 'weekend': calculatedPrice = p.weekendPrice; break;
-                    default: calculatedPrice = p.weekdayPrice;
-                }
-                const priceSelectorHTML = `<select onchange="updateCartItemPriceModel(${p.id}, this.value)" class="w-32 text-xs border-gray-300 rounded-md shadow-sm">${['weekday','weekend','threeDay'].map(m=>{if(!p.threeDayPrice&&m==='threeDay')return '';return `<option value="${m}" ${item.priceModel===m?'selected':''}>${m==='weekday'?'Mo-Do':m==='weekend'?'Fr-So':'3 Tage'}</option>`;}).join('')}</select>`;
-                const finalPrice = (item.overridePrice !== null ? item.overridePrice : calculatedPrice);
-                
-                let addonsHTML = '';
-                if (p.addons) {
-                    addonsHTML += '<div class="col-span-3 border-t mt-2 pt-2 space-y-2">';
-                    p.addons.forEach(addon => {
-                        const savedAddon = item.addons.find(a => a.name === addon.name);
-                        const currentValue = savedAddon ? savedAddon.value : '';
-                        if (addon.type === 'quantity') {
-                            addonsHTML += `<div class="flex justify-between items-center text-sm"><label>${addon.name} ${addon.price > 0 ? `(+${addon.price.toFixed(2)}€)` : ''}</label><input type="number" min="0" value="${currentValue}" placeholder="${addon.placeholder || ''}" oninput="updateAddonInCart(${p.id}, '${addon.name}', this.value, ${addon.price}, 'quantity')" class="w-20 px-2 py-1 border rounded-md"></div>`;
-                        } else if (addon.type === 'text') {
-                            addonsHTML += `<div class="flex justify-between items-center text-sm"><label>${addon.name}</label><input type="text" value="${currentValue || ''}" placeholder="${addon.placeholder || ''}" oninput="updateAddonInCart(${p.id}, '${addon.name}', this.value, 0, 'text')" class="w-2/3 px-2 py-1 border rounded-md"></div>`;
-                        } else if (addon.type === 'radio') {
-                             addonsHTML += `<div class="text-sm"><label class="font-medium">${addon.name}</label><div class="flex gap-4 mt-1">`
-                             addon.options.forEach(opt => {
-                                const isChecked = currentValue === opt ? 'checked' : '';
-                                addonsHTML += `<label class="flex items-center"><input type="radio" name="radio-${p.id}-${addon.name}" value="${opt}" ${isChecked} onchange="updateAddonInCart(${p.id}, '${addon.name}', this.value, 0, 'radio')"> ${opt}</label>`
-                             });
-                             addonsHTML += `</div></div>`
-                        } else if (addon.type === 'checkbox') {
-                            const isChecked = currentValue === true ? 'checked' : '';
-                            addonsHTML += `<div class="text-sm"><label class="flex items-center"><input type="checkbox" ${isChecked} onchange="updateAddonInCart(${p.id}, '${addon.name}', this.checked, ${addon.price}, 'checkbox')"> ${addon.name} ${addon.price > 0 ? `(+${addon.price.toFixed(2)}€)` : ''}</label></div>`;
-                        }
-                    });
-                    addonsHTML += '</div>';
-                }
+            
+            const productData = {
+                id: productId || Date.now(),
+                name: document.getElementById('productName').value,
+                category: document.getElementById('productCategory').value,
+                weekdayPrice: parseFloat(document.getElementById('productWeekdayPrice').value),
+                weekendPrice: parseFloat(document.getElementById('productWeekendPrice').value),
+                threeDayPrice: parseFloat(document.getElementById('productThreeDayPrice').value) || null,
+                features: document.getElementById('productFeatures').value,
+                addons: addons
+            };
 
-                cont.innerHTML += `
-                    <div class="grid grid-cols-3 items-center gap-2 bg-gray-50 p-3 rounded-lg">
-                        <span class="font-medium text-gray-800 col-span-3 sm:col-span-1">${p.name}</span>
-                        <div class="col-span-2 sm:col-span-1">${p.weekdayPrice > 0 || p.weekendPrice > 0 || p.threeDayPrice > 0 ? priceSelectorHTML : ''}</div>
-                        <div class="flex items-center gap-1 col-span-1 justify-self-end">
-                            <input type="number" step="0.01" value="${finalPrice.toFixed(2)}" oninput="updateCartItemOverridePrice(${p.id}, this.value)" placeholder="Preis" class="w-20 text-right px-2 py-1 border border-gray-300 rounded-md text-sm">
-                            <button type="button" onclick="removeFromCartAndRerenderModal(${p.id})" class="text-red-500 hover:text-red-700 text-2xl font-bold">×</button>
-                        </div>
-                        ${addonsHTML}
+            if (productId) {
+                const index = products.findIndex(p => p.id === productId);
+                products[index] = productData;
+            } else {
+                products.push(productData);
+            }
+            
+            saveData();
+            document.getElementById('productModal').classList.add('hidden');
+            initAdminView();
+        }
+
+        function deleteProduct() {
+            const productId = parseInt(document.getElementById('productId').value);
+            if (confirm(`Möchtest du dieses Produkt wirklich endgültig löschen?`)) {
+                products = products.filter(p => p.id !== productId);
+                saveData();
+                document.getElementById('productModal').classList.add('hidden');
+                initAdminView();
+            }
+        }
+
+        function openCategoryModal() {
+            renderCategoryManager();
+            document.getElementById('categoryModal').classList.remove('hidden');
+        }
+        
+        function renderCategoryManager() {
+            const container = document.getElementById('categoryManagerContainer');
+            container.innerHTML = '';
+            getCategories().forEach(cat => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded-md">
+                        <span class="font-medium">${cat}</span>
+                        <button onclick="renameCategory('${cat}')" class="text-sm bg-yellow-500 text-white px-3 py-1 rounded-md">Umbenennen</button>
                     </div>`;
             });
         }
-        function openBookingModal(){if(cart.length===0){alert("Bitte fügen Sie zuerst Produkte zum Auftrag hinzu.");return;}renderCartInModal();document.getElementById('bookingModal').classList.remove('hidden');const today=new Date().toISOString().split('T')[0];document.getElementById('startDate').min=today;document.getElementById('endDate').min=today;['startDate','endDate','manualDiscountPercent','manualDiscountAmount'].forEach(id=>{const el=document.getElementById(id);el.addEventListener('input',calculateCosts);});const addr=document.getElementById('address');addr.addEventListener('input',handleAddressInput);calculateCosts();}
-        function closeBookingModal(){document.getElementById('bookingModal').classList.add('hidden');document.getElementById('bookingForm').reset();document.querySelectorAll('.surface-btn.selected, .service-btn.selected').forEach(b=>b.classList.remove('selected'));}
-        function handleAddressInput(){if(this.value.length>5)calculateDistance();else{document.getElementById('address').dataset.distance=0;document.getElementById('travelCostInfo').innerHTML='';calculateCosts();}}
-        function selectSurface(s){document.querySelectorAll('.surface-btn').forEach(b=>b.classList.remove('selected'));document.getElementById(s+'Btn').classList.add('selected');document.getElementById('surface').value=s;document.getElementById('asphaltPauschale').value=(s==='asphalt')?'true':'';calculateCosts();}
-        function toggleService(id){const btn=document.getElementById(id+'Btn'),input=document.getElementById(id);btn.classList.toggle('selected');input.value=btn.classList.contains('selected')?'true':'';calculateCosts();}
-        
+
+        function addCategory() {
+            const newNameInput = document.getElementById('newCategoryName');
+            const newName = newNameInput.value.trim();
+            if (newName && !getCategories().includes(newName)) {
+                // To "create" a category, we create a dummy product and open it for editing.
+                // The user can then save or cancel it. This ensures no empty categories are created.
+                const newProduct = {
+                    id: Date.now(),
+                    name: "Neues Produkt",
+                    category: newName,
+                    weekdayPrice: 0,
+                    weekendPrice: 0,
+                    threeDayPrice: null,
+                    features: "",
+                    addons: []
+                };
+                products.push(newProduct);
+                saveData();
+                initAdminView(); // Redraws tabs
+                switchCategory(newName);
+                openProductModal(newProduct.id); // Open the new product for editing
+                document.getElementById('categoryModal').classList.add('hidden');
+                newNameInput.value = '';
+            } else {
+                alert('Kategoriename ist ungültig oder existiert bereits.');
+            }
+        }
+
+        function renameCategory(oldName) {
+            const newName = prompt(`Neuer Name für die Kategorie "${oldName}":`, oldName);
+            if (newName && newName.trim() !== oldName) {
+                products.forEach(p => {
+                    if (p.category === oldName) {
+                        p.category = newName.trim();
+                    }
+                });
+                saveData();
+                initAdminView();
+                renderCategoryManager();
+            }
+        }
+
+        // Angepasste UI-Funktionen
+        function renderCategoryTabs(){
+            const cont = document.getElementById('categoryTabs');
+            cont.innerHTML = '';
+            const cats = getCategories();
+            cats.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.id = `tab-${cat.replace(/[^a-zA-Z0-9]/g, '-')}`;
+                btn.className = 'category-tab text-white/70 font-semibold py-2 px-4';
+                btn.textContent = cat;
+                btn.onclick = () => switchCategory(cat);
+                cont.appendChild(btn);
+            });
+            cont.innerHTML += `<button onclick="openCategoryModal()" class="ml-4 text-white/70 font-semibold py-2 px-4 hover:text-white">Kategorien verwalten...</button>`;
+        }
+        function switchCategory(cat) {
+            activeCategory = cat;
+            if(!cat) {
+                document.getElementById('productGridContainer').innerHTML = `<div class="col-span-full text-center text-white/80 bg-black/10 p-8 rounded-lg">Keine Kategorien vorhanden. Bitte fügen Sie eine neue Kategorie hinzu.</div>`;
+                return;
+            }
+            document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+            const activeTab = document.getElementById(`tab-${cat.replace(/[^a-zA-Z0-9]/g, '-')}`);
+            if(activeTab) activeTab.classList.add('active');
+            renderProductGrid();
+        }
+        function renderProductGrid(){
+            const cont = document.getElementById('productGridContainer');
+            cont.innerHTML = '';
+            const filteredProducts = products.filter(p => p.category === activeCategory);
+            
+            if (filteredProducts.length === 0) {
+                 cont.innerHTML = `<div class="col-span-full text-center text-white/80 bg-black/10 p-8 rounded-lg">In dieser Kategorie gibt es noch keine Produkte.</div>`;
+                 return;
+            }
+
+            filteredProducts.forEach(p => {
+                const card = document.createElement('div');
+                card.id = `product-card-${p.id}`;
+                card.className = "bg-white rounded-lg shadow-lg p-5 flex flex-col relative";
+                card.innerHTML = `
+                    <button onclick="openProductModal(${p.id})" class="absolute top-2 right-2 text-gray-400 hover:text-purple-600 p-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2 pr-6">${p.name}</h3>
+                    <div class="space-y-1 mb-3 text-xs text-gray-600 flex-grow">${p.features ? `<p>• ${p.features}</p>` : ''}</div>
+                    <div class="border-t pt-2 mt-2">
+                        <p class="text-sm text-gray-600">Mo-Do: <span class="font-semibold">${p.weekdayPrice}€</span></p>
+                        <p class="text-sm text-gray-600">Fr-So: <span class="font-semibold">${p.weekendPrice}€</span></p>
+                        ${p.threeDayPrice ? `<p class="text-sm text-gray-600">3 Tage: <span class="font-semibold">${p.threeDayPrice}€</span></p>` : ''}
+                    </div>
+                    <button id="product-btn-${p.id}" class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium w-full">Hinzufügen</button>`;
+                card.querySelector(`#product-btn-${p.id}`).onclick = () => toggleCartItem(p.id);
+                cont.appendChild(card);
+            });
+            updateCartUI();
+        }
+
+        // Angepasste Buchungs- & Rechnungs-Funktionen
         function calculateCosts() {
             const costDetails = {
                 items: [],
@@ -297,37 +475,42 @@
 
             cart.forEach(item => {
                 const p = products.find(pr => pr.id === item.productId);
+                if (!p) return; // Produkt könnte gelöscht worden sein
+                
                 let quantity = 1;
-                if(item.addons) {
+                let totalItemPrice;
+
+                if (item.addons) {
                     const quantityAddon = item.addons.find(a => a.name.startsWith('Anzahl der'));
-                    if(quantityAddon && quantityAddon.value > 0) quantity = parseInt(quantityAddon.value);
+                    if (quantityAddon && quantityAddon.value > 0) quantity = parseInt(quantityAddon.value);
                 }
 
-                let itemPrice = 0;
                 if (item.overridePrice !== null && !isNaN(item.overridePrice)) {
-                    itemPrice = parseFloat(item.overridePrice);
+                    totalItemPrice = parseFloat(item.overridePrice);
                 } else {
-                     if (p.threeDayPrice && item.priceModel === 'threeDay') {
-                        itemPrice = p.threeDayPrice;
+                    let singleItemPrice = 0;
+                    if (p.threeDayPrice && item.priceModel === 'threeDay') {
+                        singleItemPrice = p.threeDayPrice;
                     } else if (hasDateRange && (p.weekdayPrice > 0 || p.weekendPrice > 0)) {
                         const days = Math.ceil((new Date(end) - new Date(start)) / (1000 * 60 * 60 * 24)) + 1;
                         for (let i = 0; i < days; i++) {
                             const d = new Date(start); d.setDate(d.getDate() + i); const day = d.getDay(); const isWk = (day === 0 || day === 5 || day === 6);
-                            itemPrice += isWk ? p.weekendPrice : p.weekdayPrice;
+                            singleItemPrice += isWk ? p.weekendPrice : p.weekdayPrice;
                         }
                     } else {
-                        itemPrice = (item.priceModel === 'weekend') ? p.weekendPrice : p.weekdayPrice;
+                        singleItemPrice = (item.priceModel === 'weekend') ? p.weekendPrice : p.weekdayPrice;
                     }
+                    totalItemPrice = singleItemPrice * quantity;
                 }
-                const totalItemPrice = itemPrice * quantity;
+                
                 costDetails.items.push({ name: `${p.name}${quantity > 1 ? ` (${quantity}x)` : ''}`, cost: totalItemPrice });
                 subtotal += totalItemPrice;
                 
                 if (item.addons) {
                     item.addons.forEach(addon => {
-                        if (addon.price > 0 && addon.value > 0) {
+                        if (addon.price > 0 && addon.value > 0 && !addon.name.startsWith('Anzahl der')) {
                             const addonCost = addon.price * addon.value;
-                            costDetails.items.push({ name: `&nbsp;&nbsp; L ${addon.name} (${addon.value}x)`, cost: addonCost });
+                            costDetails.items.push({ name: `   L ${addon.name} (${addon.value}x)`, cost: addonCost });
                             subtotal += addonCost;
                         }
                     });
@@ -374,7 +557,6 @@
             return { costDetails, total };
         }
         function calculateDistance(){const addr=document.getElementById('address').value.toLowerCase();let dist=15;const loc={'45964':1,'45966':2,'gladbeck':1,'45968':4,'bottrop':4,'45879':7,'gelsenkirchen':8};const match=addr.match(/\b(\d{5})\b/);if(match&&loc[match[1]]){dist=loc[match[1]];}else{for(const[l,d] of Object.entries(loc)){if(!isNaN(l))continue;if(addr.includes(l)){dist=d;break;}}}dist=Math.max(1,dist+Math.floor(Math.random()*3)-1);document.getElementById('address').dataset.distance=dist;let travel=0;if(dist<=3)travel=settings.travel0to3;else if(dist<=5)travel=settings.travel5;else if(dist<=10)travel=settings.travel10;else if(dist<=20)travel=settings.travel20;else travel=dist*settings.travelPerKm;document.getElementById('travelCostInfo').innerHTML=`📍 Geschätzte Entfernung: ${dist} km <br>💰 Fahrtkosten: ${travel.toFixed(2)} €`;calculateCosts();}
-        
         function generateOrderSummaryHTML(order) {
             let html = `<div class="text-sm space-y-2">
                 <p><strong>Kunde:</strong> ${order.customerName}</p>
@@ -385,7 +567,7 @@
                 <h4 class="font-semibold text-gray-800 mb-2">Rechnungsübersicht</h4>
                 <div class="space-y-1 text-sm">`;
             
-            order.costDetails.items.forEach(i => html += `<div class="flex justify-between"><span>${i.name.replace(/&nbsp;&nbsp; L/g, '<span class="ml-4">-</span>')}</span><span>${i.cost.toFixed(2)} €</span></div>`);
+            order.costDetails.items.forEach(i => html += `<div class="flex justify-between"><span>${i.name.replace(/   L/g, '<span class="ml-4">-</span>')}</span><span>${i.cost.toFixed(2)} €</span></div>`);
             order.costDetails.services.forEach(s => html += `<div class="flex justify-between"><span>${s.name}</span><span>${s.cost.toFixed(2)} €</span></div>`);
             if(order.costDetails.travel.cost > 0) html += `<div class="flex justify-between"><span>Fahrtkosten (${order.costDetails.travel.distance.toFixed(0)} km)</span><span>${order.costDetails.travel.cost.toFixed(2)} €</span></div>`;
             
@@ -399,12 +581,11 @@
             
             html += `</div>
                 <div class="border-t pt-2 mt-2">
-                    <div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span>${order.total.toFixed(2)} €</span></div>
+                    <div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span>${order.totalCost.toFixed(2)} €</span></div>
                 </div>
             </div>`;
             return html;
         }
-
         function handleBookingSubmit(e) {
             e.preventDefault();
             const { costDetails, total } = calculateCosts();
@@ -443,7 +624,7 @@
             closeBookingModal();
             renderOrders();
         }
-        function renderOrders(){const list=document.getElementById('ordersList');list.innerHTML='';if(orders.length===0){list.innerHTML='<p class="p-4 text-center text-gray-500">Keine Aufträge vorhanden.</p>';return;}orders.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(order=>{list.innerHTML+=`<div class="p-4"><div class="flex justify-between"><div><p class="font-semibold">${order.customerName} - ${new Date(order.startDate).toLocaleDateString('de-DE')}</p><p class="text-sm text-gray-600">${order.products.map(p=>p.name).join(', ')}</p></div><p class="text-right font-bold text-green-600">${order.totalCost.toFixed(2)} €</p></div></div>`;});}
+        function renderOrders(){const list=document.getElementById('ordersList');list.innerHTML='';if(orders.length===0){list.innerHTML='<p class="p-4 text-center text-gray-500">Keine Aufträge vorhanden.</p>';return;}orders.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).forEach(order=>{list.innerHTML+=`<div class="p-4"><div class="flex justify-between items-center"><div><p class="font-semibold">${order.customerName} - ${new Date(order.startDate).toLocaleDateString('de-DE')}</p><p class="text-sm text-gray-600">${order.products.map(p=>p.name).join(', ')}</p></div><p class="text-right font-bold text-green-600">${order.totalCost.toFixed(2)} €</p></div></div>`;});}
         function renderEmployeeBookings() {
             const cont = document.getElementById('employeeBookingsList');
             cont.innerHTML = '';
@@ -490,7 +671,7 @@
         function saveSettings(){Object.keys(settings).forEach(key=>{const el=document.getElementById(key);if(el)settings[key]=parseFloat(el.value);});saveData();alert('Einstellungen gespeichert!');document.getElementById('settingsModal').classList.add('hidden');}
         function exportOrders(){const dataStr=JSON.stringify({orders,products,settings},null,2);const url=URL.createObjectURL(new Blob([dataStr],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=`party-crasher-export-${new Date().toISOString().split('T')[0]}.json`;a.click();URL.revokeObjectURL(url);}
         function importData(){document.getElementById('importModal').classList.remove('hidden');}
-        function processJsonImport(){const json=document.getElementById('jsonInput').value.trim();if(!json)return;try{const data=JSON.parse(json);if(data.orders)orders=data.orders;if(data.products)products=data.products;if(data.settings)settings=Object.assign(settings,data.settings);saveData();if(currentUser==='admin'){renderOrders();}if(currentUser==='employee'){renderEmployeeBookings();}document.getElementById('importModal').classList.add('hidden');document.getElementById('jsonInput').value='';alert('Daten erfolgreich importiert!');}catch(e){alert('Fehler: Ungültiges JSON Format!');}}
+        function processJsonImport(){const json=document.getElementById('jsonInput').value.trim();if(!json)return;try{const data=JSON.parse(json);if(data.orders)orders=data.orders;if(data.products)products=data.products;if(data.settings)settings=Object.assign(settings,data.settings);saveData();if(currentUser==='admin'){initAdminView();renderOrders();}if(currentUser==='employee'){renderEmployeeBookings();}document.getElementById('importModal').classList.add('hidden');document.getElementById('jsonInput').value='';alert('Daten erfolgreich importiert!');}catch(e){alert('Fehler: Ungültiges JSON Format!');}}
         
         init();
     });
