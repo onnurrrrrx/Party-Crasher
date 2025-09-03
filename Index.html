@@ -270,8 +270,22 @@
             buildSettingsForm();
         }
         function buildAdminNav(){document.getElementById('main-nav').innerHTML=`<button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('overviewSection')">Produkte</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('ordersSection')">Aufträge</button><button class="px-3 py-2 text-white rounded-lg font-medium hover:bg-white/20" onclick="scrollToSection('settingsSection')">Einstellungen</button>`;}
-        function buildBookingForm(){document.getElementById('bookingForm').innerHTML=`<div><label class="block text-sm font-medium text-gray-700">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div><div><label class="block text-sm font-medium text-gray-700">Untergrund</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🌱 Rasen</button><button type="button" id="asphaltBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🛣️ Asphalt</button></div><input type="hidden" id="surface"></div><div><label class="block text-sm font-medium text-gray-700">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔌 Kabeltrommel</button><button type="button" id="aufbauServiceBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔧 Auf-/Abbau Service</button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"></div><div><label class="block text-sm font-medium text-gray-700">Adresse</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div><div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2">Manuelle Rabatte</h4><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Rabatt (%)</label><input type="number" id="manualDiscountPercent" placeholder="z.B. 10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Rabatt (€)</label><input type="number" id="manualDiscountAmount" placeholder="z.B. 25" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div class="bg-gray-50 p-4 rounded-lg mt-4"><h4 class="font-semibold text-gray-800 mb-3">Detaillierte Kostenübersicht</h4><div id="costBreakdown" class="space-y-1 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`;document.getElementById('bookingForm').addEventListener('submit',handleBookingSubmit);document.getElementById('grassBtn').addEventListener('click',()=>selectSurface('grass'));document.getElementById('asphaltBtn').addEventListener('click',()=>selectSurface('asphalt'));document.getElementById('kabeltrommelBtn').addEventListener('click',()=>toggleService('kabeltrommel'));document.getElementById('aufbauServiceBtn').addEventListener('click',()=>toggleService('aufbauService'));}
-        function buildSettingsForm(){document.getElementById('settingsContainer').innerHTML=`<div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="text-lg font-semibold mb-4">Zusatzkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Asphalt Pauschale (€)</label><input type="number" id="asphaltFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Kabeltrommel (€)</label><input type="number" id="cableFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Auf-/Abbau Service (€)</label><input type="number" id="serviceFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div><h3 class="text-lg font-semibold mb-4">Fahrtkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">0-3 km (€)</label><input type="number" id="travel0to3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 5 km (€)</label><input type="number" id="travel5" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 10 km (€)</label><input type="number" id="travel10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 20 km (€)</label><input type="number" id="travel20" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">ab 20 km (€/km)</label><input type="number" step="0.01" id="travelPerKm" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div></div><div class="flex space-x-4 mt-6"><button id="saveSettingsBtn" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium">Einstellungen Speichern</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Schließen</button></div>`;document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);}
+        
+        // KORRIGIERT: Event Listener wieder hinzugefügt
+        function buildBookingForm(){
+            document.getElementById('bookingForm').innerHTML=`<div><label class="block text-sm font-medium text-gray-700">Kunde</label><input type="text" id="customerName" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Von (Datum)</label><input type="date" id="startDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Bis (Datum)</label><input type="date" id="endDate" required class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div><div><label class="block text-sm font-medium text-gray-700">Untergrund</label><div class="grid grid-cols-2 gap-3"><button type="button" id="grassBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🌱 Rasen</button><button type="button" id="asphaltBtn" class="surface-btn p-3 border-2 border-gray-300 rounded-lg text-center">🛣️ Asphalt</button></div><input type="hidden" id="surface"></div><div><label class="block text-sm font-medium text-gray-700">Zusatzleistungen</label><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><button type="button" id="kabeltrommelBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔌 Kabeltrommel</button><button type="button" id="aufbauServiceBtn" class="service-btn p-3 border-2 border-gray-300 rounded-lg text-center">🔧 Auf-/Abbau Service</button></div><input type="hidden" id="asphaltPauschale"><input type="hidden" id="kabeltrommel"><input type="hidden" id="aufbauService"></div><div><label class="block text-sm font-medium text-gray-700">Adresse</label><input type="text" id="address" required placeholder="Straße, PLZ Ort" class="w-full px-3 py-2 border border-gray-300 rounded-md"><div id="travelCostInfo" class="mt-2 text-sm text-gray-600"></div></div><div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2">Manuelle Rabatte</h4><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-gray-700">Rabatt (%)</label><input type="number" id="manualDiscountPercent" placeholder="z.B. 10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700">Rabatt (€)</label><input type="number" id="manualDiscountAmount" placeholder="z.B. 25" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div class="bg-gray-50 p-4 rounded-lg mt-4"><h4 class="font-semibold text-gray-800 mb-3">Detaillierte Kostenübersicht</h4><div id="costBreakdown" class="space-y-1 text-sm"></div><div class="border-t pt-2 mt-3"><div class="flex justify-between font-bold text-lg"><span>Gesamtsumme:</span><span id="totalCost">0,00 €</span></div></div></div><div class="flex space-x-4 mt-6"><button type="submit" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg">Buchung Bestätigen</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Abbrechen</button></div>`;
+            document.getElementById('bookingForm').addEventListener('submit',handleBookingSubmit);
+            document.getElementById('grassBtn').addEventListener('click',()=>selectSurface('grass'));
+            document.getElementById('asphaltBtn').addEventListener('click',()=>selectSurface('asphalt'));
+            document.getElementById('kabeltrommelBtn').addEventListener('click',()=>toggleService('kabeltrommel'));
+            document.getElementById('aufbauServiceBtn').addEventListener('click',()=>toggleService('aufbauService'));
+        }
+        
+        // KORRIGIERT: Event Listener wieder hinzugefügt
+        function buildSettingsForm(){
+            document.getElementById('settingsContainer').innerHTML=`<div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="text-lg font-semibold mb-4">Zusatzkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Asphalt Pauschale (€)</label><input type="number" id="asphaltFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Kabeltrommel (€)</label><input type="number" id="cableFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Auf-/Abbau Service (€)</label><input type="number" id="serviceFee" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div><div><h3 class="text-lg font-semibold mb-4">Fahrtkosten</h3><div class="space-y-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">0-3 km (€)</label><input type="number" id="travel0to3" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 5 km (€)</label><input type="number" id="travel5" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 10 km (€)</label><input type="number" id="travel10" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">bis 20 km (€)</label><input type="number" id="travel20" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">ab 20 km (€/km)</label><input type="number" step="0.01" id="travelPerKm" class="w-full px-3 py-2 border border-gray-300 rounded-md"></div></div></div></div><div class="flex space-x-4 mt-6"><button id="saveSettingsBtn" class="flex-1 bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg font-medium">Einstellungen Speichern</button><button type="button" class="close-modal-btn flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg">Schließen</button></div>`;
+            document.getElementById('saveSettingsBtn').addEventListener('click',saveSettings);
+        }
         function loadData(){const d1=localStorage.getItem('partyCrasherOrders');if(d1)orders=JSON.parse(d1);const d2=localStorage.getItem('partyCrasherSettings');if(d2)settings=Object.assign(settings,JSON.parse(d2));const d3=localStorage.getItem('partyCrasherProducts');if(d3){products=JSON.parse(d3);}else{saveData();}}
         function saveData(){localStorage.setItem('partyCrasherOrders',JSON.stringify(orders));localStorage.setItem('partyCrasherSettings',JSON.stringify(settings));localStorage.setItem('partyCrasherProducts',JSON.stringify(products));}
         function toggleCartItem(id){const i=cart.findIndex(item=>item.productId===id);if(i>-1){cart.splice(i,1);}else{cart.push({productId:id,priceModel:'weekday',overridePrice:null,addons:[]});}updateCartUI();}
@@ -386,15 +400,23 @@
             document.getElementById('categoryModal').classList.remove('hidden');
         }
         
+        // KORRIGIERT: Baut die Button-Liste sicher auf, um Event-Handler-Probleme zu vermeiden
         function renderCategoryManager() {
             const container = document.getElementById('categoryManagerContainer');
             container.innerHTML = '';
             getCategories().forEach(cat => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-gray-100 p-2 rounded-md">
-                        <span class="font-medium">${cat}</span>
-                        <button onclick="renameCategory('${cat}')" class="text-sm bg-yellow-500 text-white px-3 py-1 rounded-md">Umbenennen</button>
-                    </div>`;
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center bg-gray-100 p-2 rounded-md';
+                const span = document.createElement('span');
+                span.className = 'font-medium';
+                span.textContent = cat;
+                const button = document.createElement('button');
+                button.className = 'text-sm bg-yellow-500 text-white px-3 py-1 rounded-md';
+                button.textContent = 'Umbenennen';
+                button.onclick = () => renameCategory(cat);
+                div.appendChild(span);
+                div.appendChild(button);
+                container.appendChild(div);
             });
         }
 
@@ -402,16 +424,10 @@
             const newNameInput = document.getElementById('newCategoryName');
             const newName = newNameInput.value.trim();
             if (newName && !getCategories().includes(newName)) {
-                // To "create" a category, we create a dummy product and open it for editing.
                 const newProduct = {
-                    id: Date.now(),
-                    name: "Neues Produkt",
-                    category: newName,
-                    weekdayPrice: 0,
-                    weekendPrice: 0,
-                    threeDayPrice: null,
-                    features: "",
-                    addons: []
+                    id: Date.now(), name: "Neues Produkt", category: newName,
+                    weekdayPrice: 0, weekendPrice: 0, threeDayPrice: null,
+                    features: "", addons: []
                 };
                 products.push(newProduct);
                 saveData();
@@ -428,19 +444,20 @@
         function renameCategory(oldName) {
             const newName = prompt(`Neuer Name für die Kategorie "${oldName}":`, oldName);
             if (newName && newName.trim() && newName.trim() !== oldName) {
+                const finalNewName = newName.trim();
                 products.forEach(p => {
                     if (p.category === oldName) {
-                        p.category = newName.trim();
+                        p.category = finalNewName;
                     }
                 });
                 saveData();
                 initAdminView();
-                switchCategory(newName.trim());
+                switchCategory(finalNewName);
                 renderCategoryManager();
             }
         }
 
-        // KORRIGIERT: UI-Funktionen
+        // KORRIGIERT: Baut die Reiter-Liste sicher auf, um Event-Handler-Probleme zu vermeiden
         function renderCategoryTabs(){
             const cont = document.getElementById('categoryTabs');
             cont.innerHTML = '';
@@ -478,7 +495,7 @@
             cont.innerHTML = '';
             const filteredProducts = products.filter(p => p.category === activeCategory);
             
-            if (filteredProducts.length === 0) {
+            if (filteredProducts.length === 0 && activeCategory) {
                  cont.innerHTML = `<div class="col-span-full text-center text-white/80 bg-black/10 p-8 rounded-lg">In dieser Kategorie gibt es noch keine Produkte.</div>`;
                  return;
             }
@@ -487,26 +504,33 @@
                 const card = document.createElement('div');
                 card.id = `product-card-${p.id}`;
                 card.className = "bg-white rounded-lg shadow-lg p-5 flex flex-col relative";
+                const editButton = document.createElement('button');
+                editButton.className = "absolute top-2 right-2 text-gray-400 hover:text-purple-600 p-1";
+                editButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>`;
+                editButton.onclick = () => openProductModal(p.id);
+
                 card.innerHTML = `
-                    <button class="absolute top-2 right-2 text-gray-400 hover:text-purple-600 p-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
-                    </button>
                     <h3 class="text-lg font-bold text-gray-800 mb-2 pr-6">${p.name}</h3>
                     <div class="space-y-1 mb-3 text-xs text-gray-600 flex-grow">${p.features ? `<p>• ${p.features}</p>` : ''}</div>
                     <div class="border-t pt-2 mt-2">
                         <p class="text-sm text-gray-600">Mo-Do: <span class="font-semibold">${p.weekdayPrice}€</span></p>
                         <p class="text-sm text-gray-600">Fr-So: <span class="font-semibold">${p.weekendPrice}€</span></p>
                         ${p.threeDayPrice ? `<p class="text-sm text-gray-600">3 Tage: <span class="font-semibold">${p.threeDayPrice}€</span></p>` : ''}
-                    </div>
-                    <button id="product-btn-${p.id}" class="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium w-full">Hinzufügen</button>`;
-                card.querySelector('button').onclick = () => openProductModal(p.id); // Edit button
-                card.querySelector(`#product-btn-${p.id}`).onclick = () => toggleCartItem(p.id); // Add to cart button
+                    </div>`;
+                const addToCartBtn = document.createElement('button');
+                addToCartBtn.id = `product-btn-${p.id}`;
+                addToCartBtn.className = "mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg font-medium w-full";
+                addToCartBtn.textContent = 'Hinzufügen';
+                addToCartBtn.onclick = () => toggleCartItem(p.id);
+
+                card.prepend(editButton);
+                card.appendChild(addToCartBtn);
                 cont.appendChild(card);
             });
             updateCartUI();
         }
 
-        // KORRIGIERTE Buchungs- & Rechnungs-Funktionen
+        // Buchungs- & Rechnungs-Funktionen
         function calculateCosts() {
             const costDetails = {
                 items: [],
