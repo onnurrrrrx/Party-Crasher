@@ -1,95 +1,894 @@
-Ich habe die Änderungen eingebaut: Asphaltpauschale 30€, Kabeltrommel 5€ und Auf-/Abbau-Service 45€. Hier ist die aktualisierte Version:
-    <div id="products" class="section">
-        <div class="category-filter">
-            <button class="category-btn all active" onclick="filterProducts('all')">Alle</button>
-            <button class="category-btn huepfburg" onclick="filterProducts('huepfburg')">Hüpfburgen</button>
-            <button class="category-btn spiel" onclick="filterProducts('spiel')">Spiel & Spaß</button>
-            <button class="category-btn funfood" onclick="filterProducts('funfood')">Funfood</button>
-            <button class="category-btn equipment" onclick="filterProducts('equipment')">Equipment</button>
-        </div>
-        <div class="ios-section">
-            <div class="ios-section-title"><span id="productCategoryTitle">Alle Produkte</span><span class="ios-section-subtitle" id="productCount">0 Produkte</span></div>
-            <div class="products-scroll" id="productList"></div>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Partycrasher GLA Pro</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif}
+        :root{--ios-bg:#000;--ios-card:#1c1c1e;--ios-card-secondary:#2c2c2e;--ios-blue:#0a84ff;--ios-green:#30d158;--ios-orange:#ff9f0a;--ios-red:#ff453a;--ios-gray:#8e8e93;--ios-text:#fff;--ios-text-secondary:rgba(255,255,255,0.6);--ios-purple:#bf5af2;--ios-pink:#ff375f;--ios-yellow:#ffd60a;--ios-teal:#5ac8fa;--safe-top:env(safe-area-inset-top);--safe-bottom:env(safe-area-inset-bottom)}
+        body{background:var(--ios-bg);color:var(--ios-text);min-height:100vh;padding-bottom:calc(90px + var(--safe-bottom));overflow-x:hidden;-webkit-font-smoothing:antialiased}
+        .status-bar{height:calc(44px + var(--safe-top));background:rgba(0,0,0,0.8);backdrop-filter:blur(20px);position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:flex-end;justify-content:center;padding-bottom:10px;border-bottom:0.5px solid rgba(255,255,255,0.1)}
+        .status-bar h1{font-size:17px;font-weight:600}
+        .settings-btn{position:absolute;right:16px;bottom:10px;background:none;border:none;color:var(--ios-blue);font-size:24px;cursor:pointer}
+        .content{padding-top:calc(44px + var(--safe-top) + 10px)}
+        .login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(180deg,#1a1a2e 0%,#000 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px}
+        .login-logo{width:120px;height:120px;background:linear-gradient(135deg,#ff6b35,#ff453a);border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:60px;margin-bottom:30px;box-shadow:0 20px 40px rgba(255,107,53,0.3);animation:pulse 2s infinite}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        .login-title{font-size:32px;font-weight:700;margin-bottom:8px;background:linear-gradient(135deg,#fff,#a0a0a0);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .login-subtitle{color:var(--ios-text-secondary);font-size:17px;margin-bottom:50px}
+        .role-selector{display:flex;gap:12px;margin-bottom:30px;width:100%;max-width:340px;background:var(--ios-card);padding:4px;border-radius:12px}
+        .role-btn{flex:1;padding:14px;background:transparent;border:none;border-radius:10px;color:var(--ios-text-secondary);font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s}
+        .role-btn.active{background:var(--ios-blue);color:white;box-shadow:0 4px 12px rgba(10,132,255,0.3)}
+        .login-form{width:100%;max-width:340px}
+        .ios-input{width:100%;padding:16px;background:var(--ios-card);border:none;border-radius:12px;color:var(--ios-text);font-size:17px;margin-bottom:12px;-webkit-appearance:none}
+        .ios-input::placeholder{color:var(--ios-gray)}
+        .ios-btn{width:100%;padding:16px;background:var(--ios-blue);border:none;border-radius:12px;color:white;font-size:17px;font-weight:600;margin-top:8px;cursor:pointer}
+        .ios-btn.secondary{background:var(--ios-card-secondary)}
+        .ios-btn.success{background:var(--ios-green)}
+        .ios-btn.danger{background:var(--ios-red)}
+        .hidden{display:none !important}
+        .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(84px + var(--safe-bottom));background:rgba(28,28,30,0.95);backdrop-filter:blur(20px);border-top:0.5px solid rgba(255,255,255,0.1);display:flex;justify-content:space-around;align-items:flex-start;padding-top:8px;z-index:1000}
+        .nav-item{display:flex;flex-direction:column;align-items:center;padding:8px 16px;color:var(--ios-gray);font-size:10px;font-weight:500;cursor:pointer;border:none;background:none}
+        .nav-item.active{color:var(--ios-blue)}
+        .nav-icon{font-size:24px;margin-bottom:4px}
+        .section{display:none;padding:16px;animation:fadeIn 0.3s}
+        .section.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .ios-section{margin-bottom:24px}
+        .ios-section-title{font-size:22px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+        .ios-section-subtitle{font-size:15px;color:var(--ios-text-secondary);font-weight:400}
+        .ios-list{background:var(--ios-card);border-radius:12px;overflow:hidden}
+        .ios-list-item{padding:16px;border-bottom:0.5px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:space-between;min-height:60px;cursor:pointer}
+        .ios-list-item:last-child{border-bottom:none}
+        .item-content{flex:1}
+        .item-title{font-size:17px;font-weight:400;margin-bottom:2px}
+        .item-subtitle{font-size:15px;color:var(--ios-text-secondary)}
+        .item-value{color:var(--ios-text-secondary);font-size:17px;margin-right:8px;font-weight:500}
+        .chevron{color:var(--ios-gray);font-size:14px}
+        .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+        .stat-card{background:var(--ios-card);border-radius:16px;padding:20px;position:relative;overflow:hidden}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ios-blue)}
+        .stat-card.green::before{background:var(--ios-green)}
+        .stat-card.orange::before{background:var(--ios-orange)}
+        .stat-card.yellow::before{background:var(--ios-yellow)}
+        .stat-label{font-size:13px;color:var(--ios-text-secondary);text-transform:uppercase;margin-bottom:8px}
+        .stat-value{font-size:28px;font-weight:700}
+        .category-filter{display:flex;gap:8px;overflow-x:auto;padding:4px 0 16px;margin:0 -16px;padding-left:16px}
+        .category-btn{flex:0 0 auto;padding:10px 20px;background:var(--ios-card);border:none;border-radius:20px;color:var(--ios-text-secondary);font-size:15px;font-weight:600;cursor:pointer}
+        .category-btn.active{background:var(--ios-blue);color:white}
+        .category-btn.huepfburg.active{background:var(--ios-green)}
+        .category-btn.spiel.active{background:var(--ios-orange)}
+        .category-btn.funfood.active{background:var(--ios-pink)}
+        .category-btn.equipment.active{background:var(--ios-purple)}
+        .products-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px;margin:0 -16px;padding-left:16px;padding-bottom:20px}
+        .product-card{flex:0 0 300px;background:var(--ios-card);border-radius:20px;overflow:hidden;scroll-snap-align:start;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+        .product-image{height:180px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}
+        .product-card.huepfburg .product-image{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}
+        .product-card.spiel .product-image{background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%)}
+        .product-card.funfood .product-image{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+        .product-card.equipment .product-image{background:linear-gradient(135deg,#fa709a 0%,#fee140 100%)}
+        .product-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600}
+        .product-category-tag{position:absolute;top:12px;left:12px;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase}
+        .product-card.huepfburg .product-category-tag{background:var(--ios-green);color:black}
+        .product-card.spiel .product-category-tag{background:var(--ios-orange);color:black}
+        .product-card.funfood .product-category-tag{background:var(--ios-pink);color:white}
+        .product-card.equipment .product-category-tag{background:var(--ios-purple);color:white}
+        .product-info{padding:20px}
+        .product-name{font-size:19px;font-weight:600;margin-bottom:4px}
+        .product-meta{font-size:13px;color:var(--ios-text-secondary);margin-bottom:12px}
+        .product-price-container{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+        .product-price{font-size:28px;font-weight:700;color:var(--ios-orange)}
+        .product-price-original{font-size:15px;color:var(--ios-text-secondary);text-decoration:line-through}
+        .product-features{font-size:14px;color:var(--ios-text-secondary);line-height:1.5;margin-bottom:16px}
+        .book-btn{width:100%;padding:16px;background:var(--ios-green);border:none;border-radius:12px;color:white;font-size:17px;font-weight:600;cursor:pointer}
+        .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:10000;display:none;flex-direction:column}
+        .modal.active{display:flex;animation:modalIn 0.3s}
+        @keyframes modalIn{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:translateY(0)}}
+        .modal-header{padding:16px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,0.1)}
+        .modal-title{font-size:17px;font-weight:600}
+        .modal-close{width:32px;height:32px;border-radius:50%;background:var(--ios-card-secondary);border:none;color:var(--ios-text);font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .modal-body{flex:1;overflow-y:auto;padding:16px}
+        .form-group{margin-bottom:24px}
+        .form-label{display:block;font-size:13px;color:var(--ios-text-secondary);text-transform:uppercase;margin-bottom:10px;font-weight:600}
+        .ios-input-group{background:var(--ios-card);border-radius:12px;overflow:hidden}
+        .ios-input-group input,.ios-input-group select,.ios-input-group textarea{width:100%;padding:16px;background:transparent;border:none;border-bottom:0.5px solid rgba(255,255,255,0.1);color:var(--ios-text);font-size:17px;-webkit-appearance:none}
+        .ios-input-group input:last-child,.ios-input-group select:last-child,.ios-input-group textarea:last-child{border-bottom:none}
+        .option-group{display:flex;gap:8px;flex-wrap:wrap}
+        .option-btn{padding:12px 20px;background:var(--ios-card);border:2px solid transparent;border-radius:10px;color:var(--ios-text);font-size:15px;cursor:pointer}
+        .option-btn.selected{border-color:var(--ios-blue);background:rgba(10,132,255,0.2)}
+        .option-btn.checkbox.selected{border-color:var(--ios-green);background:rgba(48,209,88,0.2)}
+        .option-btn.warning.selected{border-color:var(--ios-orange);background:rgba(255,159,10,0.2)}
+        .option-btn.discount{border-color:var(--ios-yellow);color:var(--ios-yellow)}
+        .option-btn.discount.selected{background:rgba(255,214,10,0.2)}
+        .price-summary{background:var(--ios-card);border-radius:16px;padding:20px;margin:24px 0}
+        .price-row{display:flex;justify-content:space-between;padding:10px 0;font-size:17px;color:var(--ios-text-secondary)}
+        .price-row.total{font-size:28px;font-weight:700;color:var(--ios-orange);margin-top:12px;padding-top:16px;border-top:0.5px solid rgba(255,255,255,0.1)}
+        .modal-footer{padding:16px;padding-bottom:calc(16px + var(--safe-bottom));border-top:0.5px solid rgba(255,255,255,0.1)}
+        .distance-box{background:linear-gradient(135deg,rgba(10,132,255,0.2),rgba(10,132,255,0.05));border:1px solid rgba(10,132,255,0.3);border-radius:12px;padding:16px;margin:16px 0}
+        .distance-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;color:var(--ios-blue);font-weight:600}
+        .distance-row{display:flex;justify-content:space-between;padding:8px 0;font-size:15px}
+        .distance-total{font-size:20px;font-weight:700;color:var(--ios-orange);margin-top:12px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.1)}
+        .early-bird-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--ios-green),#34c759);color:black;padding:8px 16px;border-radius:20px;font-size:14px;font-weight:700;margin-bottom:16px}
+        .surface-warning{background:rgba(255,159,10,0.2);border:1px solid rgba(255,159,10,0.5);border-radius:12px;padding:12px 16px;margin-top:12px;color:var(--ios-orange);font-size:14px;display:none}
+        .surface-warning.active{display:block}
+        .booking-card{background:var(--ios-card);border-radius:16px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden;cursor:pointer}
+        .booking-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ios-blue)}
+        .booking-card.confirmed::before{background:var(--ios-green)}
+        .booking-card.delivery::before{background:var(--ios-orange)}
+        .booking-card.completed::before{background:var(--ios-gray)}
+        .booking-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+        .booking-product{font-size:19px;font-weight:600;flex:1;padding-right:10px}
+        .booking-price{font-size:20px;font-weight:700;color:var(--ios-orange)}
+        .booking-info{color:var(--ios-text-secondary);font-size:15px;line-height:1.6;margin-bottom:16px}
+        .booking-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+        .status-badge{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--ios-blue);color:white}
+        .status-badge.confirmed{background:var(--ios-green)}
+        .status-badge.delivery{background:var(--ios-orange)}
+        .status-badge.completed{background:var(--ios-gray)}
+        .option-badge{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;background:rgba(255,255,255,0.1);color:var(--ios-text-secondary)}
+        .savings-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(48,209,88,0.2);color:var(--ios-green);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600}
+        .warning-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,159,10,0.2);color:var(--ios-orange);padding:4px 10px;border-radius:12px;font-size:12px;font-weight:600}
+        .booking-actions{display:flex;gap:8px;margin-top:12px}
+        .action-btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:15px;font-weight:600;cursor:pointer}
+        .action-btn.primary{background:var(--ios-blue);color:white}
+        .action-btn.secondary{background:var(--ios-card-secondary);color:var(--ios-text)}
+        .action-btn.success{background:var(--ios-green);color:white}
+        .empty-state{text-align:center;padding:60px 20px;color:var(--ios-text-secondary)}
+        .empty-icon{font-size:70px;margin-bottom:20px;opacity:0.5}
+        .empty-title{font-size:22px;font-weight:600;color:var(--ios-text);margin-bottom:8px}
+        .toast{position:fixed;top:calc(44px + var(--safe-top) + 10px);left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(48,209,88,0.95);color:white;padding:14px 24px;border-radius:100px;font-size:15px;font-weight:600;z-index:100000;transition:transform 0.3s}
+        .toast.show{transform:translateX(-50%) translateY(0)}
+        .toast.error{background:rgba(255,69,58,0.95)}
+        .settings-panel{background:var(--ios-card);border-radius:16px;padding:20px;margin-bottom:24px}
+        .settings-title{font-size:20px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+        .price-edit-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+        .price-edit-item{background:var(--ios-card-secondary);padding:12px;border-radius:10px}
+        .price-edit-label{font-size:12px;color:var(--ios-text-secondary);margin-bottom:4px}
+        .price-edit-input{width:100%;background:transparent;border:none;color:var(--ios-text);font-size:18px;font-weight:600}
+        .discount-slider{width:100%;margin:16px 0}
+        .discount-value{text-align:center;font-size:32px;font-weight:700;color:var(--ios-yellow);margin-bottom:8px}
+        .product-detail-header{text-align:center;padding:30px 20px;background:var(--ios-card);border-radius:20px;margin-bottom:24px}
+        .product-detail-icon{font-size:80px;margin-bottom:16px}
+        .product-detail-name{font-size:24px;font-weight:700;margin-bottom:8px}
+        .product-detail-price{font-size:36px;font-weight:700;color:var(--ios-orange);margin-bottom:8px}
+        .product-detail-meta{color:var(--ios-text-secondary);font-size:15px}
+        .feature-list{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+        .feature-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--ios-card);border-radius:10px;font-size:15px}
+        .feature-icon{font-size:20px}
+        .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-radius:50%;border-top-color:var(--ios-blue);animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .weekend-badge{display:inline-block;padding:4px 8px;background:var(--ios-orange);color:black;border-radius:8px;font-size:11px;font-weight:700;margin-left:8px}
+    </style>
+</head>
+<body>
 
-    <div id="settings" class="section">
-        <div class="ios-section">
-            <div class="ios-section-title">⚙️ Einstellungen</div>
-            <div class="settings-panel">
-                <div class="settings-title">💰 Globale Preisanpassung</div>
-                <div class="form-group">
-                    <div class="discount-value" id="globalDiscountValue">0%</div>
-                    <input type="range" class="discount-slider" id="globalDiscount" min="-50" max="50" value="0" step="5" oninput="updateGlobalDiscount(this.value)">
-                    <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ios-text-secondary)"><span>-50%</span><span>0%</span><span>+50%</span></div>
-                </div>
-                <button class="ios-btn" onclick="applyGlobalDiscount()">Auf alle Produkte anwenden</button>
-            </div>
-            <div class="settings-panel">
-                <div class="settings-title">📍 Lieferkosten</div>
-                <div class="form-group">
-                    <label class="form-label">Startpunkt</label>
-                    <div class="ios-input-group"><input type="text" value="Bottroper Str. 176, 45964 Gladbeck" readonly></div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kosten pro km (nach 3km)</label>
-                    <div class="ios-input-group"><input type="number" id="costPerKm" value="0.50" step="0.10"></div>
-                </div>
-            </div>
-            <div class="settings-panel">
-                <div class="settings-title">🐦 Frühbucherrabatt</div>
-                <div class="form-group">
-                    <label class="form-label">Rabatt pro Monat (%)</label>
-                    <div class="ios-input-group"><input type="number" id="earlyBirdPercent" value="5" step="1"></div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Maximaler Rabatt (%)</label>
-                    <div class="ios-input-group"><input type="number" id="maxEarlyBird" value="20" step="1"></div>
-                </div>
-            </div>
-            <button class="ios-btn danger" onclick="resetAllData()">🗑️ Alle Daten zurücksetzen</button>
-        </div>
-    </div>
+<div class="status-bar">
+    <h1 id="pageTitle">Dashboard</h1>
+    <button class="settings-btn hidden" onclick="openSettings()" id="settingsBtn">⚙️</button>
+</div>
 
-    <div id="bookings" class="section">
-        <div class="ios-section">
-            <div class="ios-section-title">Alle Buchungen<span class="ios-section-subtitle" id="totalBookingsCount">0 Buchungen</span></div>
-            <div id="bookingsList"></div>
-        </div>
+<div id="loginScreen" class="login-screen">
+    <div class="login-logo">🎪</div>
+    <div class="login-title">Partycrasher</div>
+    <div class="login-subtitle">Buchungsmanagement GLA Pro</div>
+    <div class="role-selector">
+        <button class="role-btn active" onclick="setRole('admin')">Admin</button>
+        <button class="role-btn" onclick="setRole('mitarbeiter')">Mitarbeiter</button>
     </div>
-
-    <div id="today" class="section">
-        <div class="ios-section">
-            <div class="ios-section-title">Heutige Termine<span class="ios-section-subtitle" id="todayDate"></span></div>
-            <div id="todayList"></div>
-        </div>
+    <div id="adminForm" class="login-form">
+        <input type="password" class="ios-input" id="adminPass" placeholder="Passwort eingeben">
+        <button class="ios-btn" onclick="doLogin('admin')">Anmelden</button>
     </div>
-
-    <div id="customers" class="section">
-        <div class="ios-section">
-            <div class="ios-section-title">Kunden<span class="ios-section-subtitle" id="customerCount">0 Kunden</span></div>
-            <div class="ios-list" id="customerList"></div>
-        </div>
+    <div id="mitarbeiterForm" class="login-form hidden">
+        <input type="text" class="ios-input" id="maName" placeholder="Dein Name">
+        <button class="ios-btn" onclick="doLogin('mitarbeiter')">Anmelden</button>
     </div>
 </div>
 
-<div class="bottom-nav">
-    <button class="nav-item active" onclick="navigate('dashboard')"><div class="nav-icon">📊</div><span>Dashboard</span></button>
-    <button class="nav-item admin-only" onclick="navigate('products')"><div class="nav-icon">➕</div><span>Neu</span></button>
-    <button class="nav-item" onclick="navigate('bookings')"><div class="nav-icon">📋</div><span>Buchungen</span></button>
-    <button class="nav-item" onclick="navigate('today')"><div class="nav-icon">🚚</div><span>Heute</span></button>
-    <button class="nav-item admin-only" onclick="navigate('customers')"><div class="nav-icon">👥</div><span>Kunden</span></button>
+<div id="app" class="hidden">
+    <div class="content">
+        <div id="dashboard" class="section active">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">Aktive Buchungen</div><div class="stat-value" id="statActive">0</div></div>
+                <div class="stat-card green"><div class="stat-label">Diese Woche</div><div class="stat-value" id="statWeek">0</div></div>
+                <div class="stat-card orange"><div class="stat-label">Heute</div><div class="stat-value" id="statToday">0</div></div>
+                <div class="stat-card yellow"><div class="stat-label">Umsatz</div><div class="stat-value" id="statRevenue">0€</div></div>
+            </div>
+            <div class="ios-section">
+                <div class="ios-section-title">Nächste Buchungen<span class="ios-section-subtitle" id="upcomingCount"></span></div>
+                <div id="upcomingList"><div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">Keine anstehenden Termine</div><p>Neue Buchungen erscheinen hier</p></div></div>
+            </div>
+        </div>
+
+        <div id="products" class="section">
+            <div class="category-filter">
+                <button class="category-btn all active" onclick="filterProducts('all')">Alle</button>
+                <button class="category-btn huepfburg" onclick="filterProducts('huepfburg')">Hüpfburgen</button>
+                <button class="category-btn spiel" onclick="filterProducts('spiel')">Spiel & Spaß</button>
+                <button class="category-btn funfood" onclick="filterProducts('funfood')">Funfood</button>
+                <button class="category-btn equipment" onclick="filterProducts('equipment')">Equipment</button>
+            </div>
+            <div class="ios-section">
+                <div class="ios-section-title"><span id="productCategoryTitle">Alle Produkte</span><span class="ios-section-subtitle" id="productCount">0 Produkte</span></div>
+                <div class="products-scroll" id="productList"></div>
+            </div>
+        </div>
+
+        <div id="settings" class="section">
+            <div class="ios-section">
+                <div class="ios-section-title">⚙️ Einstellungen</div>
+                <div class="settings-panel">
+                    <div class="settings-title">💰 Globale Preisanpassung</div>
+                    <div class="form-group">
+                        <div class="discount-value" id="globalDiscountValue">0%</div>
+                        <input type="range" class="discount-slider" id="globalDiscount" min="-50" max="50" value="0" step="5" oninput="updateGlobalDiscount(this.value)">
+                        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--ios-text-secondary)"><span>-50%</span><span>0%</span><span>+50%</span></div>
+                    </div>
+                    <button class="ios-btn" onclick="applyGlobalDiscount()">Auf alle Produkte anwenden</button>
+                </div>
+                <div class="settings-panel">
+                    <div class="settings-title">📍 Lieferkosten</div>
+                    <div class="form-group">
+                        <label class="form-label">Startpunkt</label>
+                        <div class="ios-input-group"><input type="text" value="Bottroper Str. 176, 45964 Gladbeck" readonly></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kosten pro km (nach 3km)</label>
+                        <div class="ios-input-group"><input type="number" id="costPerKm" value="0.50" step="0.10"></div>
+                    </div>
+                </div>
+                <div class="settings-panel">
+                    <div class="settings-title">🐦 Frühbucherrabatt</div>
+                    <div class="form-group">
+                        <label class="form-label">Rabatt pro Monat (%)</label>
+                        <div class="ios-input-group"><input type="number" id="earlyBirdPercent" value="5" step="1"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Maximaler Rabatt (%)</label>
+                        <div class="ios-input-group"><input type="number" id="maxEarlyBird" value="20" step="1"></div>
+                    </div>
+                </div>
+                <button class="ios-btn danger" onclick="resetAllData()">🗑️ Alle Daten zurücksetzen</button>
+            </div>
+        </div>
+
+        <div id="bookings" class="section">
+            <div class="ios-section">
+                <div class="ios-section-title">Alle Buchungen<span class="ios-section-subtitle" id="totalBookingsCount">0 Buchungen</span></div>
+                <div id="bookingsList"></div>
+            </div>
+        </div>
+
+        <div id="today" class="section">
+            <div class="ios-section">
+                <div class="ios-section-title">Heutige Termine<span class="ios-section-subtitle" id="todayDate"></span></div>
+                <div id="todayList"></div>
+            </div>
+        </div>
+
+        <div id="customers" class="section">
+            <div class="ios-section">
+                <div class="ios-section-title">Kunden<span class="ios-section-subtitle" id="customerCount">0 Kunden</span></div>
+                <div class="ios-list" id="customerList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="navigate('dashboard')"><div class="nav-icon">📊</div><span>Dashboard</span></button>
+        <button class="nav-item admin-only" onclick="navigate('products')"><div class="nav-icon">➕</div><span>Neu</span></button>
+        <button class="nav-item" onclick="navigate('bookings')"><div class="nav-icon">📋</div><span>Buchungen</span></button>
+        <button class="nav-item" onclick="navigate('today')"><div class="nav-icon">🚚</div><span>Heute</span></button>
+        <button class="nav-item admin-only" onclick="navigate('customers')"><div class="nav-icon">👥</div><span>Kunden</span></button>
+    </div>
 </div>
 
-🆕 Neue Features:
-✅ Asphaltpauschale 30€
-•  Automatisch beim Auswählen von "Asphalt"
-•  Warnung wird angezeigt: "Anker können nicht eingeschlagen werden"
-•  Wird in Preisübersicht und Buchungsdetails angezeigt
-✅ Zusatzleistungen
-•  🔌 Kabeltrommel +5€
-•  🛠️ Auf-/Abbau-Service +45€ (orange hervorgehoben)
-✅ Anzeige in Buchungen
-•  Asphalt-Pauschale als 🛣️ Badge
-•  Kabeltrommel als 🔌 Badge
-•  Auf-/Abbau-Service als 🛠️ Badge
+<div id="bookingModal" class="modal">
+    <div class="modal-header">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-title">Neue Buchung</div>
+        <div style="width:32px"></div>
+    </div>
+    <div class="modal-body">
+        <form id="bookingForm" onsubmit="saveBooking(event)">
+            <input type="hidden" id="selProductId">
+            <div id="earlyBirdBadge" class="early-bird-badge hidden">🐦 Frühbucherrabatt: <span id="earlyBirdAmount">0%</span></div>
+            <div class="product-detail-header">
+                <div class="product-detail-icon" id="detailIcon">🏰</div>
+                <div class="product-detail-name" id="detailName">Produktname</div>
+                <div class="product-detail-price" id="detailPrice">0€</div>
+                <div class="product-detail-meta" id="detailMeta">Größe • Kapazität</div>
+            </div>
+            <div class="feature-list" id="featureList"></div>
+            <div class="form-group">
+                <label class="form-label">Preisoption</label>
+                <div class="option-group" id="priceOptions">
+                    <button type="button" class="option-btn selected" onclick="selectPriceOption('daily',this)">Mo-Do: <span id="dailyPrice">0€</span></button>
+                    <button type="button" class="option-btn" onclick="selectPriceOption('weekend',this)">Fr-So: <span id="weekendPrice">0€</span></button>
+                    <button type="button" class="option-btn" onclick="selectPriceOption('threeDay',this)" id="threeDayBtn">3 Tage: <span id="threeDayPrice">0€</span></button>
+                </div>
+                <input type="hidden" id="priceOption" value="daily">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Individueller Preis (optional)</label>
+                <div class="ios-input-group"><input type="number" id="customPrice" placeholder="Standardpreis verwenden" step="1" onchange="updateCustomPrice()"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Rabatt (%)</label>
+                <div class="ios-input-group"><input type="number" id="discountPercent" value="0" min="0" max="100" step="5" onchange="updateDiscount()"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Kundendaten</label>
+                <div class="ios-input-group">
+                    <input type="text" id="cName" placeholder="Name" required>
+                    <input type="tel" id="cPhone" placeholder="Telefon" required>
+                    <input type="email" id="cEmail" placeholder="E-Mail (optional)">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Lieferadresse</label>
+                <div class="ios-input-group">
+                    <input type="text" id="cStreet" placeholder="Straße, Hausnr." required onchange="calculateDistance()">
+                    <input type="text" id="cZip" placeholder="PLZ" required onchange="calculateDistance()" style="width:40%;display:inline-block">
+                    <input type="text" id="cCity" placeholder="Ort" required onchange="calculateDistance()" style="width:60%;display:inline-block;border-left:0.5px solid rgba(255,255,255,0.1)">
+                </div>
+            </div>
+            <div id="distanceBox" class="distance-box hidden">
+                <div class="distance-header">🚚 Lieferkosten<span id="distanceLoading" class="loading hidden"></span></div>
+                <div class="distance-row"><span>Entfernung:</span><span id="distanceValue">-</span></div>
+                <div class="distance-row"><span>Basis (3km):</span><span>Kostenlos</span></div>
+                <div class="distance-row" id="extraDistanceRow"><span>Zusätzliche km:</span><span id="extraKm">-</span></div>
+                <div class="distance-total"><span>Lieferkosten:</span><span id="deliveryCost">0€</span></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Termin</label>
+                <div class="ios-input-group">
+                    <input type="date" id="bDate" required onchange="calculateEarlyBird()">
+                    <input type="time" id="bTime" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Untergrund</label>
+                <div class="option-group">
+                    <button type="button" class="option-btn" onclick="selectSurface(this,'rasen')">Rasen</button>
+                    <button type="button" class="option-btn" onclick="selectSurface(this,'asphalt')">Asphalt</button>
+                    <button type="button" class="option-btn" onclick="selectSurface(this,'pflaster')">Pflaster</button>
+                    <button type="button" class="option-btn" onclick="selectSurface(this,'halle')">Halle</button>
+                </div>
+                <input type="hidden" id="surfaceValue" required>
+                <div id="asphaltWarning" class="surface-warning">⚠️ <strong>Asphaltpauschale:</strong> +30€ (Anker können nicht eingeschlagen werden - zusätzliche Sicherung erforderlich)</div>
+            </div>
+            <div class="form-group" id="optionsGroup">
+                <label class="form-label">Zusatzoptionen</label>
+                <div class="option-group">
+                    <button type="button" class="option-btn checkbox" onclick="toggleOption(this,'pool',25)" id="poolOption">Pool +25€</button>
+                    <button type="button" class="option-btn checkbox" onclick="toggleOption(this,'night',30)">Nachtlieferung +30€</button>
+                    <button type="button" class="option-btn checkbox" onclick="toggleOption(this,'generator',40)">Stromaggregat +40€</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Zusatzleistungen</label>
+                <div class="option-group">
+                    <button type="button" class="option-btn checkbox" onclick="toggleOption(this,'cable',5)">🔌 Kabeltrommel +5€</button>
+                    <button type="button" class="option-btn checkbox warning" onclick="toggleOption(this,'setup',45)">🛠️ Auf-/Abbau-Service +45€</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notizen</label>
+                <div class="ios-input-group"><textarea id="bNotes" rows="3" placeholder="Besondere Hinweise..."></textarea></div>
+            </div>
+            <div class="price-summary">
+                <div class="price-row"><span>Basispreis</span><span id="pBase">0€</span></div>
+                <div class="price-row" id="discountRow" style="display:none"><span>Rabatt</span><span id="pDiscount" style="color:var(--ios-green)">-0€</span></div>
+                <div class="price-row" id="earlyBirdRow" style="display:none"><span>Frühbucherrabatt</span><span id="pEarlyBird" style="color:var(--ios-green)">-0€</span></div>
+                <div class="price-row" id="asphaltRow" style="display:none"><span>Asphaltpauschale</span><span id="pAsphalt" style="color:var(--ios-orange)">+30€</span></div>
+                <div class="price-row"><span>Zusatzoptionen</span><span id="pOpt">0€</span></div>
+                <div class="price-row"><span>Lieferkosten</span><span id="pDelivery">0€</span></div>
+                <div class="price-row total"><span>Gesamtsumme</span><span id="pTotal">0€</span></div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="ios-btn secondary" onclick="closeModal()" style="margin-bottom:8px">Abbrechen</button>
+        <button class="ios-btn success" onclick="document.getElementById('bookingForm').dispatchEvent(new Event('submit'))">Buchung speichern</button>
+    </div>
+</div>
+
+<div id="editProductModal" class="modal">
+    <div class="modal-header">
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+        <div class="modal-title">Preis bearbeiten</div>
+        <div style="width:32px"></div>
+    </div>
+    <div class="modal-body">
+        <div class="product-detail-header" style="margin-bottom:24px">
+            <div class="product-detail-icon" id="editIcon">🏰</div>
+            <div class="product-detail-name" id="editName">Produkt</div>
+        </div>
+        <div class="settings-panel">
+            <div class="price-edit-grid">
+                <div class="price-edit-item"><div class="price-edit-label">Mo-Do</div><input type="number" class="price-edit-input" id="editPriceDaily" step="1"></div>
+                <div class="price-edit-item"><div class="price-edit-label">Fr-So</div><input type="number" class="price-edit-input" id="editPriceWeekend" step="1"></div>
+                <div class="price-edit-item"><div class="price-edit-label">3 Tage</div><input type="number" class="price-edit-input" id="editPrice3Day" step="1"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Schnellrabatt (%)</label>
+            <div class="option-group">
+                <button type="button" class="option-btn discount" onclick="applyQuickDiscount(5)">5%</button>
+                <button type="button" class="option-btn discount" onclick="applyQuickDiscount(10)">10%</button>
+                <button type="button" class="option-btn discount" onclick="applyQuickDiscount(15)">15%</button>
+                <button type="button" class="option-btn discount" onclick="applyQuickDiscount(20)">20%</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="ios-btn secondary" onclick="closeEditModal()" style="margin-bottom:8px">Abbrechen</button>
+        <button class="ios-btn success" onclick="saveProductEdit()">Speichern</button>
+    </div>
+</div>
+
+<div id="detailsModal" class="modal">
+    <div class="modal-header">
+        <button class="modal-close" onclick="closeDetails()">✕</button>
+        <div class="modal-title">Buchungsdetails</div>
+        <div style="width:32px"></div>
+    </div>
+    <div class="modal-body" id="detailsContent"></div>
+    <div class="modal-footer" id="detailsFooter"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const BASE_ADDRESS="Bottroper Str. 176, 45964 Gladbeck";
+const ASPHALT_SURCHARGE=30;
+
+let products=[
+{id:1,name:"Summer Party",price:99,priceWeekend:129,price3Days:245,icon:"🏖️",size:"4,9m × 4m × 4m",cap:"8 Kinder",feats:["Mit Rutsche","15min Aufbau","100kg","Selbstabholung"],pool:true,category:"huepfburg"},
+{id:2,name:"Hawaii Box",price:99,priceWeekend:129,price3Days:245,icon:"🌺",size:"4,8m × 4m × 3,5m",cap:"8 Kinder",feats:["Rutsche & Hindernisse","15min Aufbau","100kg"],pool:false,category:"huepfburg"},
+{id:3,name:"Fußball Hütte",price:139,priceWeekend:179,price3Days:295,icon:"⚽",size:"5,5m × 5m × 4,6m",cap:"12 Kinder",feats:["Rutsche & Hindernisse","25min Aufbau","160kg","Caddy nötig"],pool:false,category:"huepfburg"},
+{id:4,name:"Haifisch Becken",price:139,priceWeekend:179,price3Days:295,icon:"🦈",size:"5,4m × 5m × 3,8m",cap:"12 Kinder",feats:["Wasserrutsche möglich","Pool +25€","25min Aufbau","160kg"],pool:true,category:"huepfburg"},
+{id:5,name:"Piratenschiff",price:99,priceWeekend:129,price3Days:245,icon:"🏴‍☠️",size:"6,2m × 3,8m × 3,6m",cap:"8 Kinder",feats:["Rutsche & Hindernisse","15min Aufbau","80kg"],pool:false,category:"huepfburg"},
+{id:6,name:"Dino Doubleslide",price:145,priceWeekend:195,price3Days:320,icon:"🦕",size:"5,4m × 6,2m × 3,4m",cap:"15 Kinder",feats:["Doppelrutsche","Wasserrutsche möglich","Pool +25€","185kg"],pool:true,category:"huepfburg"},
+{id:7,name:"Monster-Truck",price:145,priceWeekend:195,price3Days:320,icon:"🚛",size:"5,4m × 6,2m × 3,4m",cap:"15 Kinder",feats:["Doppelrutsche","Wasserrutsche möglich","Pool +25€","185kg"],pool:true,category:"huepfburg"},
+{id:8,name:"Wedding Bouncer",price:159,priceWeekend:189,price3Days:295,icon:"💒",size:"4m × 4m × 3m",cap:"8 Kinder",feats:["Rutsche & Bällebad","Selbst gestalten","25min Aufbau","130kg"],pool:false,category:"huepfburg"},
+{id:9,name:"PAW Bouncer",price:109,priceWeekend:139,price3Days:250,icon:"🐾",size:"5m × 3,5m × 3,6m",cap:"10 Kinder",feats:["Mit Rutsche","15min Aufbau","95kg","Selbstabholung"],pool:false,category:"huepfburg"},
+{id:10,name:"PAW Kidszone",price:139,priceWeekend:179,price3Days:295,icon:"🐕",size:"6m × 4m × 3,4m",cap:"15 Kinder",feats:["Bällebad, Hüpfburg & Rutsche","Nur Lieferung","20min Aufbau","85kg"],pool:false,category:"huepfburg"},
+{id:11,name:"Minnie Clubhouse",price:89,priceWeekend:119,price3Days:200,icon:"🎀",size:"3m × 3,5m × 2m",cap:"6 Kinder",feats:["Mit Rutsche","10min Aufbau","85kg","Selbstabholung"],pool:false,category:"huepfburg"},
+{id:12,name:"Mickey Clubhouse",price:79,priceWeekend:99,price3Days:180,icon:"🐭",size:"3m × 2m × 2m",cap:"3-4 Kinder",feats:["Mit Rutsche","10min Aufbau","25kg","Passt in Kleinwagen"],pool:false,category:"huepfburg"},
+{id:13,name:"Super Hero",price:109,priceWeekend:139,price3Days:250,icon:"🦸",size:"5m × 4m × 3,8m",cap:"8 Kinder",feats:["Rutsche & Hindernisse","20min Aufbau","110kg"],pool:false,category:"huepfburg"},
+{id:14,name:"Mickey Bouncer",price:109,priceWeekend:139,price3Days:250,icon:"⚡",size:"5m × 3,5m × 3,6m",cap:"10 Kinder",feats:["Rutsche & Hindernisse","15min Aufbau","95kg"],pool:false,category:"huepfburg"},
+{id:15,name:"Mario World XXL",price:145,priceWeekend:195,price3Days:320,icon:"🍄",size:"5,5m × 5,5m × 6m",cap:"15 Kinder",feats:["Riesen Rutsche","Nur Lieferung","20min Aufbau","158kg"],pool:false,category:"huepfburg"},
+{id:16,name:"Mario Bouncer",price:109,priceWeekend:139,price3Days:250,icon:"⭐",size:"5m × 3,5m × 3,6m",cap:"10 Kinder",feats:["Rutsche & Hindernisse","15min Aufbau","95kg"],pool:false,category:"huepfburg"},
+{id:17,name:"Wasserrutsche",price:129,priceWeekend:149,price3Days:280,icon:"🌊",size:"3m Rutschenhöhe",cap:"Ab 5 Jahren",feats:["Pool 3m × 2,5m","Bällebad buchbar","Mit/ohne Pool"],pool:true,category:"spiel"},
+{id:18,name:"Whack-A-Mole",price:149,priceWeekend:189,price3Days:295,icon:"🔨",size:"5m Durchmesser",cap:"6 Spieler",feats:["Extrem unterhaltsam","Ab 5 Jahren"],pool:false,category:"spiel"},
+{id:19,name:"Sumo Fight",price:109,priceWeekend:139,price3Days:250,icon:"🥋",size:"5m × 5m",cap:"2 Personen",feats:["2 Anzüge inkl.","Kopfschutz & Handschuhe","Extra dickes Polster"],pool:false,category:"spiel"},
+{id:20,name:"Boxautomat",price:89,priceWeekend:99,price3Days:null,icon:"🥊",size:"110kg, auf Rollen",cap:"1 Spieler",feats:["Licht & Toneffekte","Münzeinwurf möglich","Anhänger nötig"],pool:false,category:"spiel"},
+{id:21,name:"Maskottchen",price:49,priceWeekend:59,price3Days:null,icon:"🎭",size:"1,60-1,85m",cap:"1 Person",feats:["Minnie, Mickey, Mario, PAW...","Detailgetreu","Viele Figuren"],pool:false,category:"spiel"},
+{id:22,name:"XXL Bausteine",price:19,priceWeekend:25,price3Days:null,icon:"🧱",size:"144 Steine",cap:"Alle Altersgruppen",feats:["Motorik fördernd","Bunt"],pool:false,category:"spiel"},
+{id:23,name:"Tauziehen",price:8,priceWeekend:12,price3Days:null,icon:"🏋️",size:"Seil",cap:"Teams",feats:["Fördert Kraft","Innen & Außen","Alle Altersgruppen"],pool:false,category:"spiel"},
+{id:24,name:"Basketballkorb",price:14,priceWeekend:19,price3Days:null,icon:"🏀",size:"150-210cm",cap:"Ab 5 Jahren",feats:["Höhenverstellbar","Wilson Ball inkl.","50kg befüllbar"],pool:false,category:"spiel"},
+{id:25,name:"Riesen Wackelturm",price:9,priceWeekend:14,price3Days:null,icon:"🗼",size:"51 Blöcke, 1,24m",cap:"Ab 6 Jahren",feats:["Geschicklichkeitsspiel","Passt in Kleinwagen"],pool:false,category:"spiel"},
+{id:26,name:"Dosenwerfen",price:8,priceWeekend:10,price3Days:null,icon:"🥫",size:"10 Dosen, 3 Bälle",cap:"Ab 3 Jahren",feats:["Kleiner Preis, großer Spaß","Innen & Außen"],pool:false,category:"spiel"},
+{id:27,name:"Pfeil und Bogen",price:8,priceWeekend:10,price3Days:null,icon:"🏹",size:"Komplettset",cap:"Ab 6 Jahren",feats:["Für innen & außen","Köcher inkl.","Passt in Kleinwagen"],pool:false,category:"spiel"},
+{id:28,name:"XXL 4-Gewinnt",price:14,priceWeekend:19,price3Days:null,icon:"🔴",size:"1,22m × 0,57m",cap:"2 Spieler",feats:["42 Spielsteine","16kg","Kombi nötig"],pool:false,category:"spiel"},
+{id:29,name:"Basketballautomat",price:35,priceWeekend:45,price3Days:null,icon:"🏀",size:"Automat",cap:"2 Spieler",feats:["2 Körbe","Bälle inkl.","Elektronisch"],pool:false,category:"spiel"},
+{id:30,name:"Popcorn Maschine",price:59,priceWeekend:79,price3Days:null,icon:"🍿",size:"XXL Profi",cap:"Unbegrenzt",feats:["Mushroom-Form","2 Maisarten","Retro-Look"],pool:false,category:"funfood"},
+{id:31,name:"Zuckerwatte",price:59,priceWeekend:79,price3Days:null,icon:"🍭",size:"Edelstahl",cap:"6L Fassung",feats:["Extrem cremig","Kinderleichte Bedienung","Profigerät"],pool:false,category:"funfood"},
+{id:32,name:"Slush-Ice",price:79,priceWeekend:99,price3Days:null,icon:"🥤",size:"6L Fassung",cap:"Viele Portionen",feats:["Eisgekühlt","2 Geschmacksrichtungen","Perfekt für Sommer"],pool:false,category:"funfood"},
+{id:33,name:"Disco Zelt",price:285,priceWeekend:345,price3Days:450,icon:"🪩",size:"8m × 4m",cap:"Viele Gäste",feats:["Discokugel & Licht","Roter Teppich","45min Aufbau"],pool:false,category:"equipment"},
+{id:34,name:"Kinoabend Paket",price:95,priceWeekend:145,price3Days:245,icon:"🎬",size:"300cm Diagonale",cap:"Streaming",feats:["Beamer, Sitzsäcke","Netflix, Disney+","Lautsprecher"],pool:false,category:"equipment"},
+{id:35,name:"Stehtische",price:20,priceWeekend:20,price3Days:null,icon:"🍸",size:"109cm hoch, 70cm Ø",cap:"1 Set",feats:["Schwarz/weiß","Klappbar","Husse inkl."],pool:false,category:"equipment"},
+{id:36,name:"Kinder Sitzgruppen",price:25,priceWeekend:25,price3Days:null,icon:"🪑",size:"120×60cm",cap:"1 Tisch + 4 Stühle",feats:["Sitzhöhe 28cm","Versch. Farben","Kombinierbar"],pool:false,category:"equipment"},
+{id:37,name:"Party Deko Set",price:19.90,priceWeekend:19.90,price3Days:null,icon:"🎉",size:"20 Personen",cap:"Themen",feats:["PAW, Mario, Mickey...","Teller, Becher, Servietten"],pool:false,category:"equipment"},
+{id:38,name:"Faltpavillon 3×3m",price:40,priceWeekend:50,price3Days:null,icon:"⛺",size:"3m × 3m",cap:"Expresszelt",feats:["Wasser & Winddicht","Seitenwände","Wenige Min. Aufbau"],pool:false,category:"equipment"},
+{id:39,name:"Faltpavillon 3×6m",price:80,priceWeekend:95,price3Days:null,icon:"🏕️",size:"3m × 6m",cap:"Expresszelt",feats:["Wasser & Winddicht","Seitenwände","Weiß & Anthrazit"],pool:false,category:"equipment"},
+{id:40,name:"Festzeltgarnitur",price:12,priceWeekend:20,price3Days:null,icon:"🍺",size:"Standard",cap:"Erw./Kinder",feats:["Mit/ohne Hussen","Hochwertig","Schneller Aufbau"],pool:false,category:"equipment"},
+{id:41,name:"JBL PartyBox 320",price:35,priceWeekend:35,price3Days:null,icon:"🔊",size:"320W",cap:"Bluetooth",feats:["Lichtshow per App","Mikrofon buchbar","Stativ erhältlich"],pool:false,category:"equipment"},
+{id:42,name:"JBL PartyBox 710",price:50,priceWeekend:50,price3Days:null,icon:"🎵",size:"710W",cap:"Bluetooth",feats:["Lichtshow per App","Mikrofon buchbar","Stativ erhältlich"],pool:false,category:"equipment"},
+{id:43,name:"Nebelmaschine 900W",price:25,priceWeekend:35,price3Days:95,icon:"💨",size:"900 Watt",cap:"1 Std inkl.",feats:["RGB LEDs","Fernbedienung","1L Fassung"],pool:false,category:"equipment"}
+];
+
+let currentRole=null,currentUser=null,currentCategory='all',currentProduct=null,currentPriceOption='daily',currentBase=0,currentOpt=0,selectedSurface=null,currentDiscount=0,currentEarlyBird=0,currentDeliveryCost=0,currentCustomPrice=null,editingProduct=null,asphaltSurcharge=0;
+
+let bookings=JSON.parse(localStorage.getItem('pcb_bookings'))||[];
+let customers=JSON.parse(localStorage.getItem('pcb_customers'))||[];
+let productPrices=JSON.parse(localStorage.getItem('pcb_prices'))||{};
+let settings=JSON.parse(localStorage.getItem('pcb_settings'))||{costPerKm:0.50,freeDistance:3,earlyBirdPercent:5,maxEarlyBird:20};
+
+function loadSavedPrices(){for(let id in productPrices){let p=products.find(x=>x.id==id);if(p)Object.assign(p,productPrices[id])}}
+function loadSettings(){document.getElementById('costPerKm').value=settings.costPerKm;document.getElementById('earlyBirdPercent').value=settings.earlyBirdPercent;document.getElementById('maxEarlyBird').value=settings.maxEarlyBird}
+
+window.onload=function(){
+loadSavedPrices();
+loadSettings();
+renderProducts();
+updateStats();
+document.getElementById('todayDate').textContent=new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'});
+['costPerKm','earlyBirdPercent','maxEarlyBird'].forEach(id=>{document.getElementById(id)?.addEventListener('change',e=>{settings[id]=parseFloat(e.target.value);localStorage.setItem('pcb_settings',JSON.stringify(settings))})});
+};
+
+function setRole(role){
+document.querySelectorAll('.role-btn').forEach(b=>b.classList.remove('active'));
+event.target.classList.add('active');
+if(role==='admin'){document.getElementById('adminForm').classList.remove('hidden');document.getElementById('mitarbeiterForm').classList.add('hidden')}
+else{document.getElementById('adminForm').classList.add('hidden');document.getElementById('mitarbeiterForm').classList.remove('hidden')}
+}
+
+function doLogin(role){
+if(role==='admin'){if(document.getElementById('adminPass').value!=='admin123'){showToast('Falsches Passwort',true);return}currentUser='Admin';document.getElementById('settingsBtn').classList.remove('hidden')}
+else{const name=document.getElementById('maName').value;if(!name){showToast('Name eingeben',true);return}currentUser=name;document.getElementById('settingsBtn').classList.add('hidden')}
+currentRole=role;
+document.getElementById('loginScreen').classList.add('hidden');
+document.getElementById('app').classList.remove('hidden');
+if(role==='mitarbeiter'){document.querySelectorAll('.admin-only').forEach(el=>el.style.display='none');navigate('today')}
+else{navigate('dashboard')}
+updateStats();
+}
+
+function navigate(page){
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+const pages=['dashboard','products','bookings','today','customers'];
+const idx=pages.indexOf(page);
+if(idx>-1)document.querySelectorAll('.nav-item')[idx]?.classList.add('active');
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(page).classList.add('active');
+const titles={dashboard:'Dashboard',products:'Neue Buchung',bookings:'Buchungen',today:'Heute',customers:'Kunden',settings:'Einstellungen'};
+document.getElementById('pageTitle').textContent=titles[page];
+if(page==='bookings')renderBookings();
+if(page==='today')renderToday();
+if(page==='customers')renderCustomers();
+if(page==='dashboard'){updateStats();renderUpcoming()}
+if(page==='products')renderProducts();
+}
+
+function openSettings(){navigate('settings')}
+function filterProducts(category){currentCategory=category;document.querySelectorAll('.category-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');const titles={all:'Alle Produkte',huepfburg:'Hüpfburgen',spiel:'Spiel & Spaß',funfood:'Funfood',equipment:'Equipment'};document.getElementById('productCategoryTitle').textContent=titles[category];renderProducts()}
+
+function getCategoryLabel(cat){const labels={huepfburg:'Hüpfburg',spiel:'Spiel',funfood:'Food',equipment:'Equip'};return labels[cat]||cat}
+function isWeekendPrice(){const day=new Date().getDay();return day===5||day===6||day===0}
+
+function renderProducts(){
+const container=document.getElementById('productList');
+let filtered=currentCategory==='all'?products:products.filter(p=>p.category===currentCategory);
+document.getElementById('productCount').textContent=filtered.length+' Produkte';
+let html='';
+filtered.forEach(p=>{
+const isWeekend=isWeekendPrice();
+const displayPrice=isWeekend?p.priceWeekend:p.price;
+html+=`<div class="product-card ${p.category}" onclick="openBooking(${p.id})">
+<div class="product-image">
+<span class="product-category-tag">${getCategoryLabel(p.category)}</span>
+${p.pool?'<div class="product-badge">💧 Pool</div>':''}
+${currentRole==='admin'?'<div class="product-badge" style="left:12px;right:auto;top:40px;background:rgba(255,255,255,0.2)" onclick="event.stopPropagation();editProduct('+p.id+')">✏️</div>':''}
+${p.icon}
+</div>
+<div class="product-info">
+<div class="product-name">${p.name}</div>
+<div class="product-meta">${p.size} • ${p.cap}</div>
+<div class="product-price-container">
+<span class="product-price">${displayPrice}€</span>
+${isWeekend?'':'<span class="product-price-original">Fr-So: '+p.priceWeekend+'€</span>'}
+</div>
+<div class="product-features">${p.feats.join(' • ')}</div>
+<button class="book-btn">Jetzt buchen</button>
+</div>
+</div>`;
+});
+container.innerHTML=html;
+}
+
+function editProduct(id){
+if(currentRole!=='admin')return;
+editingProduct=products.find(p=>p.id===id);
+if(!editingProduct)return;
+document.getElementById('editIcon').textContent=editingProduct.icon;
+document.getElementById('editName').textContent=editingProduct.name;
+document.getElementById('editPriceDaily').value=editingProduct.price;
+document.getElementById('editPriceWeekend').value=editingProduct.priceWeekend;
+document.getElementById('editPrice3Day').value=editingProduct.price3Days||'';
+document.getElementById('editProductModal').classList.add('active');
+}
+
+function closeEditModal(){document.getElementById('editProductModal').classList.remove('active');editingProduct=null}
+function applyQuickDiscount(percent){if(!editingProduct)return;document.getElementById('editPriceDaily').value=Math.round(editingProduct.price*(1-percent/100));document.getElementById('editPriceWeekend').value=Math.round(editingProduct.priceWeekend*(1-percent/100));if(editingProduct.price3Days){document.getElementById('editPrice3Day').value=Math.round(editingProduct.price3Days*(1-percent/100))}}
+
+function saveProductEdit(){
+if(!editingProduct)return;
+editingProduct.price=parseInt(document.getElementById('editPriceDaily').value)||editingProduct.price;
+editingProduct.priceWeekend=parseInt(document.getElementById('editPriceWeekend').value)||editingProduct.priceWeekend;
+const threeDay=document.getElementById('editPrice3Day').value;
+editingProduct.price3Days=threeDay?parseInt(threeDay):null;
+productPrices[editingProduct.id]={price:editingProduct.price,priceWeekend:editingProduct.priceWeekend,price3Days:editingProduct.price3Days};
+localStorage.setItem('pcb_prices',JSON.stringify(productPrices));
+closeEditModal();
+renderProducts();
+showToast('✓ Preise aktualisiert');
+}
+
+function updateGlobalDiscount(value){document.getElementById('globalDiscountValue').textContent=(value>0?'+':'')+value+'%'}
+function applyGlobalDiscount(){
+const discount=parseInt(document.getElementById('globalDiscount').value);
+if(discount===0)return;
+const factor=1+(discount/100);
+products.forEach(p=>{
+p.price=Math.round(p.price*factor);
+p.priceWeekend=Math.round(p.priceWeekend*factor);
+if(p.price3Days)p.price3Days=Math.round(p.price3Days*factor);
+productPrices[p.id]={price:p.price,priceWeekend:p.priceWeekend,price3Days:p.price3Days};
+});
+localStorage.setItem('pcb_prices',JSON.stringify(productPrices));
+renderProducts();
+showToast('✓ Alle Preise um '+discount+'% angepasst');
+}
+
+function openBooking(pid){
+currentProduct=products.find(x=>x.id===pid);
+if(!currentProduct)return;
+currentOpt=0;selectedSurface=null;currentPriceOption='daily';currentDiscount=0;currentEarlyBird=0;currentDeliveryCost=0;currentCustomPrice=null;asphaltSurcharge=0;
+document.getElementById('selProductId').value=pid;
+document.getElementById('detailIcon').textContent=currentProduct.icon;
+document.getElementById('detailName').textContent=currentProduct.name;
+document.getElementById('detailMeta').textContent=currentProduct.size+' • '+currentProduct.cap;
+document.getElementById('featureList').innerHTML=currentProduct.feats.map(f=>`<div class="feature-item"><span class="feature-icon">✓</span><span>${f}</span></div>`).join('');
+document.getElementById('dailyPrice').textContent=currentProduct.price+'€';
+document.getElementById('weekendPrice').textContent=currentProduct.priceWeekend+'€';
+const threeDayBtn=document.getElementById('threeDayBtn');
+if(currentProduct.price3Days){threeDayBtn.style.display='block';document.getElementById('threeDayPrice').textContent=currentProduct.price3Days+'€'}else{threeDayBtn.style.display='none'}
+document.querySelectorAll('#priceOptions .option-btn').forEach(b=>b.classList.remove('selected'));
+document.querySelector('#priceOptions .option-btn').classList.add('selected');
+const poolOption=document.getElementById('poolOption');
+poolOption.style.display=currentProduct.pool?'flex':'none';
+poolOption.classList.remove('selected');
+document.querySelectorAll('.option-btn.checkbox').forEach(b=>b.classList.remove('selected'));
+document.getElementById('bookingForm').reset();
+document.getElementById('bDate').min=new Date().toISOString().split('T')[0];
+document.getElementById('discountPercent').value=0;
+document.getElementById('customPrice').value='';
+document.getElementById('earlyBirdBadge').classList.add('hidden');
+document.getElementById('distanceBox').classList.add('hidden');
+document.getElementById('discountRow').style.display='none';
+document.getElementById('earlyBirdRow').style.display='none';
+document.getElementById('asphaltRow').style.display='none';
+document.getElementById('asphaltWarning').classList.remove('active');
+updatePrice();
+document.getElementById('bookingModal').classList.add('active');
+}
+
+function closeModal(){document.getElementById('bookingModal').classList.remove('active')}
+function selectPriceOption(option,btn){currentPriceOption=option;document.querySelectorAll('#priceOptions .option-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');updatePrice()}
+function updateCustomPrice(){const val=document.getElementById('customPrice').value;currentCustomPrice=val?parseInt(val):null;updatePrice()}
+function updateDiscount(){currentDiscount=parseInt(document.getElementById('discountPercent').value)||0;updatePrice()}
+
+function selectSurface(btn,val){
+document.querySelectorAll('.option-btn:not(.checkbox):not(#priceOptions .option-btn)').forEach(b=>b.classList.remove('selected'));
+btn.classList.add('selected');
+selectedSurface=val;
+document.getElementById('surfaceValue').value=val;
+const warning=document.getElementById('asphaltWarning');
+if(val==='asphalt'){
+asphaltSurcharge=ASPHALT_SURCHARGE;
+warning.classList.add('active');
+document.getElementById('asphaltRow').style.display='flex';
+document.getElementById('pAsphalt').textContent='+'+ASPHALT_SURCHARGE+'€';
+}else{
+asphaltSurcharge=0;
+warning.classList.remove('active');
+document.getElementById('asphaltRow').style.display='none';
+}
+updatePrice();
+}
+
+function toggleOption(btn,id,price){btn.classList.toggle('selected');if(btn.classList.contains('selected')){currentOpt+=price}else{currentOpt-=price}updatePrice()}
+
+async function calculateDistance(){
+const street=document.getElementById('cStreet').value;
+const zip=document.getElementById('cZip').value;
+const city=document.getElementById('cCity').value;
+if(!street||!zip||!city)return;
+const fullAddress=`${street}, ${zip} ${city}`;
+document.getElementById('distanceLoading').classList.remove('hidden');
+try{
+const response=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(BASE_ADDRESS)}`);
+const baseData=await response.json();
+const response2=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`);
+const destData=await response2.json();
+if(baseData[0]&&destData[0]){
+const baseCoords={lat:parseFloat(baseData[0].lat),lon:parseFloat(baseData[0].lon)};
+const destCoords={lat:parseFloat(destData[0].lat),lon:parseFloat(destData[0].lon)};
+const R=6371;
+const dLat=(destCoords.lat-baseCoords.lat)*Math.PI/180;
+const dLon=(destCoords.lon-baseCoords.lon)*Math.PI/180;
+const a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(baseCoords.lat*Math.PI/180)*Math.cos(destCoords.lat*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+const distance=Math.round(R*c*10)/10;
+displayDistance(distance);
+}else{estimateDistance(zip)}
+}catch(e){estimateDistance(zip)}
+document.getElementById('distanceLoading').classList.add('hidden');
+}
+
+function estimateDistance(zip){
+const firstDigit=zip.toString()[0];
+const estimates={'4':5,'5':15,'6':25,'3':35,'2':45};
+displayDistance(estimates[firstDigit]||10);
+}
+
+function displayDistance(distance){
+const freeDist=settings.freeDistance;
+const costPerKm=settings.costPerKm;
+let extraKm=Math.max(0,Math.ceil(distance-freeDist));
+let cost=extraKm*costPerKm;
+currentDeliveryCost=cost;
+document.getElementById('distanceValue').textContent=distance+' km';
+document.getElementById('extraKm').textContent=extraKm+' km';
+document.getElementById('deliveryCost').textContent=cost.toFixed(2)+'€';
+document.getElementById('distanceBox').classList.remove('hidden');
+updatePrice();
+}
+
+function calculateEarlyBird(){
+const dateVal=document.getElementById('bDate').value;
+if(!dateVal)return;
+const bookingDate=new Date(dateVal);
+const today=new Date();
+const diffTime=bookingDate-today;
+const diffMonths=Math.floor(diffTime/(1000*60*60*24*30));
+if(diffMonths>0){
+const discount=Math.min(diffMonths*settings.earlyBirdPercent,settings.maxEarlyBird);
+currentEarlyBird=discount;
+if(discount>0){
+document.getElementById('earlyBirdAmount').textContent=discount+'%';
+document.getElementById('earlyBirdBadge').classList.remove('hidden');
+}else{document.getElementById('earlyBirdBadge').classList.add('hidden')}
+}else{currentEarlyBird=0;document.getElementById('earlyBirdBadge').classList.add('hidden')}
+updatePrice();
+}
+
+function updatePrice(){
+if(!currentProduct)return;
+let base=currentCustomPrice||currentProduct.price;
+if(currentPriceOption==='weekend')base=currentCustomPrice||currentProduct.priceWeekend;
+if(currentPriceOption==='threeDay')base=currentCustomPrice||currentProduct.price3Days||currentProduct.price;
+currentBase=base;
+let afterDiscount=base;
+if(currentDiscount>0){
+afterDiscount=Math.round(base*(1-currentDiscount/100));
+document.getElementById('discountRow').style.display='flex';
+document.getElementById('pDiscount').textContent='-'+(base-afterDiscount)+'€ ('+currentDiscount+'%)';
+}else{document.getElementById('discountRow').style.display='none'}
+let afterEarlyBird=afterDiscount;
+if(currentEarlyBird>0){
+afterEarlyBird=Math.round(afterDiscount*(1-currentEarlyBird/100));
+document.getElementById('earlyBirdRow').style.display='flex';
+document.getElementById('pEarlyBird').textContent='-'+(afterDiscount-afterEarlyBird)+'€ ('+currentEarlyBird+'%)';
+}else{document.getElementById('earlyBirdRow').style.display='none'}
+const total=afterEarlyBird+currentOpt+currentDeliveryCost+asphaltSurcharge;
+document.getElementById('detailPrice').textContent=total+'€';
+document.getElementById('pBase').textContent=base+'€';
+document.getElementById('pOpt').textContent=currentOpt+'€';
+document.getElementById('pDelivery').textContent=currentDeliveryCost.toFixed(2)+'€';
+document.getElementById('pTotal').textContent=total+'€';
+}
+
+function saveBooking(e){
+e.preventDefault();
+if(!selectedSurface){showToast('Bitte Untergrund wählen',true);return}
+const booking={
+id:Date.now(),
+product:currentProduct.name,
+productId:currentProduct.id,
+category:currentProduct.category,
+icon:currentProduct.icon,
+customer:document.getElementById('cName').value,
+phone:document.getElementById('cPhone').value,
+email:document.getElementById('cEmail').value,
+address:`${document.getElementById('cStreet').value}, ${document.getElementById('cZip').value} ${document.getElementById('cCity').value}`,
+date:document.getElementById('bDate').value,
+time:document.getElementById('bTime').value,
+surface:selectedSurface,
+asphaltSurcharge:asphaltSurcharge,
+priceOption:currentPriceOption,
+basePrice:currentBase,
+customPrice:currentCustomPrice,
+discount:currentDiscount,
+earlyBird:currentEarlyBird,
+deliveryCost:currentDeliveryCost,
+options:{
+pool:document.getElementById('poolOption')?.classList.contains('selected')||false,
+night:document.querySelectorAll('.option-btn.checkbox')[1]?.classList.contains('selected')||false,
+generator:document.querySelectorAll('.option-btn.checkbox')[2]?.classList.contains('selected')||false,
+cable:document.querySelectorAll('.option-btn.checkbox')[3]?.classList.contains('selected')||false,
+setup:document.querySelectorAll('.option-btn.checkbox')[4]?.classList.contains('selected')||false
+},
+optPrice:currentOpt,
+total:parseInt(document.getElementById('pTotal').textContent),
+notes:document.getElementById('bNotes').value,
+status:'confirmed',
+createdAt:new Date().toISOString(),
+createdBy:currentUser
+};
+bookings.push(booking);
+localStorage.setItem('pcb_bookings',JSON.stringify(bookings));
+const existing=customers.find(c=>c.phone===booking.phone);
+if(existing){existing.bookings++;existing.lastBooking=new Date().toISOString()}
+else{customers.push({name:booking.customer,phone:booking.phone,email:booking.email,address:booking.address,bookings:1,firstBooking:new Date().toISOString(),lastBooking:new Date().toISOString()})}
+localStorage.setItem('pcb_customers',JSON.stringify(customers));
+closeModal();
+showToast('✓ Buchung gespeichert');
+navigate('bookings');
+updateStats();
+}
+
+function renderBookings(){
+const container=document.getElementById('bookingsList');
+document.getElementById('totalBookingsCount').textContent=bookings.length+' Buchungen';
+if(bookings.length===0){container.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Keine Buchungen</div><p>Erstellen Sie Ihre erste Buchung</p></div>`;return}
+container.innerHTML=bookings.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(b=>`<div class="booking-card ${b.status}" onclick="showDetails(${b.id})"><div class="booking-header"><div class="booking-product">${b.icon} ${b.product}</div><div class="booking-price">${b.total}€</div></div><div class="booking-info">👤 ${b.customer}<br>📅 ${formatDate(b.date)} um ${b.time}<br>📍 ${b.address}</div><div class="booking-meta"><span class="status-badge ${b.status}">${getStatusText(b.status)}</span>${b.earlyBird>0?'<span class="savings-badge">🐦 -'+b.earlyBird+'%</span>':''}${b.discount>0?'<span class="savings-badge">🏷️ -'+b.discount+'%</span>':''}${b.asphaltSurcharge>0?'<span class="warning-badge">🛣️ Asphalt +'+b.asphaltSurcharge+'€</span>':''}${b.options.pool?'<span class="option-badge">💧 Pool</span>':''}${b.options.night?'<span class="option-badge">🌙 Nacht</span>':''}${b.options.generator?'<span class="option-badge">⚡ Strom</span>':''}${b.options.cable?'<span class="option-badge">🔌 Kabel</span>':''}${b.options.setup?'<span class="option-badge">🛠️ Service</span>':''}</div></div>`).join('');
+}
+
+function renderToday(){
+const container=document.getElementById('todayList');
+const today=new Date().toISOString().split('T')[0];
+const list=bookings.filter(b=>b.date===today).sort((a,b)=>a.time.localeCompare(b.time));
+if(list.length===0){container.innerHTML=`<div class="empty-state"><div class="empty-icon">🌴</div><div class="empty-title">Freier Tag!</div><p>Keine Auslieferungen für heute</p></div>`;return}
+container.innerHTML=list.map(b=>`<div class="booking-card ${b.status}"><div class="booking-header"><div class="booking-product">${b.icon} ${b.product}</div><div class="booking-price">${b.time}</div></div><div class="booking-info"><strong>${b.customer}</strong><br>📞 ${b.phone}<br>📍 ${b.address}</div>${b.asphaltSurcharge>0?`<div style="font-size:13px;color:var(--ios-orange);margin-bottom:8px">🛣️ Asphaltpauschale: ${b.asphaltSurcharge}€</div>`:''}${b.deliveryCost>0?`<div style="font-size:13px;color:var(--ios-orange);margin-bottom:8px">🚚 Lieferkosten: ${b.deliveryCost.toFixed(2)}€</div>`:''}${b.notes?`<div style="background:rgba(255,159,10,0.2);padding:12px;border-radius:8px;margin:12px 0;font-size:14px">⚠️ ${b.notes}</div>`:''}<div class="booking-actions">${b.status!=='completed'?`<button class="action-btn ${b.status==='confirmed'?'primary':'success'}" onclick="event.stopPropagation();setStatus(${b.id},'${b.status==='confirmed'?'delivery':'completed'}')">${b.status==='confirmed'?'🚚 Losfahren':'✓ Abschließen'}</button>`:''}<button class="action-btn secondary" onclick="event.stopPropagation();showDetails(${b.id})">Details</button></div></div>`).join('');
+}
+
+function renderCustomers(){
+const container=document.getElementById('customerList');
+document.getElementById('customerCount').textContent=customers.length+' Kunden';
+if(customers.length===0){container.innerHTML='<div class="ios-list-item"><div class="item-content"><div class="item-title">Keine Kunden</div></div></div>';return}
+container.innerHTML=customers.sort((a,b)=>b.bookings-a.bookings).map(c=>`<div class="ios-list-item"><div class="item-content"><div class="item-title">${c.name}</div><div class="item-subtitle">${c.phone} • ${c.bookings} Buchung${c.bookings>1?'en':''}</div></div><div class="chevron">›</div></div>`).join('');
+}
+
+function renderUpcoming(){
+const container=document.getElementById('upcomingList');
+const today=new Date().toISOString().split('T')[0];
+const list=bookings.filter(b=>b.date>=today&&b.status!=='completed').sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,5);
+document.getElementById('upcomingCount').textContent=list.length>0?list.length+' anstehend':'';
+if(list.length===0){container.innerHTML=`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">Keine anstehenden Termine</div><p>Neue Buchungen erscheinen hier</p></div>`;return}
+container.innerHTML=list.map(b=>`<div class="ios-list-item" onclick="showDetails(${b.id})"><div class="item-content"><div class="item-title">${b.icon} ${b.product}</div><div class="item-subtitle">${formatDate(b.date)} • ${b.customer}</div></div><div class="item-value" style="color:var(--ios-orange)">${b.total}€</div><div class="chevron">›</div></div>`).join('');
+}
+
+function getStatusText(s){const map={confirmed:'Bestätigt',delivery:'Unterwegs',completed:'Erledigt'};return map[s]||s}
+function formatDate(d){return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}
+
+function updateStats(){
+const today=new Date().toISOString().split('T')[0];
+const week=new Date();
+week.setDate(week.getDate()+7);
+document.getElementById('statActive').textContent=bookings.filter(b=>b.date>=today&&b.status!=='completed').length;
+document.getElementById('statWeek').textContent=bookings.filter(b=>b.date>=today&&b.date<=week.toISOString().split('T')[0]).length;
+document.getElementById('statToday').textContent=bookings.filter(b=>b.date===today).length;
+document.getElementById('statRevenue').textContent=bookings.reduce((sum,b)=>sum+b.total,0)+'€';
+}
+
+function setStatus(id,status){
+const b=bookings.find(x=>x.id===id);
+if(b){b.status=status;localStorage.setItem('pcb_bookings',JSON.stringify(bookings));showToast(status==='completed'?'✓ Abgeschlossen':'🚚 Gestartet');renderToday();updateStats()}
+}
+
+function showDetails(id){
+const b=bookings.find(x=>x.id===id);
+if(!b)return;
+const content=document.getElementById('detailsContent');
+const footer=document.getElementById('detailsFooter');
+let priceBreakdown=`<div style="background:var(--ios-card);border-radius:12px;padding:16px;margin-bottom:24px"><div style="font-size:13px;color:var(--ios-text-secondary);margin-bottom:12px">PREISDETAILS</div><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Basispreis (${b.priceOption})</span><span>${b.basePrice}€</span></div>${b.customPrice?'<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--ios-blue)"><span>Individueller Preis</span><span>✓</span></div>':''}${b.discount>0?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--ios-green)"><span>Rabatt</span><span>-${b.discount}%</span></div>`:''}${b.earlyBird>0?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--ios-green)"><span>🐦 Frühbucher</span><span>-${b.earlyBird}%</span></div>`:''}${b.asphaltSurcharge>0?`<div style="display:flex;justify-content:space-between;margin-bottom:8px;color:var(--ios-orange)"><span>🛣️ Asphaltpauschale</span><span>+${b.asphaltSurcharge}€</span></div>`:''}${b.optPrice>0?`<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>Zusatzoptionen</span><span>${b.optPrice}€</span></div>`:''}${b.deliveryCost>0?`<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>🚚 Lieferkosten</span><span>${b.deliveryCost.toFixed(2)}€</span></div>`:''}<div style="display:flex;justify-content:space-between;font-weight:700;font-size:20px;margin-top:12px;padding-top:12px;border-top:0.5px solid rgba(255,255,255,0.1)"><span>Gesamt</span><span style="color:var(--ios-orange)">${b.total}€</span></div></div>`;
+content.innerHTML=`<div style="text-align:center;margin-bottom:24px"><div style="font-size:80px;margin-bottom:16px">${b.icon}</div><h2 style="font-size:24px;margin-bottom:8px">${b.product}</h2><div style="font-size:32px;color:var(--ios-orange);font-weight:700">${b.total}€</div><div style="color:var(--ios-text-secondary);margin-top:8px">${getStatusText(b.status)}</div></div><div class="ios-list" style="margin-bottom:24px"><div class="ios-list-item"><div class="item-content"><div class="item-title">Kunde</div><div class="item-subtitle">${b.customer}</div></div></div><div class="ios-list-item"><div class="item-content"><div class="item-title">Telefon</div><div class="item-subtitle"><a href="tel:${b.phone}" style="color:var(--ios-blue);text-decoration:none">${b.phone}</a></div></div></div><div class="ios-list-item"><div class="item-content"><div class="item-title">Adresse</div><div class="item-subtitle">${b.address}</div></div></div><div class="ios-list-item"><div class="item-content"><div class="item-title">Termin</div><div class="item-subtitle">${formatDate(b.date)} um ${b.time}</div></div></div><div class="ios-list-item"><div class="item-content"><div class="item-title">Untergrund</div><div class="item-subtitle">${b.surface}${b.asphaltSurcharge>0?' (+30€ Pauschale)':''}</div></div></div>${b.email?`<div class="ios-list-item"><div class="item-content"><div class="item-title">E-Mail</div><div class="item-subtitle">${b.email}</div></div></div>`:''}</div>${b.notes?`<div style="background:rgba(255,159,10,0.2);padding:16px;border-radius:12px;margin-bottom:24px"><strong>Notiz:</strong><br>${b.notes}</div>`:''}${priceBreakdown}`;
+footer.innerHTML=`<button class="ios-btn secondary" onclick="closeDetails()" style="margin-bottom:8px">Schließen</button>${currentRole==='admin'?`<button class="ios-btn danger" onclick="deleteBooking(${b.id});closeDetails()">Buchung löschen</button>`:''}`;
+document.getElementById('detailsModal').classList.add('active');
+}
+
+function closeDetails(){document.getElementById('detailsModal').classList.remove('active')}
+function deleteBooking(id){if(!confirm('Buchung wirklich löschen?'))return;bookings=bookings.filter(b=>b.id!==id);localStorage.setItem('pcb_bookings',JSON.stringify(bookings));showToast('Buchung gelöscht');renderBookings();updateStats()}
+function resetAllData(){if(!confirm('Wirklich ALLE Daten löschen?'))return;localStorage.removeItem('pcb_bookings');localStorage.removeItem('pcb_customers');localStorage.removeItem('pcb_prices');localStorage.removeItem('pcb_settings');location.reload()}
+function showToast(msg,isError){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(isError?' error':'');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+document.querySelectorAll('.modal').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('active')})});
+</script>
+</body>
+</html>
